@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native"
 import { cores } from "./variaveis";
+import { fontes} from "./variaveis";
 
 const loginStyle = StyleSheet.create({
     conteudo: {
@@ -16,7 +17,7 @@ const loginStyle = StyleSheet.create({
 
     titulo: {
         marginTop: 30,
-        fontSize: 40,
+        fontSize: fontes.fontxgrande,
         fontWeight: 'bold',
         color: cores.preto,
         textAlign: 'center',
@@ -24,7 +25,7 @@ const loginStyle = StyleSheet.create({
 
     subtitulo: {
         margin: 10,
-        fontSize: 20,
+        fontSize: fontes.fontgrande,
         color: cores.cinzclaro,
     },
 
@@ -92,7 +93,7 @@ const loginStyle = StyleSheet.create({
     },
 
     textoEntrar: {
-        fontSize: 25,
+        fontSize: fontes.fonttitulo,
         color: cores.preto,
         fontWeight: 'bold',
     },
@@ -116,7 +117,7 @@ const loginStyle = StyleSheet.create({
     },
 
     textoSeparador: {
-        fontSize: 15,
+        fontSize: fontes.fontmedia,
         color: '#888888',
 
     },

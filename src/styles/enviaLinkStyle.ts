@@ -1,5 +1,6 @@
 import {StyleSheet} from "react-native"
 import { cores } from "./variaveis";
+import { fontes} from "./variaveis";
 
 const enviaLinkStyle = StyleSheet.create({
 
@@ -24,7 +25,7 @@ conteudo:{
 
 titulo:{
 
-    fontSize:24,
+    fontSize:fontes.fonttitulo,
     fontWeight:'bold',
     textAlign:'center',
     color:cores.preto,

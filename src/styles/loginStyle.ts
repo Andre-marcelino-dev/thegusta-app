@@ -1,4 +1,5 @@
 import { StyleSheet, TextInput } from "react-native";
+import { fontes } from "./variaveis";
 
 const LoginStyle = StyleSheet.create({
   conteudo: {
@@ -21,7 +22,7 @@ const LoginStyle = StyleSheet.create({
   },
   subtitulo: {
     marginTop: 10,
-    fontSize: 20,
+    fontSize: fontes.fontgrande,
     color: "#888888",
   },
   form: {

@@ -5,6 +5,7 @@ export const cores = {
     azul: "#0400ffff",
     laranja: '#ff9800',
     laranjaclaro: '#ffe8c5',
+    verde: '#2e9e4f',
     preto: '#000000',
 }
 

@@ -16,6 +16,69 @@ import globalStyle from "@/styles/globalStyle";
 import homeStyle from "@/styles/homeStyle";
 
 import { cores } from "@/styles/variaveis";
+
+const destaques = [
+    {
+        id: 1,
+        nome: "Bolo de banana fit",
+        descricao: "Banana Prata com canela e gergelim",
+        preco: "R$18,00",
+        imagem: require("@/assets/images/img/bolo01.png"),
+    },
+    {
+        id: 2,
+        nome: "Bolo de banana fit",
+        descricao: "Banana Prata com canela e gergelim",
+        preco: "R$18,00",
+        imagem: require("@/assets/images/img/bolo01.png"),
+    },
+    {
+        id: 3,
+        nome: "Bolo de banana fit",
+        descricao: "Banana Prata com canela e gergelim",
+        preco: "R$18,00",
+        imagem: require("@/assets/images/img/bolo01.png"),
+    },
+];
+
+const menuItens = [
+    {
+        id: 1,
+        rotulo: "Home",
+        icone: require("@/assets/images/img/home.png"),
+        rota: "/home",
+        ativo: true,
+    },
+    {
+        id: 2,
+        rotulo: "Cardápio",
+        icone: require("@/assets/images/img/cardapio.png"),
+        rota: "/cardapio",
+        ativo: false,
+    },
+    {
+        id: 3,
+        rotulo: "Sacola",
+        icone: require("@/assets/images/img/sacola.png"),
+        rota: "/sacola",
+        ativo: false,
+    },
+    {
+        id: 4,
+        rotulo: "Pedido",
+        icone: require("@/assets/images/img/pedido.png"),
+        rota: null,
+        ativo: false,
+    },
+    {
+        id: 5,
+        rotulo: "Config",
+        icone: require("@/assets/images/img/config.png"),
+        rota: null,
+        ativo: false,
+    },
+];
+
 export default function HomeScreen() {
     return (
         <View style={globalStyle.container}>
@@ -107,10 +170,59 @@ export default function HomeScreen() {
 
                             <View style={homeStyle.destaque}>
                                 <Text style={homeStyle.tituloSecao}> Destaque</Text>
+                                <View style={homeStyle.listaDestaque}>
+                                    {destaques.map((item) => (
+                                        <Pressable
+                                            key={item.id}
+                                            style={homeStyle.cardDestaque}
+                                            onPress={() => router.push("/detalhesProduto")}
+                                        >
+                                            <Image
+                                                style={homeStyle.imgDestaque}
+                                                source={item.imagem}
+                                            />
+                                            <Text style={homeStyle.nomeDestaque} numberOfLines={2}>
+                                                {item.nome}
+                                            </Text>
+                                            <Text style={homeStyle.descricaoDestaque} numberOfLines={2}>
+                                                {item.descricao}
+                                            </Text>
+                                            <View style={homeStyle.rodapeDestaque}>
+                                                <Text style={homeStyle.precoDestaque}>
+                                                    {item.preco}
+                                                </Text>
+                                                <Pressable style={homeStyle.btnAdicionar}>
+                                                    <Image
+                                                        style={homeStyle.imgAdicionar}
+                                                        source={require("@/assets/images/img/mais.png")}
+                                                    />
+                                                </Pressable>
+                                            </View>
+                                        </Pressable>
+                                    ))}
+                                </View>
                             </View>
                         </View>
 
                     </ScrollView>
+
+                    <View style={homeStyle.menuInferior}>
+                        {menuItens.map((item) => (
+                            <Pressable
+                                key={item.id}
+                                style={homeStyle.itemMenu}
+                                onPress={() => item.rota && router.push(item.rota as any)}
+                            >
+                                <Image
+                                    style={[homeStyle.imgMenu, { tintColor: cores.laranja }]}
+                                    source={item.icone}
+                                />
+                                <Text style={homeStyle.txtMenu}>
+                                    {item.rotulo}
+                                </Text>
+                            </Pressable>
+                        ))}
+                    </View>
                 </SafeAreaView>
             </ImageBackground>
 

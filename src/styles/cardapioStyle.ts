@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native"
 import { cores } from "./variaveis";
 import { fontes } from "./variaveis";
 
-const homeStyle = StyleSheet.create({
+const cardapioStyle = StyleSheet.create({
 
     header: {
         width: '80%',
@@ -11,18 +11,28 @@ const homeStyle = StyleSheet.create({
         marginTop: 80,
     },
     conteudo: {
-        alignItems: "flex-end",
+        alignItems: "center",
         justifyContent: "space-between",
         flexDirection: "row",
         width: '100%',
 
+    },
+    iconeVoltar: {
+        width: 36,
+        height: 36,
+    },
+    logo: {
+        width: 55,
+        height: 55,
+        borderRadius: "50%",
     },
     titulo: {
 
         fontSize: 30,
         fontWeight: "bold",
         color: cores.preto,
-        textAlign: "center",
+        textAlign: "left",
+        marginTop: 15,
         fontFamily: fontes.negrito
     },
     bordaPerfil: {
@@ -112,27 +122,32 @@ tituloSecao:{
 },
 
 itemCategoria:{
+    alignItems:'center',
+},
+
+caixaCategoria:{
     width:50,
     height:50,
     borderRadius:10,
     borderColor:cores.laranja,
     borderWidth:2,
-    paddingVertical:3,
-    paddingHorizontal:10,
     alignItems:'center',
+    justifyContent:'center',
     backgroundColor:cores.laranjaclaro,
 },
 
 imgCategoria:{
-    width:30,
-    height:30,
+    width:26,
+    height:26,
 
 },
 
 txtCategoria:{
-fontSize:12,
+fontSize:11,
 fontFamily:fontes.comum,
 color:cores.cinzclaro,
+marginTop:6,
+textAlign:'center',
 
 },
 
@@ -149,8 +164,8 @@ listaDestaque:{
 },
 
 cardDestaque:{
-    width:'30%',
-  
+    width:'47%',
+
     marginBottom:20,
     backgroundColor:cores.branco,
     borderRadius:15,
@@ -164,7 +179,7 @@ cardDestaque:{
 
 imgDestaque:{
     width:'100%',
-    height:80,
+    height:110,
     borderRadius:12,
 },
 
@@ -249,4 +264,4 @@ txtMenu:{
 
 });
 
-export default homeStyle;
+export default cardapioStyle;

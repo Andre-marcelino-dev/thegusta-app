@@ -13,6 +13,7 @@ import {
 
 import globalStyle from "@/styles/globalStyle";
 import cardapioStyle from "@/styles/cardapioStyle";
+import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
 
@@ -83,15 +84,29 @@ const cardapio = [
         id: 2,
         categoria: "Doces",
         produtos: [
-            {
-                id: 5,
+    {
+                id: 1,
                 nome: "Bolo de banana fit",
                 descricao: "Banana Prata com canela e gergelim",
                 preco: "R$18,00",
                 imagem: require("@/assets/images/img/bolo01.png"),
             },
             {
-                id: 6,
+                id: 2,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 3,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 4,
                 nome: "Bolo de banana fit",
                 descricao: "Banana Prata com canela e gergelim",
                 preco: "R$18,00",
@@ -99,44 +114,117 @@ const cardapio = [
             },
         ],
     },
-];
 
-const menuItens = [
-    {
-        id: 1,
-        rotulo: "Home",
-        icone: require("@/assets/images/img/home.png"),
-        rota: "/home",
-        ativo: false,
-    },
-    {
-        id: 2,
-        rotulo: "Cardápio",
-        icone: require("@/assets/images/img/cardapio.png"),
-        rota: "/cardapio",
-        ativo: true,
-    },
+
     {
         id: 3,
-        rotulo: "Sacola",
-        icone: require("@/assets/images/img/sacola.png"),
-        rota: "/sacola",
-        ativo: false,
+        categoria: "Tortas",
+        produtos: [
+    {
+                id: 1,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 2,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 3,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 4,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+        ],
     },
+
+
+
     {
         id: 4,
-        rotulo: "Pedido",
-        icone: require("@/assets/images/img/pedido.png"),
-        rota: null,
-        ativo: false,
+        categoria: "Bebidas",
+        produtos: [
+    {
+                id: 1,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 2,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 3,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 4,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+        ],
     },
+
+
+
     {
         id: 5,
-        rotulo: "Config",
-        icone: require("@/assets/images/img/config.png"),
-        rota: null,
-        ativo: false,
+        categoria: "Kits",
+        produtos: [
+    {
+                id: 1,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 2,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 3,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+            {
+                id: 4,
+                nome: "Bolo de banana fit",
+                descricao: "Banana Prata com canela e gergelim",
+                preco: "R$18,00",
+                imagem: require("@/assets/images/img/bolo01.png"),
+            },
+        ],
     },
+    
 ];
 
 export default function CardapioScreen() {
@@ -151,12 +239,6 @@ export default function CardapioScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={cardapioStyle.header}>
                             <View style={cardapioStyle.conteudo}>
-                                <Pressable onPress={() => router.back()}>
-                                    <Image
-                                        style={cardapioStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={cardapioStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -186,12 +268,10 @@ export default function CardapioScreen() {
                                 <View style={cardapioStyle.conteudoCategoria}>
                                     {categorias.map((item) => (
                                         <View key={item.id} style={cardapioStyle.itemCategoria}>
-                                            <View style={cardapioStyle.caixaCategoria}>
-                                                <Image
-                                                    style={cardapioStyle.imgCategoria}
-                                                    source={item.icone}
-                                                />
-                                            </View>
+                                            <Image
+                                                style={cardapioStyle.imgCategoria}
+                                                source={item.icone}
+                                            />
                                             <Text style={cardapioStyle.txtCategoria}>
                                                 {item.nome}
                                             </Text>
@@ -207,33 +287,38 @@ export default function CardapioScreen() {
                                     </Text>
                                     <View style={cardapioStyle.listaDestaque}>
                                         {secao.produtos.map((item) => (
-                                            <Pressable
-                                                key={item.id}
-                                                style={cardapioStyle.cardDestaque}
-                                                onPress={() => router.push("/detalhesProduto")}
-                                            >
-                                                <Image
-                                                    style={cardapioStyle.imgDestaque}
-                                                    source={item.imagem}
-                                                />
-                                                <Text style={cardapioStyle.nomeDestaque} numberOfLines={2}>
-                                                    {item.nome}
-                                                </Text>
-                                                <Text style={cardapioStyle.descricaoDestaque} numberOfLines={2}>
-                                                    {item.descricao}
-                                                </Text>
+                                            <View key={item.id} style={cardapioStyle.cardDestaque}>
+                                                <Pressable
+                                                    onPress={() => router.push("/detalhesProduto")}
+                                                >
+                                                    <View style={cardapioStyle.wrapperImgDestaque}>
+                                                        <Image
+                                                            style={cardapioStyle.imgDestaque}
+                                                            source={item.imagem}
+                                                        />
+                                                        <View style={cardapioStyle.badgeDestaque}>
+                                                            <Text style={cardapioStyle.txtEstrela}>☆</Text>
+                                                        </View>
+                                                    </View>
+                                                    <Text style={cardapioStyle.nomeDestaque} numberOfLines={2}>
+                                                        {item.nome}
+                                                    </Text>
+                                                    <Text style={cardapioStyle.descricaoDestaque} numberOfLines={2}>
+                                                        {item.descricao}
+                                                    </Text>
+                                                </Pressable>
                                                 <View style={cardapioStyle.rodapeDestaque}>
                                                     <Text style={cardapioStyle.precoDestaque}>
                                                         {item.preco}
                                                     </Text>
-                                                    <Pressable style={cardapioStyle.btnAdicionar}>
+                                                    <Pressable style={cardapioStyle.btnAdicionar} onPress={()=> router.navigate('/detalhesProduto')}>
                                                         <Image
                                                             style={cardapioStyle.imgAdicionar}
                                                             source={require("@/assets/images/img/mais.png")}
                                                         />
                                                     </Pressable>
                                                 </View>
-                                            </Pressable>
+                                            </View>
                                         ))}
                                     </View>
                                 </View>
@@ -242,23 +327,17 @@ export default function CardapioScreen() {
 
                     </ScrollView>
 
-                    <View style={cardapioStyle.menuInferior}>
-                        {menuItens.map((item) => (
-                            <Pressable
-                                key={item.id}
-                                style={cardapioStyle.itemMenu}
-                                onPress={() => item.rota && router.push(item.rota as any)}
-                            >
-                                <Image
-                                    style={[cardapioStyle.imgMenu, { tintColor: cores.laranja }]}
-                                    source={item.icone}
-                                />
-                                <Text style={cardapioStyle.txtMenu}>
-                                    {item.rotulo}
-                                </Text>
-                            </Pressable>
-                        ))}
-                    </View>
+                    <Pressable
+                        style={cardapioStyle.btnVoltarFixo}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={cardapioStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
+
+                    <Footer />
                 </SafeAreaView>
             </ImageBackground>
         </View>

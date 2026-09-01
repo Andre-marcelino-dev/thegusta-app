@@ -13,41 +13,7 @@ import {
 
 import globalStyle from "@/styles/globalStyle";
 import produtoStyle from "@/styles/produtoStyle";
-
-import { cores } from "@/styles/variaveis";
-
-const menuItens = [
-    {
-        id: 1,
-        rotulo: "Home",
-        icone: require("@/assets/images/img/home.png"),
-        rota: "/home",
-    },
-    {
-        id: 2,
-        rotulo: "Cardápio",
-        icone: require("@/assets/images/img/cardapio.png"),
-        rota: "/cardapio",
-    },
-    {
-        id: 3,
-        rotulo: "Sacola",
-        icone: require("@/assets/images/img/sacola.png"),
-        rota: "/sacola",
-    },
-    {
-        id: 4,
-        rotulo: "Pedido",
-        icone: require("@/assets/images/img/pedido.png"),
-        rota: null,
-    },
-    {
-        id: 5,
-        rotulo: "Config",
-        icone: require("@/assets/images/img/config.png"),
-        rota: null,
-    },
-];
+import Footer from "@/components/footer";
 
 const produto = {
     nome: "Bolo de Banana Fit",
@@ -93,6 +59,9 @@ export default function ProdutoScreen() {
                                         source={require("@/assets/images/img/voltar.png")}
                                     />
                                 </Pressable>
+                                <Text style={produtoStyle.titulo} numberOfLines={1}>
+                                    {produto.nome}
+                                </Text>
                                 <Pressable style={produtoStyle.btnTopo}>
                                     <Text style={produtoStyle.txtFavorito}>★</Text>
                                 </Pressable>
@@ -106,13 +75,11 @@ export default function ProdutoScreen() {
                             />
 
                             <View style={produtoStyle.conteudoTitulo}>
-                                <Text style={produtoStyle.titulo}>{produto.nome}</Text>
+                                <Text style={produtoStyle.preco}>
+                                    R${produto.preco.toFixed(2).replace(".", ",")}
+                                </Text>
                                 <Text style={produtoStyle.categoria}>{produto.categoria}</Text>
                             </View>
-
-                            <Text style={produtoStyle.preco}>
-                                R${produto.preco.toFixed(2).replace(".", ",")}
-                            </Text>
 
                             <Text style={produtoStyle.textoResumo}>{produto.resumo}</Text>
 
@@ -124,21 +91,23 @@ export default function ProdutoScreen() {
                     </ScrollView>
 
                     <View style={produtoStyle.rodapeCompra}>
-                        <View style={produtoStyle.quantidade}>
-                            <Pressable style={produtoStyle.btnQuantidade} onPress={diminuir}>
-                                <Text style={produtoStyle.txtBtnQuantidade}>-</Text>
-                            </Pressable>
-                            <Text style={produtoStyle.txtQuantidade}>{quantidade}</Text>
-                            <Pressable style={produtoStyle.btnQuantidade} onPress={aumentar}>
-                                <Text style={produtoStyle.txtBtnQuantidade}>+</Text>
-                            </Pressable>
-                        </View>
+                        <View style={produtoStyle.linhaRodape}>
+                            <View style={produtoStyle.quantidade}>
+                                <Pressable style={produtoStyle.btnQuantidade} onPress={diminuir}>
+                                    <Text style={produtoStyle.txtBtnQuantidade}>-</Text>
+                                </Pressable>
+                                <Text style={produtoStyle.txtQuantidade}>{quantidade}</Text>
+                                <Pressable style={produtoStyle.btnQuantidade} onPress={aumentar}>
+                                    <Text style={produtoStyle.txtBtnQuantidade}>+</Text>
+                                </Pressable>
+                            </View>
 
-                        <View style={produtoStyle.subtotal}>
-                            <Text style={produtoStyle.txtSubtotalLabel}>Subtotal</Text>
-                            <Text style={produtoStyle.txtSubtotalValor}>
-                                R${subtotal.toFixed(2).replace(".", ",")}
-                            </Text>
+                            <View style={produtoStyle.subtotal}>
+                                <Text style={produtoStyle.txtSubtotalLabel}>Subtotal</Text>
+                                <Text style={produtoStyle.txtSubtotalValor}>
+                                    R${subtotal.toFixed(2).replace(".", ",")}
+                                </Text>
+                            </View>
                         </View>
 
                         <Pressable
@@ -146,28 +115,12 @@ export default function ProdutoScreen() {
                             onPress={() => router.push("/sacola")}
                         >
                             <Text style={produtoStyle.txtAdicionarSacola}>
-                                Adicionar à sacola
+                                Adicionar a sacola
                             </Text>
                         </Pressable>
                     </View>
 
-                    <View style={produtoStyle.menuInferior}>
-                        {menuItens.map((item) => (
-                            <Pressable
-                                key={item.id}
-                                style={produtoStyle.itemMenu}
-                                onPress={() => item.rota && router.push(item.rota as any)}
-                            >
-                                <Image
-                                    style={[produtoStyle.imgMenu, { tintColor: cores.laranja }]}
-                                    source={item.icone}
-                                />
-                                <Text style={produtoStyle.txtMenu}>
-                                    {item.rotulo}
-                                </Text>
-                            </Pressable>
-                        ))}
-                    </View>
+                    <Footer />
                 </SafeAreaView>
             </ImageBackground>
         </View>

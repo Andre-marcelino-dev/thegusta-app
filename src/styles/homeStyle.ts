@@ -112,14 +112,14 @@ tituloSecao:{
 },
 
 itemCategoria:{
-    width:50,
-    height:50,
+    width:55,
     borderRadius:10,
     borderColor:cores.laranja,
     borderWidth:2,
-    paddingVertical:3,
-    paddingHorizontal:10,
+    paddingVertical:8,
+    paddingHorizontal:6,
     alignItems:'center',
+    justifyContent:'center',
     backgroundColor:cores.laranjaclaro,
 },
 
@@ -130,9 +130,11 @@ imgCategoria:{
 },
 
 txtCategoria:{
-fontSize:12,
+fontSize:10,
 fontFamily:fontes.comum,
 color:cores.cinzclaro,
+marginTop:6,
+textAlign:'center',
 
 },
 
@@ -162,10 +164,33 @@ cardDestaque:{
     elevation:3,
 },
 
+wrapperImgDestaque:{
+    width:'100%',
+},
+
 imgDestaque:{
     width:'100%',
     height:80,
     borderRadius:12,
+},
+
+badgeDestaque:{
+    position:'absolute',
+    top:6,
+    right:6,
+    width:22,
+    height:22,
+    borderRadius:8,
+    borderColor:cores.laranja,
+    borderWidth:1.5,
+    backgroundColor:cores.laranjaclaro,
+    alignItems:'center',
+    justifyContent:'center',
+},
+
+txtEstrela:{
+    fontSize:12,
+    color:cores.laranja,
 },
 
 nomeDestaque:{
@@ -212,39 +237,6 @@ imgAdicionar:{
     width:10,
     height:10,
     tintColor:cores.branco,
-},
-
-menuInferior:{
-    width:'100%',
-    flexDirection:'row',
-    justifyContent:'space-around',
-    alignItems:'center',
-    paddingVertical:15,
-    backgroundColor:cores.branco,
-    borderTopLeftRadius:25,
-    borderTopRightRadius:25,
-    shadowColor:cores.preto,
-    shadowOffset:{ width: 0, height: -2 },
-    shadowOpacity:0.1,
-    shadowRadius:6,
-    elevation:6,
-},
-
-itemMenu:{
-    alignItems:'center',
-    justifyContent:'center',
-},
-
-imgMenu:{
-    width:26,
-    height:26,
-},
-
-txtMenu:{
-    fontSize:11,
-    fontFamily:fontes.comum,
-    color:cores.laranja,
-    marginTop:4,
 },
 
 });

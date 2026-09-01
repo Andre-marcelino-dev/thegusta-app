@@ -14,6 +14,7 @@ import {
 
 import globalStyle from "@/styles/globalStyle";
 import sacolaStyle from "@/styles/sacolaStyle";
+import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
 
@@ -45,39 +46,6 @@ const itensIniciais = [
 ];
 
 const taxaEntrega = 6.0;
-
-const menuItens = [
-    {
-        id: 1,
-        rotulo: "Home",
-        icone: require("@/assets/images/img/home.png"),
-        rota: "/home",
-    },
-    {
-        id: 2,
-        rotulo: "Cardápio",
-        icone: require("@/assets/images/img/cardapio.png"),
-        rota: "/cardapio",
-    },
-    {
-        id: 3,
-        rotulo: "Sacola",
-        icone: require("@/assets/images/img/sacola.png"),
-        rota: "/sacola",
-    },
-    {
-        id: 4,
-        rotulo: "Pedido",
-        icone: require("@/assets/images/img/pedido.png"),
-        rota: null,
-    },
-    {
-        id: 5,
-        rotulo: "Config",
-        icone: require("@/assets/images/img/config.png"),
-        rota: null,
-    },
-];
 
 function formatarPreco(valor: number) {
     return `R$${valor.toFixed(2).replace(".", ",")}`;
@@ -288,28 +256,17 @@ export default function SacolaScreen() {
                             </View>
                         </View>
 
-                        <Pressable style={sacolaStyle.btnFinalizar}>
+                        <Pressable
+                            style={sacolaStyle.btnFinalizar}
+                            onPress={() => router.push("/pagamento")}
+                        >
                             <Text style={sacolaStyle.txtFinalizar}>
                                 Continuar para pagamento
                             </Text>
                         </Pressable>
                     </ScrollView>
 
-                    <View style={sacolaStyle.menuInferior}>
-                        {menuItens.map((item) => (
-                            <Pressable
-                                key={item.id}
-                                style={sacolaStyle.itemMenu}
-                                onPress={() => item.rota && router.push(item.rota as any)}
-                            >
-                                <Image
-                                    style={[sacolaStyle.imgMenu, { tintColor: cores.laranja }]}
-                                    source={item.icone}
-                                />
-                                <Text style={sacolaStyle.txtMenu}>{item.rotulo}</Text>
-                            </Pressable>
-                        ))}
-                    </View>
+                    <Footer />
                 </SafeAreaView>
             </ImageBackground>
         </View>

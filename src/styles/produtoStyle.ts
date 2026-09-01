@@ -53,33 +53,30 @@ const produtoStyle = StyleSheet.create({
     conteudoTitulo: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         marginTop: 20,
     },
 
     titulo: {
-        fontSize: fontes.fontxg,
+        flex: 1,
+        fontSize: fontes.fontgrande,
         fontFamily: fontes.negrito,
         color: cores.preto,
-        flexShrink: 1,
+        textAlign: 'center',
+        marginHorizontal: 10,
+        paddingTop:10,
     },
 
     categoria: {
         fontSize: fontes.fontpeq,
         fontFamily: fontes.comum,
         color: cores.cinzclaro,
-        backgroundColor: cores.laranjaclaro,
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 20,
-        overflow: 'hidden',
     },
 
     preco: {
         fontSize: fontes.fontxg,
         fontFamily: fontes.negrito,
         color: cores.laranja,
-        marginTop: 10,
     },
 
     textoResumo: {
@@ -103,14 +100,11 @@ const produtoStyle = StyleSheet.create({
         fontFamily: fontes.comum,
         color: cores.cinzclaro,
         lineHeight: 22,
-        marginBottom: 20,
+        marginBottom: 40,
     },
 
     rodapeCompra: {
         width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         paddingHorizontal: 15,
         paddingVertical: 15,
         backgroundColor: cores.branco,
@@ -123,12 +117,21 @@ const produtoStyle = StyleSheet.create({
         elevation: 6,
     },
 
+    linhaRodape: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+
     quantidade: {
         flexDirection: 'row',
         alignItems: 'center',
         borderColor: cores.laranja,
         borderWidth: 2,
         borderRadius: 10,
+        marginLeft:10,
     },
 
     btnQuantidade: {
@@ -153,65 +156,35 @@ const produtoStyle = StyleSheet.create({
     },
 
     subtotal: {
-        alignItems: 'flex-start',
+        flexDirection: 'row',
+        alignItems: 'baseline',
     },
 
     txtSubtotalLabel: {
-        fontSize: 11,
+        fontSize: 13,
         fontFamily: fontes.comum,
         color: cores.cinzclaro,
+        marginRight: 6,
     },
 
     txtSubtotalValor: {
-        fontSize: fontes.fontgrande,
+        fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-        color: cores.preto,
+        color: cores.laranja,
     },
 
     btnAdicionarSacola: {
+        width: '100%',
         backgroundColor: cores.laranja,
         borderRadius: 15,
-        paddingHorizontal: 20,
-        paddingVertical: 14,
-
+        paddingVertical: 16,
+        alignItems: 'center',
     },
 
     txtAdicionarSacola: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-        color: cores.preto,
-        fontWeight: 'bold',
-    },
-
-    menuInferior: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        paddingVertical: 15,
-        backgroundColor: cores.branco,
-        shadowColor: cores.preto,
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 6,
-    },
-
-    itemMenu: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
-    imgMenu: {
-        width: 26,
-        height: 26,
-    },
-
-    txtMenu: {
-        fontSize: 11,
-        fontFamily: fontes.comum,
-        color: cores.laranja,
-        marginTop: 4,
+        color: cores.branco,
     },
 
 });

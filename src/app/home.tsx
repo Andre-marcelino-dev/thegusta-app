@@ -14,6 +14,7 @@ import {
 
 import globalStyle from "@/styles/globalStyle";
 import homeStyle from "@/styles/homeStyle";
+import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
 
@@ -24,6 +25,7 @@ const destaques = [
         descricao: "Banana Prata com canela e gergelim",
         preco: "R$18,00",
         imagem: require("@/assets/images/img/bolo01.png"),
+        destaque: true,
     },
     {
         id: 2,
@@ -31,6 +33,7 @@ const destaques = [
         descricao: "Banana Prata com canela e gergelim",
         preco: "R$18,00",
         imagem: require("@/assets/images/img/bolo01.png"),
+        destaque: false,
     },
     {
         id: 3,
@@ -38,44 +41,7 @@ const destaques = [
         descricao: "Banana Prata com canela e gergelim",
         preco: "R$18,00",
         imagem: require("@/assets/images/img/bolo01.png"),
-    },
-];
-
-const menuItens = [
-    {
-        id: 1,
-        rotulo: "Home",
-        icone: require("@/assets/images/img/home.png"),
-        rota: "/home",
-        ativo: true,
-    },
-    {
-        id: 2,
-        rotulo: "Cardápio",
-        icone: require("@/assets/images/img/cardapio.png"),
-        rota: "/cardapio",
-        ativo: false,
-    },
-    {
-        id: 3,
-        rotulo: "Sacola",
-        icone: require("@/assets/images/img/sacola.png"),
-        rota: "/sacola",
-        ativo: false,
-    },
-    {
-        id: 4,
-        rotulo: "Pedido",
-        icone: require("@/assets/images/img/pedido.png"),
-        rota: null,
-        ativo: false,
-    },
-    {
-        id: 5,
-        rotulo: "Config",
-        icone: require("@/assets/images/img/config.png"),
-        rota: null,
-        ativo: false,
+        destaque: false,
     },
 ];
 
@@ -139,31 +105,31 @@ export default function HomeScreen() {
                                         <Image style={homeStyle.imgCategoria}
                                             source={require('@/assets/images/img/bolo.png')}
                                         />
-                                        <Text style={homeStyle.txtCategoria}></Text>
+                                        <Text style={homeStyle.txtCategoria}>Bolos</Text>
                                     </View>
                                     <View style={homeStyle.itemCategoria}>
                                         <Image style={homeStyle.imgCategoria}
                                             source={require('@/assets/images/img/brigadeiro.png')}
                                         />
-                                        <Text style={homeStyle.txtCategoria}></Text>
+                                        <Text style={homeStyle.txtCategoria}>Doces</Text>
                                     </View>
                                     <View style={homeStyle.itemCategoria}>
                                         <Image style={homeStyle.imgCategoria}
                                             source={require('@/assets/images/img/torta.png')}
                                         />
-                                        <Text style={homeStyle.txtCategoria}></Text>
+                                        <Text style={homeStyle.txtCategoria}>Tortas</Text>
                                     </View>
                                     <View style={homeStyle.itemCategoria}>
                                         <Image style={homeStyle.imgCategoria}
                                             source={require('@/assets/images/img/copo-de-plastico.png')}
                                         />
-                                        <Text style={homeStyle.txtCategoria}></Text>
+                                        <Text style={homeStyle.txtCategoria}>Bebidas</Text>
                                     </View>
                                     <View style={homeStyle.itemCategoria}>
                                         <Image style={homeStyle.imgCategoria}
                                             source={require('@/assets/images/img/presente-de-supermercado.png')}
                                         />
-                                        <Text style={homeStyle.txtCategoria}></Text>
+                                        <Text style={homeStyle.txtCategoria}>Kits</Text>
                                     </View>
                                 </View>
                             </View>
@@ -172,21 +138,28 @@ export default function HomeScreen() {
                                 <Text style={homeStyle.tituloSecao}> Destaque</Text>
                                 <View style={homeStyle.listaDestaque}>
                                     {destaques.map((item) => (
-                                        <Pressable
-                                            key={item.id}
-                                            style={homeStyle.cardDestaque}
-                                            onPress={() => router.push("/detalhesProduto")}
-                                        >
-                                            <Image
-                                                style={homeStyle.imgDestaque}
-                                                source={item.imagem}
-                                            />
-                                            <Text style={homeStyle.nomeDestaque} numberOfLines={2}>
-                                                {item.nome}
-                                            </Text>
-                                            <Text style={homeStyle.descricaoDestaque} numberOfLines={2}>
-                                                {item.descricao}
-                                            </Text>
+                                        <View key={item.id} style={homeStyle.cardDestaque}>
+                                            <Pressable
+                                                onPress={() => router.push("/detalhesProduto")}
+                                            >
+                                                <View style={homeStyle.wrapperImgDestaque}>
+                                                    <Image
+                                                        style={homeStyle.imgDestaque}
+                                                        source={item.imagem}
+                                                    />
+                                                    <View style={homeStyle.badgeDestaque}>
+                                                        <Text style={homeStyle.txtEstrela}>
+                                                            {item.destaque ? "★" : "☆"}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                                <Text style={homeStyle.nomeDestaque} numberOfLines={2}>
+                                                    {item.nome}
+                                                </Text>
+                                                <Text style={homeStyle.descricaoDestaque} numberOfLines={2}>
+                                                    {item.descricao}
+                                                </Text>
+                                            </Pressable>
                                             <View style={homeStyle.rodapeDestaque}>
                                                 <Text style={homeStyle.precoDestaque}>
                                                     {item.preco}
@@ -198,7 +171,7 @@ export default function HomeScreen() {
                                                     />
                                                 </Pressable>
                                             </View>
-                                        </Pressable>
+                                        </View>
                                     ))}
                                 </View>
                             </View>
@@ -206,23 +179,7 @@ export default function HomeScreen() {
 
                     </ScrollView>
 
-                    <View style={homeStyle.menuInferior}>
-                        {menuItens.map((item) => (
-                            <Pressable
-                                key={item.id}
-                                style={homeStyle.itemMenu}
-                                onPress={() => item.rota && router.push(item.rota as any)}
-                            >
-                                <Image
-                                    style={[homeStyle.imgMenu, { tintColor: cores.laranja }]}
-                                    source={item.icone}
-                                />
-                                <Text style={homeStyle.txtMenu}>
-                                    {item.rotulo}
-                                </Text>
-                            </Pressable>
-                        ))}
-                    </View>
+                    <Footer />
                 </SafeAreaView>
             </ImageBackground>
 

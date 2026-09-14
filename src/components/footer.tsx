@@ -32,7 +32,7 @@ const menuItens = [
         id: 5,
         rotulo: "Config",
         icone: require("@/assets/images/img/config.png"),
-        rota: null,
+        rota: "/configuracoes",
     },
 ];
 

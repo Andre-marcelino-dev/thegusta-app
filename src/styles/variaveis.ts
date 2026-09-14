@@ -7,6 +7,7 @@ export const cores = {
     laranjaclaro: '#ffe8c5',
     verde: '#2e9e4f',
     preto: '#000000',
+    verdeClaro:"#ddffee",
 }
 
 

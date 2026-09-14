@@ -15,33 +15,35 @@ const produtoStyle = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-
-    btnTopo: {
-        width: 44,
-        height: 44,
-        borderRadius: "50%",
-        borderColor: cores.laranja,
-        borderWidth: 2,
-        backgroundColor: cores.laranjaclaro,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
+    
+ btnTopo: {
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    borderColor: cores.laranja,
+    borderWidth: 2,
+    backgroundColor: cores.laranjaclaro,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: -2, // valor negativo joga para trás dos elementos "normais"
+},
+    
     iconeTopo: {
         width: 20,
         height: 20,
         tintColor: cores.laranja,
     },
-
+    
     txtFavorito: {
         fontSize: 20,
         color: cores.laranja,
     },
-
+    
     main: {
         width: '80%',
         margin: "auto",
         marginTop: 20,
+        
     },
 
     imgProduto: {
@@ -64,7 +66,7 @@ const produtoStyle = StyleSheet.create({
         color: cores.preto,
         textAlign: 'center',
         marginHorizontal: 10,
-        paddingTop:10,
+        paddingTop: 10,
     },
 
     categoria: {
@@ -131,7 +133,7 @@ const produtoStyle = StyleSheet.create({
         borderColor: cores.laranja,
         borderWidth: 2,
         borderRadius: 10,
-        marginLeft:10,
+        marginLeft: 10,
     },
 
     btnQuantidade: {
@@ -150,7 +152,7 @@ const produtoStyle = StyleSheet.create({
     txtQuantidade: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-          color: cores.cinzclaro,
+        color: cores.cinzclaro,
         minWidth: 20,
         textAlign: 'center',
     },
@@ -161,7 +163,7 @@ const produtoStyle = StyleSheet.create({
     },
 
     txtSubtotalLabel: {
-        fontSize: 13,
+        fontSize: fontes.fontgrande,
         fontFamily: fontes.comum,
         color: cores.cinzclaro,
         marginRight: 6,
@@ -174,11 +176,14 @@ const produtoStyle = StyleSheet.create({
     },
 
     btnAdicionarSacola: {
-        width: '100%',
+        width: '50%',
+        alignSelf: 'center',
         backgroundColor: cores.laranja,
         borderRadius: 15,
         paddingVertical: 16,
+        paddingHorizontal: 20,
         alignItems: 'center',
+        justifyContent: 'center',
     },
 
     txtAdicionarSacola: {

@@ -28,12 +28,13 @@ const cardapioStyle = StyleSheet.create({
         width: 40,
         height: 40,
         backgroundColor: cores.laranjaclaro,
-        borderRadius: '50%'
+        borderRadius: '50%',
+   
     },
     logo: {
         width: 80,
         height: 75,
-        
+       
         
     },
     titulo: {
@@ -176,7 +177,7 @@ const cardapioStyle = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-        zIndex:99999,
+       
     },
 
     wrapperImgDestaque: {

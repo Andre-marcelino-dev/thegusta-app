@@ -84,7 +84,7 @@ const cardapio = [
         id: 2,
         categoria: "Doces",
         produtos: [
-    {
+            {
                 id: 1,
                 nome: "Bolo de banana fit",
                 descricao: "Banana Prata com canela e gergelim",
@@ -120,7 +120,7 @@ const cardapio = [
         id: 3,
         categoria: "Tortas",
         produtos: [
-    {
+            {
                 id: 1,
                 nome: "Bolo de banana fit",
                 descricao: "Banana Prata com canela e gergelim",
@@ -157,7 +157,7 @@ const cardapio = [
         id: 4,
         categoria: "Bebidas",
         produtos: [
-    {
+            {
                 id: 1,
                 nome: "Bolo de banana fit",
                 descricao: "Banana Prata com canela e gergelim",
@@ -194,7 +194,7 @@ const cardapio = [
         id: 5,
         categoria: "Kits",
         produtos: [
-    {
+            {
                 id: 1,
                 nome: "Bolo de banana fit",
                 descricao: "Banana Prata com canela e gergelim",
@@ -224,7 +224,7 @@ const cardapio = [
             },
         ],
     },
-    
+
 ];
 
 export default function CardapioScreen() {
@@ -311,7 +311,7 @@ export default function CardapioScreen() {
                                                     <Text style={cardapioStyle.precoDestaque}>
                                                         {item.preco}
                                                     </Text>
-                                                    <Pressable style={cardapioStyle.btnAdicionar} onPress={()=> router.navigate('/detalhesProduto')}>
+                                                    <Pressable style={cardapioStyle.btnAdicionar} onPress={() => router.navigate('/detalhesProduto')}>
                                                         <Image
                                                             style={cardapioStyle.imgAdicionar}
                                                             source={require("@/assets/images/img/mais.png")}

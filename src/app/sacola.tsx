@@ -123,7 +123,7 @@ export default function SacolaScreen() {
                                     <Image style={sacolaStyle.imgItem} source={item.imagem} />
                                     <View style={sacolaStyle.infoItem}>
                                         <View style={sacolaStyle.topoItem}>
-                                            <View>
+                                            <View style={sacolaStyle.infoTexto}>
                                                 <Text style={sacolaStyle.nomeItem}>
                                                     {item.nome}
                                                 </Text>
@@ -134,7 +134,10 @@ export default function SacolaScreen() {
                                                     {item.descricao}
                                                 </Text>
                                             </View>
-                                            <Pressable onPress={() => removerItem(item.id)}>
+                                            <Pressable
+                                                style={sacolaStyle.btnLixeira}
+                                                onPress={() => removerItem(item.id)}
+                                            >
                                                 <Image
                                                     style={sacolaStyle.imgLixeira}
                                                     source={require("@/assets/images/img/lixeira.png")}
@@ -142,9 +145,14 @@ export default function SacolaScreen() {
                                             </Pressable>
                                         </View>
                                         <View style={sacolaStyle.rodapeItem}>
-                                            <Text style={sacolaStyle.precoItem}>
-                                                {formatarPreco(item.preco * item.quantidade)}
-                                            </Text>
+                                            <View style={sacolaStyle.precos}>
+                                                <Text style={sacolaStyle.precoUnitario}>
+                                                    {formatarPreco(item.preco)}
+                                                </Text>
+                                                <Text style={sacolaStyle.precoItem}>
+                                                    {formatarPreco(item.preco * item.quantidade)}
+                                                </Text>
+                                            </View>
                                             <View style={sacolaStyle.quantidade}>
                                                 <Pressable
                                                     style={sacolaStyle.btnQuantidade}
@@ -196,6 +204,7 @@ export default function SacolaScreen() {
                                     <Image
                                         style={sacolaStyle.iconeEntrega}
                                         source={require("@/assets/images/img/delivery-laranja.png")}
+                                        resizeMode="stretch"
                                     />
                                     <Text style={sacolaStyle.txtEndereco}>
                                         Avenida Marechal Tito, 1500 - São Miguel Paulista - São

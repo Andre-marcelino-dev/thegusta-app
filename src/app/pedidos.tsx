@@ -50,19 +50,14 @@ const pedidosAndamento = [
 const pedidosEntregues = [
     {
         id: 4,
-        numero: 1021,
-        statusLabel: "Entregue",
-        statusIcone: require("@/assets/images/img/entregue-laranja.png"),
-        itens: ["2x Bolo de Banana Fit", "2x Bolo de Banana Fit"],
+        numero: 999,
+        itens: ["2x Bolo de Banana Fit", "2x Bolo de Banana Fit", "2x Bolo de Banana Fit"],
         total: 142.56,
-        previsao: "Entregue",
     },
 ];
 
 export default function PedidosScreen() {
     const [aba, setAba] = useState<AbaPedido>("andamento");
-
-    const pedidos = aba === "andamento" ? pedidosAndamento : pedidosEntregues;
 
     return (
         <View style={globalStyle.container}>
@@ -110,7 +105,7 @@ export default function PedidosScreen() {
                                             aba === "andamento" && pedidosStyle.txtAbaAtiva,
                                         ]}
                                     >
-                                        Em andamento
+                                        Em preparo
                                     </Text>
                                 </Pressable>
                                 <Pressable
@@ -131,73 +126,148 @@ export default function PedidosScreen() {
                                 </Pressable>
                             </View>
 
-                            {pedidos.map((pedido) => (
-                                <View key={pedido.id} style={pedidosStyle.cardPedido}>
-                                    <View style={pedidosStyle.topoPedido}>
-                                        <View style={pedidosStyle.linhaNumeroPedido}>
-                                            <View style={pedidosStyle.iconeCaixaPedido}>
-                                                <Image
-                                                    style={pedidosStyle.imgPedido}
-                                                    source={require("@/assets/images/img/pedido.png")}
-                                                />
-                                            </View>
-                                            <Text style={pedidosStyle.txtNumeroPedido}>
-                                                Pedido #{pedido.numero}
-                                            </Text>
-                                        </View>
-                                        <View style={pedidosStyle.linhaStatus}>
-                                            <Image
-                                                style={pedidosStyle.imgStatus}
-                                                source={pedido.statusIcone}
-                                            />
-                                            <Text style={pedidosStyle.txtStatus}>
-                                                {pedido.statusLabel}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={pedidosStyle.listaItens}>
-                                        {pedido.itens.map((item, index) => (
-                                            <View key={index} style={pedidosStyle.linhaItem}>
-                                                <Image
-                                                    style={pedidosStyle.imgItem}
-                                                    source={require("@/assets/images/img/bolo01.png")}
-                                                />
-                                                <Text style={pedidosStyle.txtItem}>{item}</Text>
-                                            </View>
-                                        ))}
-                                    </View>
-
-                                    <View style={pedidosStyle.divisor} />
-
-                                    <View style={pedidosStyle.rodapePedido}>
-                                        <View>
-                                            <Text style={pedidosStyle.txtLabelTotal}>Total</Text>
-                                            <Text style={pedidosStyle.txtValorTotal}>
-                                                R$ {pedido.total.toFixed(2).replace(".", ",")}
-                                            </Text>
-                                        </View>
-                                        <View style={pedidosStyle.previsao}>
-                                            <View style={pedidosStyle.linhaPrevisao}>
-                                                <Image
-                                                    style={pedidosStyle.imgPrevisao}
-                                                    source={require("@/assets/images/img/previsao.png")}
-                                                />
-                                                <Text style={pedidosStyle.txtValorPrevisao}>
-                                                    {pedido.previsao}
+                            {aba === "andamento" &&
+                                pedidosAndamento.map((pedido) => (
+                                    <View key={pedido.id} style={pedidosStyle.cardPedido}>
+                                        <View style={pedidosStyle.topoPedido}>
+                                            <View style={pedidosStyle.linhaNumeroPedido}>
+                                                <View style={pedidosStyle.iconeCaixaPedido}>
+                                                    <Image
+                                                        style={pedidosStyle.imgPedido}
+                                                        source={require("@/assets/images/img/pedido.png")}
+                                                    />
+                                                </View>
+                                                <Text style={pedidosStyle.txtNumeroPedido}>
+                                                    Pedido #{pedido.numero}
                                                 </Text>
                                             </View>
-                                            <Text style={pedidosStyle.txtLabelPrevisao}>
-                                                Previsto
+                                            <View style={pedidosStyle.linhaStatus}>
+                                                <Image
+                                                    style={pedidosStyle.imgStatus}
+                                                    source={pedido.statusIcone}
+                                                />
+                                                <Text style={pedidosStyle.txtStatus}>
+                                                    {pedido.statusLabel}
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        <View style={pedidosStyle.listaItens}>
+                                            {pedido.itens.map((item, index) => (
+                                                <View key={index} style={pedidosStyle.linhaItem}>
+                                                    <Image
+                                                        style={pedidosStyle.imgItem}
+                                                        source={require("@/assets/images/img/bolo01.png")}
+                                                    />
+                                                    <Text style={pedidosStyle.txtItem}>{item}</Text>
+                                                </View>
+                                            ))}
+                                        </View>
+
+                                        <View style={pedidosStyle.divisor} />
+
+                                        <View style={pedidosStyle.rodapePedido}>
+                                            <View>
+                                                <Text style={pedidosStyle.txtLabelTotal}>Total</Text>
+                                                <Text style={pedidosStyle.txtValorTotal}>
+                                                    R$ {pedido.total.toFixed(2).replace(".", ",")}
+                                                </Text>
+                                            </View>
+                                            <View style={pedidosStyle.previsao}>
+                                                <View style={pedidosStyle.linhaPrevisao}>
+                                                    <Image
+                                                        style={pedidosStyle.imgPrevisao}
+                                                        source={require("@/assets/images/img/previsao.png")}
+                                                    />
+                                                    <Text style={pedidosStyle.txtValorPrevisao}>
+                                                        {pedido.previsao}
+                                                    </Text>
+                                                </View>
+                                                <Text style={pedidosStyle.txtLabelPrevisao}>
+                                                    Previsto
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        <Pressable
+                                            style={pedidosStyle.btnDetalhes}
+                                            onPress={() => router.push("/detalhesPedido")}
+                                        >
+                                            <Text style={pedidosStyle.txtDetalhes}>
+                                                Ver detalhes
                                             </Text>
+                                        </Pressable>
+                                    </View>
+                                ))}
+
+                            {aba === "entregues" &&
+                                pedidosEntregues.map((pedido) => (
+                                    <View
+                                        key={pedido.id}
+                                        style={pedidosStyle.cardPedidoEntregue}
+                                    >
+                                        <View style={pedidosStyle.topoPedido}>
+                                            <View style={pedidosStyle.linhaNumeroPedido}>
+                                                <View style={pedidosStyle.iconeCaixaPedidoVerde}>
+                                                    <Image
+                                                        style={pedidosStyle.imgPedidoVerde}
+                                                        source={require("@/assets/images/img/pedido.png")}
+                                                    />
+                                                </View>
+                                                <Text style={pedidosStyle.txtNumeroPedidoVerde}>
+                                                    Pedido #{pedido.numero}
+                                                </Text>
+                                            </View>
+                                            <View style={pedidosStyle.badgeEntregue}>
+                                                <Image
+                                                    style={pedidosStyle.imgBadgeEntregue}
+                                                    source={require("@/assets/images/img/entregue-verde.png")}
+                                                />
+                                                <Text style={pedidosStyle.txtBadgeEntregue}>
+                                                    Entregue
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        <View style={pedidosStyle.listaItens}>
+                                            {pedido.itens.map((item, index) => (
+                                                <View key={index} style={pedidosStyle.linhaItem}>
+                                                    <Image
+                                                        style={pedidosStyle.imgItem}
+                                                        source={require("@/assets/images/img/bolo01.png")}
+                                                    />
+                                                    <Text style={pedidosStyle.txtItem}>{item}</Text>
+                                                </View>
+                                            ))}
+                                        </View>
+
+                                        <View style={pedidosStyle.divisorVerde} />
+
+                                        <View style={pedidosStyle.rodapePedidoEntregue}>
+                                            <View>
+                                                <Text style={pedidosStyle.txtLabelTotal}>Total</Text>
+                                                <Text style={pedidosStyle.txtValorTotalVerde}>
+                                                    R$ {pedido.total.toFixed(2).replace(".", ",")}
+                                                </Text>
+                                            </View>
+                                            <View style={pedidosStyle.linhaBotoesEntregue}>
+                                                <Pressable
+                                                    style={pedidosStyle.btnVerDetalhesPeq}
+                                                    onPress={() => router.push("/detalhesPedido")}
+                                                >
+                                                    <Text style={pedidosStyle.txtVerDetalhesPeq}>
+                                                        Ver detalhes
+                                                    </Text>
+                                                </Pressable>
+                                                <Pressable style={pedidosStyle.btnPedirNovamentePeq}>
+                                                    <Text style={pedidosStyle.txtPedirNovamentePeq}>
+                                                        Pedir novamente
+                                                    </Text>
+                                                </Pressable>
+                                            </View>
                                         </View>
                                     </View>
-
-                                    <Pressable style={pedidosStyle.btnDetalhes}>
-                                        <Text style={pedidosStyle.txtDetalhes}>Ver detalhes</Text>
-                                    </Pressable>
-                                </View>
-                            ))}
+                                ))}
                         </View>
                     </ScrollView>
 

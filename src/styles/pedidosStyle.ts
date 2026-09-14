@@ -245,6 +245,112 @@ const pedidosStyle = StyleSheet.create({
         color: cores.laranja,
     },
 
+    cardPedidoEntregue: {
+        width: '100%',
+        backgroundColor: cores.branco,
+        borderColor: cores.verde,
+        borderWidth: 2,
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 20,
+    },
+
+    iconeCaixaPedidoVerde: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        backgroundColor: '#d9f2df',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 8,
+    },
+
+    imgPedidoVerde: {
+        width: 18,
+        height: 18,
+        tintColor: cores.verde,
+    },
+
+    txtNumeroPedidoVerde: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: cores.verde,
+    },
+
+    badgeEntregue: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#d9f2df',
+        borderRadius: 20,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+    },
+
+    imgBadgeEntregue: {
+        width: 14,
+        height: 14,
+        marginRight: 4,
+    },
+
+    txtBadgeEntregue: {
+        fontSize: 12,
+        fontFamily: fontes.negrito,
+        color: cores.verde,
+    },
+
+    divisorVerde: {
+        width: '100%',
+        height: 1,
+        backgroundColor: '#d9f2df',
+        marginVertical: 8,
+    },
+
+    rodapePedidoEntregue: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+    },
+
+    txtValorTotalVerde: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: cores.verde,
+        marginTop: 2,
+    },
+
+    linhaBotoesEntregue: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+    btnVerDetalhesPeq: {
+        borderColor: cores.laranja,
+        borderWidth: 2,
+        borderRadius: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        marginRight: 8,
+    },
+
+    txtVerDetalhesPeq: {
+        fontSize: 11,
+        fontFamily: fontes.negrito,
+        color: cores.laranja,
+    },
+
+    btnPedirNovamentePeq: {
+        backgroundColor: cores.laranja,
+        borderRadius: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+    },
+
+    txtPedirNovamentePeq: {
+        fontSize: 11,
+        fontFamily: fontes.negrito,
+        color: cores.branco,
+    },
+
 });
 
 export default pedidosStyle;

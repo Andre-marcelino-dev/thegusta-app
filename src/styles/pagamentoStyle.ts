@@ -64,6 +64,20 @@ const pagamentoStyle = StyleSheet.create({
         alignItems: 'center',
     },
 
+    iconeEndereco: {
+        width: 18,
+        height: 18,
+        marginRight: 8,
+        tintColor: cores.laranja,
+    },
+
+    iconeCarteira: {
+        width: 18,
+        height: 18,
+        marginRight: 8,
+        tintColor: cores.laranja,
+    },
+
     labelCard: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
@@ -295,7 +309,7 @@ const pagamentoStyle = StyleSheet.create({
     txtConfirmar: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-        color: cores.branco,
+        color: cores.preto,
     },
 
 });

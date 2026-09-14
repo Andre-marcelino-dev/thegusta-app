@@ -15,6 +15,7 @@ const sacolaStyle = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         width: '100%',
+        marginTop:10,
     },
 
     iconeVoltar: {
@@ -45,7 +46,7 @@ const sacolaStyle = StyleSheet.create({
     main: {
         width: '80%',
         margin: "auto",
-        marginTop: 25,
+        marginTop: 15,
     },
 
     tituloSecao: {
@@ -70,9 +71,10 @@ const sacolaStyle = StyleSheet.create({
     },
 
     imgItem: {
-        width: 60,
-        height: 60,
+        width: '27%',
+        height: 50,
         borderRadius: 12,
+        marginTop:20
     },
 
     infoItem: {
@@ -85,6 +87,11 @@ const sacolaStyle = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
+    },
+
+    infoTexto: {
+        flex: 1,
+        marginRight: 8,
     },
 
     nomeItem: {
@@ -101,6 +108,10 @@ const sacolaStyle = StyleSheet.create({
         width: '100%',
     },
 
+    btnLixeira: {
+        flexShrink: 0,
+    },
+
     imgLixeira: {
         width: 18,
         height: 18,
@@ -114,6 +125,19 @@ const sacolaStyle = StyleSheet.create({
         marginTop: 8,
     },
 
+    precos: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+        flexShrink: 1,
+    },
+
+    precoUnitario: {
+        fontSize: 13,
+        fontFamily: fontes.comum,
+        color: cores.cinzclaro,
+        marginRight: 10,
+    },
+
     precoItem: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
@@ -123,6 +147,7 @@ const sacolaStyle = StyleSheet.create({
     quantidade: {
         flexDirection: 'row',
         alignItems: 'center',
+        flexShrink: 0,
         borderColor: cores.laranja,
         borderWidth: 2,
         borderRadius: 8,
@@ -160,6 +185,7 @@ const sacolaStyle = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+        textTransform:'uppercase',
     },
 
     tituloCupom: {
@@ -232,6 +258,7 @@ const sacolaStyle = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-start',
         marginTop: 8,
+        marginVertical:5,
     },
 
     txtEndereco: {
@@ -239,14 +266,15 @@ const sacolaStyle = StyleSheet.create({
         fontSize: 13,
         fontFamily: fontes.negrito,
         color: cores.preto,
+        marginBottom:5,
     },
 
     txtTelefone: {
         fontSize: 13,
         fontFamily: fontes.negrito,
         color: cores.preto,
-        marginTop: 4,
-        marginLeft: 34,
+    
+        marginLeft: 56,
     },
 
     linhaRodapeEntrega: {
@@ -257,8 +285,8 @@ const sacolaStyle = StyleSheet.create({
     },
 
     iconeEntrega: {
-        width: 26,
-        height: 26,
+        width: 50,
+        height: 50,
         marginRight: 8,
     },
 
@@ -285,15 +313,16 @@ const sacolaStyle = StyleSheet.create({
 
     divisor: {
         width: '100%',
-        height: 1,
+        height: 2,
         backgroundColor: cores.laranja,
-        marginVertical: 12,
+        marginVertical: 5,
     },
 
     linhaResumo: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 8,
+        marginBottom: 5,
+        width:'100%',
     },
 
     txtLabelResumo: {
@@ -312,6 +341,8 @@ const sacolaStyle = StyleSheet.create({
         fontSize: 14,
         fontFamily: fontes.negrito,
         color: cores.verde,
+        textAlign:'center',
+        justifyContent:'center',
     },
 
     txtValorResumo: {
@@ -336,6 +367,7 @@ const sacolaStyle = StyleSheet.create({
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
         color: cores.laranja,
+   
     },
 
     btnFinalizar: {
@@ -351,7 +383,7 @@ const sacolaStyle = StyleSheet.create({
     txtFinalizar: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-        color: cores.branco,
+        color: cores.preto,
     },
 
 });

@@ -76,9 +76,15 @@ export default function PagamentoScreen() {
                         <View style={pagamentoStyle.main}>
                             <View style={pagamentoStyle.card}>
                                 <View style={pagamentoStyle.linhaTopoCard}>
-                                    <Text style={pagamentoStyle.labelCard}>
-                                        Endereço de entrega:
-                                    </Text>
+                                    <View style={pagamentoStyle.linhaObservacao}>
+                                        <Image
+                                            style={pagamentoStyle.iconeEndereco}
+                                            source={require("@/assets/images/img/local.png")}
+                                        />
+                                        <Text style={pagamentoStyle.labelCard}>
+                                            Endereço de entrega:
+                                        </Text>
+                                    </View>
                                     <Pressable>
                                         <Text style={pagamentoStyle.txtAlterar}>Alterar &gt;</Text>
                                     </Pressable>
@@ -142,7 +148,13 @@ export default function PagamentoScreen() {
                             </View>
 
                             <View style={pagamentoStyle.card}>
-                                <Text style={pagamentoStyle.labelCard}>Forma de Pagamento</Text>
+                                <View style={pagamentoStyle.linhaObservacao}>
+                                    <Image
+                                        style={pagamentoStyle.iconeCarteira}
+                                        source={require("@/assets/images/img/carteira.png")}
+                                    />
+                                    <Text style={pagamentoStyle.labelCard}>Forma de Pagamento</Text>
+                                </View>
                                 <View style={pagamentoStyle.segmentado3}>
                                     <Pressable
                                         style={[

@@ -1,3 +1,5 @@
+
+
 import { router } from "expo-router";
 import { useState } from "react";
 
@@ -94,9 +96,10 @@ export default function LoginScreen() {
                   style={({ pressed }) => [
                     LoginStyle.btnEntrar,
                     pressed && LoginStyle.btnEntrarPressed,
+                    
                   ]}
                 >
-                  <Text style={LoginStyle.txtEntrar}>Entrar</Text>
+                  <Text style={LoginStyle.txtEntrar} onPress={()=>router.navigate('/home')}>Entrar</Text>
                 </Pressable>
 
                 <View style={LoginStyle.Separador}>

@@ -27,13 +27,33 @@ const produtoStyle = StyleSheet.create({
     justifyContent: 'center',
     zIndex: -2, // valor negativo joga para trás dos elementos "normais"
 },
-    
+
+    btnVoltar: {
+        position: 'absolute',
+        top: 50,
+        left: '10%',
+        zIndex: 9999,
+        elevation: 20,
+        width: 42,
+        height: 42,
+        borderRadius: "50%",
+        backgroundColor: cores.laranja,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    iconeVoltar: {
+        width: 20,
+        height: 20,
+        tintColor: cores.branco,
+    },
+
     iconeTopo: {
         width: 20,
         height: 20,
         tintColor: cores.laranja,
     },
-    
+
     txtFavorito: {
         fontSize: 20,
         color: cores.laranja,

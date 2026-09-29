@@ -36,15 +36,6 @@ export default function EditarPerfilScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={editarPerfilStyle.header}>
                             <View style={editarPerfilStyle.conteudo}>
-                                <Pressable
-                                    style={editarPerfilStyle.btnVoltar}
-                                    onPress={() => router.back()}
-                                >
-                                    <Image
-                                        style={editarPerfilStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={editarPerfilStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -199,6 +190,16 @@ export default function EditarPerfilScreen() {
                             </Pressable>
                         </View>
                     </ScrollView>
+
+                    <Pressable
+                        style={editarPerfilStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={editarPerfilStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

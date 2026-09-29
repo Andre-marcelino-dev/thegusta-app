@@ -70,15 +70,6 @@ export default function PedidosScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={pedidosStyle.header}>
                             <View style={pedidosStyle.conteudo}>
-                                <Pressable
-                                    style={pedidosStyle.btnVoltar}
-                                    onPress={() => router.back()}
-                                >
-                                    <Image
-                                        style={pedidosStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={pedidosStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -270,6 +261,16 @@ export default function PedidosScreen() {
                                 ))}
                         </View>
                     </ScrollView>
+
+                    <Pressable
+                        style={pedidosStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={pedidosStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

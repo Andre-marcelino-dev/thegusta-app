@@ -12,15 +12,30 @@ const sacolaStyle = StyleSheet.create({
 
     conteudo: {
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         flexDirection: 'row',
         width: '100%',
         marginTop:10,
     },
 
+    btnVoltar: {
+        position: 'absolute',
+        top: 50,
+        left: '10%',
+        zIndex: 9999,
+        elevation: 20,
+        width: 42,
+        height: 42,
+        borderRadius: "50%",
+        backgroundColor: cores.laranja,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
     iconeVoltar: {
-        width: 36,
-        height: 36,
+        width: 20,
+        height: 20,
+        tintColor: cores.branco,
     },
 
     logo: {

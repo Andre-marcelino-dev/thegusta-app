@@ -100,12 +100,6 @@ export default function SacolaScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={sacolaStyle.header}>
                             <View style={sacolaStyle.conteudo}>
-                                <Pressable onPress={() => router.back()}>
-                                    <Image
-                                        style={sacolaStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={sacolaStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -222,7 +216,7 @@ export default function SacolaScreen() {
                                         45 - 60 min
                                     </Text>
                                     <Pressable>
-                                        <Text style={sacolaStyle.txtTrocarEndereco}>
+                                        <Text style={sacolaStyle.txtTrocarEndereco}onPress={()=>router.navigate('/editarEndereco')}>
                                             Trocar endereço
                                         </Text>
                                     </Pressable>
@@ -274,6 +268,16 @@ export default function SacolaScreen() {
                             </Text>
                         </Pressable>
                     </ScrollView>
+
+                    <Pressable
+                        style={sacolaStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={sacolaStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

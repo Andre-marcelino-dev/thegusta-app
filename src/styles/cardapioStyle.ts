@@ -23,13 +23,17 @@ const cardapioStyle = StyleSheet.create({
         left: '10%',
         zIndex: 9999,
         elevation: 20,
+        width: 42,
+        height: 42,
+        borderRadius: "50%",
+        backgroundColor: cores.laranja,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     iconeVoltar: {
-        width: 40,
-        height: 40,
-        backgroundColor: cores.laranjaclaro,
-        borderRadius: '50%',
-   
+        width: 20,
+        height: 20,
+        tintColor: cores.branco,
     },
     logo: {
         width: 80,

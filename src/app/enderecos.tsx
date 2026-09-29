@@ -53,15 +53,6 @@ export default function EnderecosScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={enderecosStyle.header}>
                             <View style={enderecosStyle.conteudo}>
-                                <Pressable
-                                    style={enderecosStyle.btnVoltar}
-                                    onPress={() => router.back()}
-                                >
-                                    <Image
-                                        style={enderecosStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={enderecosStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -130,7 +121,10 @@ export default function EnderecosScreen() {
                                         </View>
 
                                         <View style={enderecosStyle.linhaBotoes}>
-                                            <Pressable style={enderecosStyle.btnEditar}>
+                                            <Pressable
+                                                style={enderecosStyle.btnEditar}
+                                                onPress={() => router.push("/editarEndereco")}
+                                            >
                                                 <Text style={enderecosStyle.txtEditar}>
                                                     Editar
                                                 </Text>
@@ -159,6 +153,16 @@ export default function EnderecosScreen() {
                             </Pressable>
                         </View>
                     </ScrollView>
+
+                    <Pressable
+                        style={enderecosStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={enderecosStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

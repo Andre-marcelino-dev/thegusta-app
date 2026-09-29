@@ -29,15 +29,6 @@ export default function ConfiguracoesScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={configuracoesStyle.header}>
                             <View style={configuracoesStyle.conteudo}>
-                                <Pressable
-                                    style={configuracoesStyle.btnVoltar}
-                                    onPress={() => router.back()}
-                                >
-                                    <Image
-                                        style={configuracoesStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={configuracoesStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -112,7 +103,7 @@ export default function ConfiguracoesScreen() {
 
                                 <Pressable
                                     style={configuracoesStyle.itemConta}
-                                    onPress={() => router.push("/redefinir-senha")}
+                                    onPress={() => router.push("/alterarSenha")}
                                 >
                                     <View style={configuracoesStyle.iconeCaixaItem}>
                                         <Image
@@ -195,7 +186,10 @@ export default function ConfiguracoesScreen() {
                                     Relacionamento
                                 </Text>
 
-                                <Pressable style={configuracoesStyle.itemConta}>
+                                <Pressable
+                                    style={configuracoesStyle.itemConta}
+                                    onPress={() => router.push("/depoimentos")}
+                                >
                                     <View style={configuracoesStyle.iconeCaixaItem}>
                                         <Image
                                             style={configuracoesStyle.imgItem}
@@ -213,7 +207,10 @@ export default function ConfiguracoesScreen() {
                                     <Text style={configuracoesStyle.txtSeta}>&gt;</Text>
                                 </Pressable>
 
-                                <Pressable style={configuracoesStyle.itemConta}>
+                                <Pressable
+                                    style={configuracoesStyle.itemConta}
+                                    onPress={() => router.push("/faleConosco")}
+                                >
                                     <View style={configuracoesStyle.iconeCaixaItem}>
                                         <Image
                                             style={configuracoesStyle.imgItem}
@@ -240,6 +237,16 @@ export default function ConfiguracoesScreen() {
                             </Pressable>
                         </View>
                     </ScrollView>
+
+                    <Pressable
+                        style={configuracoesStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={configuracoesStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

@@ -100,8 +100,9 @@ categoria:{
 conteudoCategoria:{
     width:'100%',
     flexDirection:'row',
+    flexWrap:'wrap',
     justifyContent:'space-between',
-
+    rowGap:10,
 },
 
 tituloSecao:{
@@ -144,16 +145,14 @@ destaque:{
 },
 
 listaDestaque:{
-    width:'100%',
     flexDirection:'row',
-    justifyContent:'space-between',
-    flexWrap:'wrap',
+    paddingRight:20,
+    paddingBottom:10,
 },
 
 cardDestaque:{
-    width:'30%',
-  
-    marginBottom:20,
+    width:140,
+    marginRight:14,
     backgroundColor:cores.branco,
     borderRadius:15,
     padding:6,
@@ -170,7 +169,7 @@ wrapperImgDestaque:{
 
 imgDestaque:{
     width:'100%',
-    height:80,
+    height:100,
     borderRadius:12,
 },
 

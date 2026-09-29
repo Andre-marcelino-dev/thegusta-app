@@ -1,10 +1,13 @@
 import { router } from "expo-router";
-import { useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
     Image,
     ImageBackground,
+    Keyboard,
+    Platform,
     Pressable,
     Text,
     TextInput,
@@ -18,34 +21,238 @@ import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
 
-const destaques = [
+const API_BASE_URL = "http://localhost:8081";
+const IMAGEM_PADRAO = require("@/assets/images/img/sem-imagem.png");
+
+
+type ProdutoDestaque = {
+    id: number;
+    slug: string;
+    nome: string;
+    descricao: string;
+    categoria: string;
+    preco: string;
+    imagem: any;
+    favorito: boolean;
+};
+
+type ProdutoApi = {
+    id_produto: number;
+    slug_produto: string;
+    nome_produto: string;
+    descricao_produto: string;
+    valor_produto: number;
+    foto_produto: string;
+    destaque_produto: "SIM" | "NAO";
+    categoria_produto: { nome_categoria: string };
+};
+
+type Categoria = {
+    id: number;
+    nome: string;
+    icone: any;
+};
+
+type CategoriaApi = {
+    id_categoria: number;
+    nome_categoria: string;
+    status_categoria: "ATIVO" | "INATIVO";
+    ordem_categoria: number;
+};
+
+// A API não retorna ícone, então escolhemos um localmente pelo nome da categoria.
+function escolherIconeCategoria(nomeCategoria: string) {
+    const nome = nomeCategoria.toLowerCase();
+    if (nome.includes("bolo")) return require("@/assets/images/img/bolo.png");
+    if (nome.includes("doce") || nome.includes("brigadeiro"))
+        return require("@/assets/images/img/brigadeiro.png");
+    if (nome.includes("torta")) return require("@/assets/images/img/torta.png");
+    if (nome.includes("bebida"))
+        return require("@/assets/images/img/copo-de-plastico.png");
+    if (nome.includes("kit") || nome.includes("presente"))
+        return require("@/assets/images/img/presente-de-supermercado.png");
+    return require("@/assets/images/img/cardapio.png");
+}
+
+// Usado enquanto a API carrega ou se a busca falhar.
+const destaquesIniciais: ProdutoDestaque[] = [
     {
         id: 1,
+        slug: "",
         nome: "Bolo de banana fit",
         descricao: "Banana Prata com canela e gergelim",
+        categoria: "Bolos",
         preco: "R$18,00",
         imagem: require("@/assets/images/img/bolo01.png"),
-        destaque: true,
+        favorito: false,
     },
     {
         id: 2,
+        slug: "",
         nome: "Bolo de banana fit",
         descricao: "Banana Prata com canela e gergelim",
+        categoria: "Bolos",
         preco: "R$18,00",
         imagem: require("@/assets/images/img/bolo01.png"),
-        destaque: false,
+        favorito: false,
     },
     {
         id: 3,
-        nome: "Bolo de banana fit",
+        slug: "",
+        nome: "Brigadeiro Gourmet",
         descricao: "Banana Prata com canela e gergelim",
+        categoria: "Doces",
         preco: "R$18,00",
         imagem: require("@/assets/images/img/bolo01.png"),
-        destaque: false,
+        favorito: false,
+    },
+    {
+        id: 4,
+        slug: "",
+        nome: "Brigadeiro Gourmet",
+        descricao: "Banana Prata com canela e gergelim",
+        categoria: "Doces",
+        preco: "R$18,00",
+        imagem: require("@/assets/images/img/bolo01.png"),
+        favorito: false,
+    },
+];
+
+// Usado enquanto a API carrega ou se a busca falhar.
+const categoriasIniciais: Categoria[] = [
+    { id: 1, nome: "Bolos", icone: require("@/assets/images/img/bolo.png") },
+    { id: 2, nome: "Doces", icone: require("@/assets/images/img/brigadeiro.png") },
+    { id: 3, nome: "Tortas", icone: require("@/assets/images/img/torta.png") },
+    {
+        id: 4,
+        nome: "Bebidas",
+        icone: require("@/assets/images/img/copo-de-plastico.png"),
+    },
+    {
+        id: 5,
+        nome: "Kits",
+        icone: require("@/assets/images/img/presente-de-supermercado.png"),
     },
 ];
 
 export default function HomeScreen() {
+    const [destaques, setDestaques] = useState<ProdutoDestaque[]>(destaquesIniciais);
+    const [imagensComErro, setImagensComErro] = useState<number[]>([]);
+    const [categorias, setCategorias] = useState<Categoria[]>(categoriasIniciais);
+    const [busca, setBusca] = useState("");
+
+    const termoBusca = busca.trim().toLowerCase();
+    const destaquesFiltrados = termoBusca
+        ? destaques.filter(
+              (item) =>
+                  item.nome.toLowerCase().includes(termoBusca) ||
+                  item.categoria.toLowerCase().includes(termoBusca)
+          )
+        : destaques;
+
+    function marcarImagemComErro(id: number) {
+        setImagensComErro((atual) => (atual.includes(id) ? atual : [...atual, id]));
+    }
+
+    // Carregar as categorias da API
+    useEffect(() => {
+        async function carregarCategorias() {
+            try {
+                const resposta = await fetch(`${API_BASE_URL}/api/v1/categorias`);
+                if (!resposta.ok) {
+                    throw new Error(`Erro ${resposta.status} ao buscar categorias`);
+                }
+                const json = await resposta.json();
+                const categoriasAtivas: Categoria[] = json.data
+                    .filter((categoria: CategoriaApi) => categoria.status_categoria === "ATIVO")
+                    .sort(
+                        (a: CategoriaApi, b: CategoriaApi) =>
+                            a.ordem_categoria - b.ordem_categoria
+                    )
+                    .map((categoria: CategoriaApi) => ({
+                        id: categoria.id_categoria,
+                        nome: categoria.nome_categoria,
+                        icone: escolherIconeCategoria(categoria.nome_categoria),
+                    }));
+                setCategorias(categoriasAtivas);
+            } catch (erro) {
+                console.error("Erro ao carregar categorias:", erro);
+            }
+        }
+
+        carregarCategorias();
+    }, []);
+
+    // Carregar os produtos em destaque da API
+    useEffect(() => {
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch(`${API_BASE_URL}/api/v1/produtos`);
+                if (!resposta.ok) {
+                    throw new Error(`Erro ${resposta.status} ao buscar produtos`);
+                }
+                const json = await resposta.json();
+                const produtosDestaque: ProdutoDestaque[] = json.data
+                    .filter((produto: ProdutoApi) => produto.destaque_produto === "SIM")
+                    .map((produto: ProdutoApi) => ({
+                        id: produto.id_produto,
+                        slug: produto.slug_produto,
+                        nome: produto.nome_produto,
+                        descricao: produto.descricao_produto,
+                        categoria: produto.categoria_produto.nome_categoria,
+                        preco: `R$${produto.valor_produto.toFixed(2).replace(".", ",")}`,
+                        imagem: { uri: `${API_BASE_URL}/davilla/images/${produto.foto_produto}` },
+                        favorito: false,
+                    }));
+                setDestaques(produtosDestaque);
+            } catch (erro) {
+                console.error("Erro ao carregar produtos:", erro);
+            }
+        }
+
+        carregarProdutos();
+    }, []);
+
+    const scrollDestaqueRef = useRef<ScrollView>(null);
+    const arrastandoRef = useRef(false);
+    const posMouseInicialRef = useRef(0);
+    const scrollInicialRef = useRef(0);
+    const scrollAtualRef = useRef(0);
+
+    const eventosArrasteDestaque =
+        Platform.OS === "web"
+            ? {
+                  onMouseDown: (evento: any) => {
+                      arrastandoRef.current = true;
+                      posMouseInicialRef.current = evento.pageX;
+                      scrollInicialRef.current = scrollAtualRef.current;
+                  },
+                  onMouseMove: (evento: any) => {
+                      if (!arrastandoRef.current) return;
+                      evento.preventDefault();
+                      const delta = evento.pageX - posMouseInicialRef.current;
+                      scrollDestaqueRef.current?.scrollTo({
+                          x: scrollInicialRef.current - delta,
+                          animated: false,
+                      });
+                  },
+                  onMouseUp: () => {
+                      arrastandoRef.current = false;
+                  },
+                  onMouseLeave: () => {
+                      arrastandoRef.current = false;
+                  },
+              }
+            : {};
+    function alterarFavorito(id: number) {
+        setDestaques((produtoFavorito) =>
+            produtoFavorito.map((produto) =>
+                produto.id === id
+                    ? { ...produto, favorito: !produto.favorito }
+                    : produto
+            )
+        );
+    }
     return (
         <View style={globalStyle.container}>
             <ImageBackground
@@ -79,9 +286,15 @@ export default function HomeScreen() {
                                 <TextInput style={homeStyle.txtProduto}
                                     placeholder="Buscar produto"
                                     placeholderTextColor={cores.cinzclaro}
-
+                                    value={busca}
+                                    onChangeText={setBusca}
+                                    returnKeyType="search"
+                                    onSubmitEditing={Keyboard.dismiss}
                                 />
-                                <Pressable style={homeStyle.btnBuscar}>
+                                <Pressable
+                                    style={homeStyle.btnBuscar}
+                                    onPress={Keyboard.dismiss}
+                                >
                                     <Image
                                         style={homeStyle.imgBuscar}
                                         source={require("@/assets/images/img/lupa.png")}
@@ -101,57 +314,77 @@ export default function HomeScreen() {
                                     Categorias
                                 </Text>
                                 <View style={homeStyle.conteudoCategoria}>
-                                    <View style={homeStyle.itemCategoria}>
-                                        <Image style={homeStyle.imgCategoria}
-                                            source={require('@/assets/images/img/bolo.png')}
-                                        />
-                                        <Text style={homeStyle.txtCategoria}>Bolos</Text>
-                                    </View>
-                                    <View style={homeStyle.itemCategoria}>
-                                        <Image style={homeStyle.imgCategoria}
-                                            source={require('@/assets/images/img/brigadeiro.png')}
-                                        />
-                                        <Text style={homeStyle.txtCategoria}>Doces</Text>
-                                    </View>
-                                    <View style={homeStyle.itemCategoria}>
-                                        <Image style={homeStyle.imgCategoria}
-                                            source={require('@/assets/images/img/torta.png')}
-                                        />
-                                        <Text style={homeStyle.txtCategoria}>Tortas</Text>
-                                    </View>
-                                    <View style={homeStyle.itemCategoria}>
-                                        <Image style={homeStyle.imgCategoria}
-                                            source={require('@/assets/images/img/copo-de-plastico.png')}
-                                        />
-                                        <Text style={homeStyle.txtCategoria}>Bebidas</Text>
-                                    </View>
-                                    <View style={homeStyle.itemCategoria}>
-                                        <Image style={homeStyle.imgCategoria}
-                                            source={require('@/assets/images/img/presente-de-supermercado.png')}
-                                        />
-                                        <Text style={homeStyle.txtCategoria}>Kits</Text>
-                                    </View>
+                                    {categorias.map((categoria) => (
+                                        <View
+                                            key={categoria.id}
+                                            style={homeStyle.itemCategoria}
+                                        >
+                                            <Image
+                                                style={homeStyle.imgCategoria}
+                                                source={categoria.icone}
+                                            />
+                                            <Text style={homeStyle.txtCategoria}>
+                                                {categoria.nome}
+                                            </Text>
+                                        </View>
+                                    ))}
                                 </View>
                             </View>
 
                             <View style={homeStyle.destaque}>
-                                <Text style={homeStyle.tituloSecao}> Destaque</Text>
-                                <View style={homeStyle.listaDestaque}>
-                                    {destaques.map((item) => (
+                                <Text style={homeStyle.tituloSecao}>
+                                    {termoBusca ? `Resultados para "${busca}"` : " Destaque"}
+                                </Text>
+                                {termoBusca && destaquesFiltrados.length === 0 ? (
+                                    <Text style={homeStyle.txtCategoria}>
+                                        Nenhum produto em destaque encontrado.
+                                    </Text>
+                                ) : (
+                                <ScrollView
+                                    ref={scrollDestaqueRef}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={homeStyle.listaDestaque}
+                                    onScroll={(evento) => {
+                                        scrollAtualRef.current =
+                                            evento.nativeEvent.contentOffset.x;
+                                    }}
+                                    scrollEventThrottle={16}
+                                    style={
+                                        Platform.OS === "web"
+                                            ? ({ cursor: "grab" } as any)
+                                            : undefined
+                                    }
+                                    {...eventosArrasteDestaque}
+                                >
+                                    {destaquesFiltrados.map((item) => (
                                         <View key={item.id} style={homeStyle.cardDestaque}>
                                             <Pressable
-                                                onPress={() => router.push("/detalhesProduto")}
+                                                onPress={() =>
+                                                    router.push({
+                                                        pathname: "/detalhesProduto",
+                                                        params: { slug: item.slug },
+                                                    })
+                                                }
                                             >
                                                 <View style={homeStyle.wrapperImgDestaque}>
                                                     <Image
                                                         style={homeStyle.imgDestaque}
-                                                        source={item.imagem}
+                                                        source={
+                                                            imagensComErro.includes(item.id)
+                                                                ? IMAGEM_PADRAO
+                                                                : item.imagem
+                                                        }
+                                                        onError={() => marcarImagemComErro(item.id)}
                                                     />
-                                                    <View style={homeStyle.badgeDestaque}>
+                                                    <Pressable
+                                                        style={homeStyle.badgeDestaque}
+                                                        onPress={() => alterarFavorito(item.id)}
+                                                    >
                                                         <Text style={homeStyle.txtEstrela}>
-                                                            {item.destaque ? "★" : "☆"}
+                                                            {item.favorito ? "★" : "☆"}
                                                         </Text>
-                                                    </View>
+                                                    </Pressable>
                                                 </View>
                                                 <Text style={homeStyle.nomeDestaque} numberOfLines={2}>
                                                     {item.nome}
@@ -173,7 +406,8 @@ export default function HomeScreen() {
                                             </View>
                                         </View>
                                     ))}
-                                </View>
+                                </ScrollView>
+                                )}
                             </View>
                         </View>
 

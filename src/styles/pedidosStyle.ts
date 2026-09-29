@@ -12,12 +12,17 @@ const pedidosStyle = StyleSheet.create({
 
     conteudo: {
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         flexDirection: 'row',
         width: '100%',
     },
 
     btnVoltar: {
+        position: 'absolute',
+        top: 50,
+        left: '10%',
+        zIndex: 9999,
+        elevation: 20,
         width: 42,
         height: 42,
         borderRadius: "50%",

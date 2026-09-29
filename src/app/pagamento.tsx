@@ -3,8 +3,11 @@ import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
+    Alert,
     Image,
     ImageBackground,
+    Linking,
+    Platform,
     Pressable,
     Text,
     TextInput,
@@ -22,29 +25,137 @@ type TipoEntrega = "entrega" | "retirada";
 type FormaPagamento = "pix" | "cartao" | "dinheiro";
 
 const itensPedido = [
-    { id: 1, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-    { id: 2, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-    { id: 3, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-    { id: 4, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
+    {
+        id: 1,
+        nome: "Bolo de Banana Fit",
+        preco: 18.8,
+        quantidade: 2,
+        imagem: require("@/assets/images/img/bolo01.png"),
+    },
+    {
+        id: 2,
+        nome: "Bolo de Banana Fit",
+        preco: 18.8,
+        quantidade: 2,
+        imagem: require("@/assets/images/img/bolo01.png"),
+    },
+    {
+        id: 3,
+        nome: "Bolo de Banana Fit",
+        preco: 18.8,
+        quantidade: 2,
+        imagem: require("@/assets/images/img/bolo01.png"),
+    },
 ];
 
-const taxaEntrega = 8.0;
-const cupomAplicado = "THEGUSTEX10";
-
+const taxaEntrega = 6.0;
+const cupomAplicado = "THEGUSTA10";
+const numeroWhatsapp = "5511988161211";
+const rotulosEntrega: Record<TipoEntrega, string> = {
+    entrega: "Entrega",
+    retirada: "Retirada",
+};
+const rotulosPagamento: Record<FormaPagamento, string> = {
+    pix: "Pix",
+    cartao: "Cartão",
+    dinheiro: "Dinheiro",
+};
+const menuItens = [
+    {
+        id: 1,
+        rotulo: "Home",
+        icone: require("@/assets/images/img/home.png"),
+        rota: "/home",
+    },
+    {
+        id: 2,
+        rotulo: "Cardápio",
+        icone: require("@/assets/images/img/cardapio.png"),
+        rota: "/cardapio",
+    },
+    {
+        id: 3,
+        rotulo: "Sacola",
+        icone: require("@/assets/images/img/sacola.png"),
+        rota: "/sacola",
+    },
+    {
+        id: 4,
+        rotulo: "Pedido",
+        icone: require("@/assets/images/img/pedido.png"),
+        rota: null,
+    },
+    {
+        id: 5,
+        rotulo: "Config",
+        icone: require("@/assets/images/img/config.png"),
+        rota: null,
+    },
+];
+ 
 function formatarPrecoResumo(valor: number) {
     return `R$ ${valor.toFixed(2).replace(".", ",")}`;
 }
-
+ 
 export default function PagamentoScreen() {
     const [tipoEntrega, setTipoEntrega] = useState<TipoEntrega>("entrega");
-    const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>("pix");
+    const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>(
+        "pix"
+    );
     const [observacao, setObservacao] = useState("");
 
-    const subtotal = itensPedido.reduce((soma, item) => soma + item.preco, 0);
-    const entrega = tipoEntrega === "entrega" ? taxaEntrega : 0;
-    const desconto = cupomAplicado ? subtotal * 0.1053 : 0;
-    const total = subtotal + entrega - desconto;
+    const subtotal = itensPedido.reduce(
+        (soma, item) => soma + item.preco * item.quantidade,
+        0
+    );
+    const valorEntrega = tipoEntrega === "entrega" ? taxaEntrega : 0;
+    const desconto = cupomAplicado ? subtotal * 0.1 : 0;
+    const total = subtotal + valorEntrega - desconto;
+ 
+    async function confirmarPedido() {
+        const linhasItens = itensPedido
+            .map((item) => `- ${item.quantidade}x ${item.nome}`)
+            .join("\n");
+ 
+        const linhasEndereco =
+            tipoEntrega === "entrega"
+                ? `\n*Endereço:* Avenida Marechal Tito, 1500 - São Miguel Paulista - São Paulo - SP\n*Telefone:* (11) 9999-99999`
+                : "";
 
+        const linhaObservacao = observacao.trim()
+            ? `\n*Observação:* ${observacao.trim()}`
+            : "";
+
+        const mensagem = `*Novo pedido - TheGusta*\n\n${linhasItens}\n\n*Entrega/Retirada:* ${rotulosEntrega[tipoEntrega]}${linhasEndereco}\n*Forma de pagamento:* ${rotulosPagamento[formaPagamento]}${linhaObservacao}\n\n*Subtotal:* ${formatarPrecoResumo(
+            subtotal
+        )}\n*Entrega:* ${formatarPrecoResumo(
+            valorEntrega
+        )}\n*Desconto (${cupomAplicado}):* -${formatarPrecoResumo(
+            desconto
+        )}\n*Total:* ${formatarPrecoResumo(total)}`;
+ 
+        const textoCodificado = encodeURIComponent(mensagem);
+        const urlApp = `whatsapp://send?phone=${numeroWhatsapp}&text=${textoCodificado}`;
+        const urlWeb = `https://wa.me/${numeroWhatsapp}?text=${textoCodificado}`;
+ 
+        if (Platform.OS !== "web") {
+            try {
+                await Linking.openURL(urlApp);
+                return;
+            } catch {
+                // WhatsApp não instalado, segue para o link web
+            }
+        }
+ 
+        try {
+            await Linking.openURL(urlWeb);
+        } catch {
+            Alert.alert(
+                "WhatsApp não encontrado",
+                "Não foi possível abrir o WhatsApp neste dispositivo."
+            );
+        }
+    }
     return (
         <View style={globalStyle.container}>
             <ImageBackground
@@ -56,12 +167,6 @@ export default function PagamentoScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={pagamentoStyle.header}>
                             <View style={pagamentoStyle.conteudo}>
-                                <Pressable onPress={() => router.back()}>
-                                    <Image
-                                        style={pagamentoStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={pagamentoStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -85,7 +190,9 @@ export default function PagamentoScreen() {
                                             Endereço de entrega:
                                         </Text>
                                     </View>
-                                    <Pressable>
+                                    <Pressable
+                                        onPress={() => router.push("/editarEndereco")}
+                                    >
                                         <Text style={pagamentoStyle.txtAlterar}>Alterar &gt;</Text>
                                     </Pressable>
                                 </View>
@@ -268,7 +375,7 @@ export default function PagamentoScreen() {
                                 <View style={pagamentoStyle.linhaResumo}>
                                     <Text style={pagamentoStyle.txtLabelResumo}>Entrega</Text>
                                     <Text style={pagamentoStyle.txtValorResumo}>
-                                        {formatarPrecoResumo(entrega)}
+                                        {formatarPrecoResumo(valorEntrega)}
                                     </Text>
                                 </View>
                                 {cupomAplicado && (
@@ -294,10 +401,23 @@ export default function PagamentoScreen() {
                             </View>
                         </View>
 
-                        <Pressable style={pagamentoStyle.btnConfirmar}>
+                        <Pressable
+                            style={pagamentoStyle.btnConfirmar}
+                            onPress={confirmarPedido}
+                        >
                             <Text style={pagamentoStyle.txtConfirmar}>Confirma Pedido</Text>
                         </Pressable>
                     </ScrollView>
+
+                    <Pressable
+                        style={pagamentoStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={pagamentoStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

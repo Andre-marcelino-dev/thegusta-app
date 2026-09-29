@@ -78,15 +78,6 @@ export default function DetalhesPedidoScreen() {
                     <ScrollView style={globalStyle.scrollConteudo}>
                         <View style={detalhesPedidoStyle.header}>
                             <View style={detalhesPedidoStyle.conteudo}>
-                                <Pressable
-                                    style={detalhesPedidoStyle.btnVoltar}
-                                    onPress={() => router.back()}
-                                >
-                                    <Image
-                                        style={detalhesPedidoStyle.iconeVoltar}
-                                        source={require("@/assets/images/img/voltar.png")}
-                                    />
-                                </Pressable>
                                 <Image
                                     style={detalhesPedidoStyle.logo}
                                     source={require("@/assets/images/img/logo.png")}
@@ -315,6 +306,16 @@ export default function DetalhesPedidoScreen() {
                             </View>
                         </View>
                     </ScrollView>
+
+                    <Pressable
+                        style={detalhesPedidoStyle.btnVoltar}
+                        onPress={() => router.back()}
+                    >
+                        <Image
+                            style={detalhesPedidoStyle.iconeVoltar}
+                            source={require("@/assets/images/img/voltar.png")}
+                        />
+                    </Pressable>
 
                     <Footer />
                 </SafeAreaView>

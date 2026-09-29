@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native"
 import { cores } from "./variaveis";
 import { fontes } from "./variaveis";
 
-const enderecosStyle = StyleSheet.create({
+const alterarSenhaStyle = StyleSheet.create({
 
     header: {
         width: '80%',
@@ -63,144 +63,103 @@ const enderecosStyle = StyleSheet.create({
         marginTop: 25,
     },
 
-    card: {
+    form: {
+        width: '100%',
+        marginBottom: 20,
+    },
+
+    campo: {
+        flexDirection: 'row',
+        alignItems: 'center',
         width: '100%',
         backgroundColor: cores.branco,
         borderColor: cores.laranja,
         borderWidth: 2,
-        borderRadius: 15,
-        padding: 15,
-        marginBottom: 15,
+        borderRadius: 12,
+        paddingHorizontal: 14,
+        height: 52,
+        marginBottom: 14,
     },
 
-    linhaTopoCard: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-
-    linhaTipo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
-    iconeCaixaTipo: {
-        width: 34,
-        height: 34,
-        borderRadius: 9,
-        backgroundColor: cores.laranjaclaro,
-        alignItems: 'center',
-        justifyContent: 'center',
+    iconeCampo: {
+        width: 20,
+        height: 20,
+        tintColor: cores.laranja,
         marginRight: 10,
     },
 
-    imgTipo: {
-        width: 18,
-        height: 18,
-        tintColor: cores.laranja,
-    },
-
-    txtTipo: {
-        fontSize: fontes.fontmedia,
-        fontFamily: fontes.negrito,
-        color: cores.preto,
-    },
-
-    btnFavorito: {
-        padding: 2,
-    },
-
-    imgFavorito: {
-        width: 22,
-        height: 22,
-        tintColor: cores.cinzclaro,
-    },
-
-    imgFavoritoAtivo: {
-        tintColor: cores.laranja,
-    },
-
-    txtEndereco: {
+    inputCampo: {
+        flex: 1,
         fontSize: 13,
         fontFamily: fontes.comum,
         color: cores.preto,
-        marginTop: 10,
-        marginLeft: 44,
-        lineHeight: 18,
     },
 
-    linhaStatus: {
-        alignItems: 'flex-end',
-        marginTop: 10,
+    btnMostrarSenha: {
+        padding: 4,
     },
 
-    pillAtivo: {
-        backgroundColor: '#d9f2df',
-        borderRadius: 20,
-        paddingVertical: 5,
-        paddingHorizontal: 12,
+    imgMostrarSenha: {
+        width: 20,
+        height: 20,
+        tintColor: cores.cinzclaro,
     },
 
-    txtPillAtivo: {
-        fontSize: 11,
-        fontFamily: fontes.negrito,
-        color: cores.verde,
-    },
-
-    txtUsarEndereco: {
-        fontSize: 12,
-        fontFamily: fontes.negrito,
-        color: cores.laranja,
-        textDecorationLine: 'underline',
-    },
-
-    linhaBotoes: {
+    cardDicas: {
         flexDirection: 'row',
-        marginTop: 14,
-    },
-
-    btnEditar: {
-        flex: 1,
+        width: '100%',
+        backgroundColor: cores.laranjaclaro,
         borderColor: cores.laranja,
         borderWidth: 2,
-        borderRadius: 10,
-        paddingVertical: 9,
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 25,
+    },
+
+    iconeCaixaDicas: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        backgroundColor: cores.laranja,
         alignItems: 'center',
-        marginRight: 10,
+        justifyContent: 'center',
+        marginRight: 12,
     },
 
-    txtEditar: {
-        fontSize: 13,
-        fontFamily: fontes.negrito,
-        color: cores.laranja,
+    imgIconeDicas: {
+        width: 16,
+        height: 16,
+        tintColor: cores.branco,
     },
 
-    btnExcluir: {
+    infoDicas: {
         flex: 1,
-        borderColor: cores.laranja,
-        borderWidth: 2,
-        borderRadius: 10,
-        paddingVertical: 9,
-        alignItems: 'center',
     },
 
-    txtExcluir: {
-        fontSize: 13,
+    tituloDicas: {
+        fontSize: 14,
         fontFamily: fontes.negrito,
-        color: cores.laranja,
+        color: cores.preto,
+        marginBottom: 6,
     },
 
-    btnAdicionar: {
+    itemDica: {
+        fontSize: 12,
+        fontFamily: fontes.comum,
+        color: cores.preto,
+        marginBottom: 2,
+    },
+
+    btnSalvar: {
         width: '100%',
         backgroundColor: cores.laranja,
         borderRadius: 15,
         paddingVertical: 16,
         alignItems: 'center',
-        marginTop: 5,
         marginBottom: 12,
     },
 
-    txtAdicionar: {
+    txtSalvar: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
         color: cores.branco,
@@ -224,4 +183,4 @@ const enderecosStyle = StyleSheet.create({
 
 });
 
-export default enderecosStyle;
+export default alterarSenhaStyle;

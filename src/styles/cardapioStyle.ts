@@ -117,7 +117,8 @@ const cardapioStyle = StyleSheet.create({
     conteudoCategoria: {
         width: '100%',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        rowGap: 8,
         marginTop: 20,
 
     },
@@ -129,30 +130,28 @@ const cardapioStyle = StyleSheet.create({
 
     },
 
+    // 3 por linha, todas do mesmo tamanho (32% + 2% de espaço)
     itemCategoria: {
-        width: 55,
-        height: 55,
+        width: '32%',
+        minHeight: 40,
         borderRadius: 10,
-        borderColor: cores.laranja,
-        borderWidth: 2,
         paddingVertical: 8,
-        paddingHorizontal: 6,
+        paddingHorizontal: 4,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: cores.laranjaclaro,
+        backgroundColor: cores.laranja,
     },
 
-    imgCategoria: {
-        width: 26,
-        height: 26,
-
+    // Sem margem na última de cada linha
+    itemCategoriaMeio: {
+        marginRight: '2%',
     },
 
     txtCategoria: {
-        fontSize: 11,
+        fontSize: 15,
+        lineHeight: 18,
         fontFamily: fontes.comum,
-        color: cores.cinzclaro,
-        marginTop: 6,
+        color: cores.branco,
         textAlign: 'center',
 
     },

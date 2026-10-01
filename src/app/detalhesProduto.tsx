@@ -14,8 +14,8 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import produtoStyle from "@/styles/produtoStyle";
 import Footer from "@/components/footer";
+import { API_BASE_URL } from "@/utils/categorias";
 
-const API_BASE_URL = "http://localhost:8081";
 
 type Produto = {
     nome: string;

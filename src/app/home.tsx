@@ -20,8 +20,8 @@ import homeStyle from "@/styles/homeStyle";
 import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
+import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
 
-const API_BASE_URL = "http://localhost:8081";
 const IMAGEM_PADRAO = require("@/assets/images/img/sem-imagem.png");
 
 
@@ -46,33 +46,6 @@ type ProdutoApi = {
     destaque_produto: "SIM" | "NAO";
     categoria_produto: { nome_categoria: string };
 };
-
-type Categoria = {
-    id: number;
-    nome: string;
-    icone: any;
-};
-
-type CategoriaApi = {
-    id_categoria: number;
-    nome_categoria: string;
-    status_categoria: "ATIVO" | "INATIVO";
-    ordem_categoria: number;
-};
-
-// A API não retorna ícone, então escolhemos um localmente pelo nome da categoria.
-function escolherIconeCategoria(nomeCategoria: string) {
-    const nome = nomeCategoria.toLowerCase();
-    if (nome.includes("bolo")) return require("@/assets/images/img/bolo.png");
-    if (nome.includes("doce") || nome.includes("brigadeiro"))
-        return require("@/assets/images/img/brigadeiro.png");
-    if (nome.includes("torta")) return require("@/assets/images/img/torta.png");
-    if (nome.includes("bebida"))
-        return require("@/assets/images/img/copo-de-plastico.png");
-    if (nome.includes("kit") || nome.includes("presente"))
-        return require("@/assets/images/img/presente-de-supermercado.png");
-    return require("@/assets/images/img/cardapio.png");
-}
 
 // Usado enquanto a API carrega ou se a busca falhar.
 const destaquesIniciais: ProdutoDestaque[] = [
@@ -158,23 +131,7 @@ export default function HomeScreen() {
     useEffect(() => {
         async function carregarCategorias() {
             try {
-                const resposta = await fetch(`${API_BASE_URL}/api/v1/categorias`);
-                if (!resposta.ok) {
-                    throw new Error(`Erro ${resposta.status} ao buscar categorias`);
-                }
-                const json = await resposta.json();
-                const categoriasAtivas: Categoria[] = json.data
-                    .filter((categoria: CategoriaApi) => categoria.status_categoria === "ATIVO")
-                    .sort(
-                        (a: CategoriaApi, b: CategoriaApi) =>
-                            a.ordem_categoria - b.ordem_categoria
-                    )
-                    .map((categoria: CategoriaApi) => ({
-                        id: categoria.id_categoria,
-                        nome: categoria.nome_categoria,
-                        icone: escolherIconeCategoria(categoria.nome_categoria),
-                    }));
-                setCategorias(categoriasAtivas);
+                setCategorias(await buscarCategorias());
             } catch (erro) {
                 console.error("Erro ao carregar categorias:", erro);
             }
@@ -315,9 +272,15 @@ export default function HomeScreen() {
                                 </Text>
                                 <View style={homeStyle.conteudoCategoria}>
                                     {categorias.map((categoria) => (
-                                        <View
+                                        <Pressable
                                             key={categoria.id}
                                             style={homeStyle.itemCategoria}
+                                            onPress={() =>
+                                                router.push({
+                                                    pathname: "/cardapio",
+                                                    params: { categoria: categoria.id },
+                                                })
+                                            }
                                         >
                                             <Image
                                                 style={homeStyle.imgCategoria}
@@ -326,7 +289,7 @@ export default function HomeScreen() {
                                             <Text style={homeStyle.txtCategoria}>
                                                 {categoria.nome}
                                             </Text>
-                                        </View>
+                                        </Pressable>
                                     ))}
                                 </View>
                             </View>

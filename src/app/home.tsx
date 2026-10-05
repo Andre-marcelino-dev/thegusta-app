@@ -21,6 +21,7 @@ import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
 import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
+import { buscarClienteLogado, urlFotoCliente } from "@/utils/auth";
 
 const IMAGEM_PADRAO = require("@/assets/images/img/sem-imagem.png");
 
@@ -113,6 +114,34 @@ export default function HomeScreen() {
     const [imagensComErro, setImagensComErro] = useState<number[]>([]);
     const [categorias, setCategorias] = useState<Categoria[]>(categoriasIniciais);
     const [busca, setBusca] = useState("");
+    const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
+    const [nomeCliente, setNomeCliente] = useState("Cliente");
+
+    // Carregar a foto de quem está logado
+    useEffect(() => {
+        async function carregarCliente() {
+            try {
+                const cliente = await buscarClienteLogado();
+                setFotoPerfil(urlFotoCliente(cliente));
+                // Mostra só o primeiro nome, para caber no título
+                const primeiroNome = cliente?.nome_cliente?.trim().split(" ")[0];
+                if (primeiroNome) setNomeCliente(primeiroNome);
+            } catch (erro) {
+                console.error("Erro ao carregar cliente:", erro);
+            }
+        }
+
+        carregarCliente();
+    }, []);
+
+    // Ao confirmar a busca, abre o Cardápio já filtrado pelo texto digitado
+    function buscarNoCardapio() {
+        Keyboard.dismiss();
+        const termo = busca.trim();
+        if (!termo) return;
+        router.push({ pathname: "/cardapio", params: { busca: termo } });
+        setBusca("");
+    }
 
     const termoBusca = busca.trim().toLowerCase();
     const destaquesFiltrados = termoBusca
@@ -223,12 +252,25 @@ export default function HomeScreen() {
 
 
                             <View style={homeStyle.conteudo}>
-                                <Text style={homeStyle.titulo}> Óla, Cliente</Text>
-                                <View style={homeStyle.bordaPerfil}>
-                                    <Image
-                                        style={homeStyle.perfil}
-                                        source={require("@/assets/images/img/user.png")}
-                                    />
+                                <Text style={homeStyle.titulo}> Olá, {nomeCliente}</Text>
+                                <View
+                                    style={[
+                                        homeStyle.bordaPerfil,
+                                        fotoPerfil !== null && homeStyle.bordaPerfilFoto,
+                                    ]}
+                                >
+                                    {fotoPerfil !== null ? (
+                                        <Image
+                                            style={homeStyle.fotoPerfil}
+                                            source={{ uri: fotoPerfil }}
+                                            onError={() => setFotoPerfil(null)}
+                                        />
+                                    ) : (
+                                        <Image
+                                            style={homeStyle.perfil}
+                                            source={require("@/assets/images/img/user.png")}
+                                        />
+                                    )}
                                 </View>
 
 
@@ -246,11 +288,11 @@ export default function HomeScreen() {
                                     value={busca}
                                     onChangeText={setBusca}
                                     returnKeyType="search"
-                                    onSubmitEditing={Keyboard.dismiss}
+                                    onSubmitEditing={buscarNoCardapio}
                                 />
                                 <Pressable
                                     style={homeStyle.btnBuscar}
-                                    onPress={Keyboard.dismiss}
+                                    onPress={buscarNoCardapio}
                                 >
                                     <Image
                                         style={homeStyle.imgBuscar}
@@ -271,10 +313,13 @@ export default function HomeScreen() {
                                     Categorias
                                 </Text>
                                 <View style={homeStyle.conteudoCategoria}>
-                                    {categorias.map((categoria) => (
+                                    {categorias.map((categoria, indice) => (
                                         <Pressable
                                             key={categoria.id}
-                                            style={homeStyle.itemCategoria}
+                                            style={[
+                                                homeStyle.itemCategoria,
+                                                indice % 3 !== 2 && homeStyle.itemCategoriaMeio,
+                                            ]}
                                             onPress={() =>
                                                 router.push({
                                                     pathname: "/cardapio",
@@ -282,11 +327,7 @@ export default function HomeScreen() {
                                                 })
                                             }
                                         >
-                                            <Image
-                                                style={homeStyle.imgCategoria}
-                                                source={categoria.icone}
-                                            />
-                                            <Text style={homeStyle.txtCategoria}>
+                                            <Text style={homeStyle.txtCategoria} numberOfLines={2}>
                                                 {categoria.nome}
                                             </Text>
                                         </Pressable>
@@ -299,7 +340,7 @@ export default function HomeScreen() {
                                     {termoBusca ? `Resultados para "${busca}"` : " Destaque"}
                                 </Text>
                                 {termoBusca && destaquesFiltrados.length === 0 ? (
-                                    <Text style={homeStyle.txtCategoria}>
+                                    <Text style={homeStyle.txtMensagem}>
                                         Nenhum produto em destaque encontrado.
                                     </Text>
                                 ) : (

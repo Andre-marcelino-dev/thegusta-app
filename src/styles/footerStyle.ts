@@ -26,14 +26,23 @@ const footerStyle = StyleSheet.create({
     imgMenu: {
         width: 26,
         height: 26,
+        tintColor: cores.cinzclaro,
+    },
+
+    imgMenuAtivo: {
         tintColor: cores.laranja,
     },
 
     txtMenu: {
         fontSize: 11,
         fontFamily: fontes.comum,
-        color: cores.laranja,
+        color: cores.cinzclaro,
         marginTop: 4,
+    },
+
+    txtMenuAtivo: {
+        color: cores.laranja,
+        fontFamily: fontes.negrito,
     },
 
 });

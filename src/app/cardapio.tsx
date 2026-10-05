@@ -16,6 +16,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import cardapioStyle from "@/styles/cardapioStyle";
 import Footer from "@/components/footer";
+import BannerCarrossel from "@/components/bannerCarrossel";
 
 import { cores } from "@/styles/variaveis";
 import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
@@ -132,7 +133,13 @@ export default function CardapioScreen() {
         carregarProdutos();
     }, []);
 
-    const [busca, setBusca] = useState("");
+    // Quando vem da busca da Home com ?busca=texto, já abre filtrado
+    const { busca: buscaParam } = useLocalSearchParams<{ busca?: string }>();
+    const [busca, setBusca] = useState(buscaParam ?? "");
+
+    useEffect(() => {
+        if (buscaParam !== undefined) setBusca(buscaParam);
+    }, [buscaParam]);
     const termoBusca = normalizar(busca.trim());
 
     // Uma seção por categoria, só com as que têm produtos (já filtrados pela busca)
@@ -228,6 +235,8 @@ export default function CardapioScreen() {
                                     />
                                 </Pressable>
                             </View>
+
+                            <BannerCarrossel />
 
                             <View style={cardapioStyle.categoria}>
                                 <View style={cardapioStyle.conteudoCategoria}>

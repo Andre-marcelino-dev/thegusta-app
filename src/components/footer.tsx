@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 
 import footerStyle from "@/styles/footerStyle";
@@ -37,18 +37,29 @@ const menuItens = [
 ];
 
 export default function Footer() {
+    // O item ativo é o da tela atual
+    const rotaAtual = usePathname();
+
     return (
         <View style={footerStyle.menuInferior}>
-            {menuItens.map((item) => (
-                <Pressable
-                    key={item.id}
-                    style={footerStyle.itemMenu}
-                    onPress={() => item.rota && router.push(item.rota as any)}
-                >
-                    <Image style={footerStyle.imgMenu} source={item.icone} />
-                    <Text style={footerStyle.txtMenu}>{item.rotulo}</Text>
-                </Pressable>
-            ))}
+            {menuItens.map((item) => {
+                const ativo = rotaAtual === item.rota;
+                return (
+                    <Pressable
+                        key={item.id}
+                        style={footerStyle.itemMenu}
+                        onPress={() => !ativo && router.push(item.rota as any)}
+                    >
+                        <Image
+                            style={[footerStyle.imgMenu, ativo && footerStyle.imgMenuAtivo]}
+                            source={item.icone}
+                        />
+                        <Text style={[footerStyle.txtMenu, ativo && footerStyle.txtMenuAtivo]}>
+                            {item.rotulo}
+                        </Text>
+                    </Pressable>
+                );
+            })}
         </View>
     );
 }

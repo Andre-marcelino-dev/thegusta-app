@@ -16,9 +16,37 @@ import {
 import LoginStyle from "@/styles/loginStyle";
 import globalStyle from "@/styles/globalStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { fazerLogin } from "@/utils/auth";
 
 export default function LoginScreen() {
   const [verSenha, setVerSenha] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
+
+  async function entrar() {
+    const emailLimpo = email.trim();
+    if (!emailLimpo || !senha) {
+      setErro("Preencha o e-mail e a senha.");
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(emailLimpo)) {
+      setErro("Informe um e-mail válido.");
+      return;
+    }
+
+    setErro("");
+    setCarregando(true);
+    try {
+      await fazerLogin(emailLimpo, senha);
+      router.replace("/home");
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Não foi possível fazer login.");
+    } finally {
+      setCarregando(false);
+    }
+  }
 
   return (
     <View style={globalStyle.container}>
@@ -53,6 +81,8 @@ export default function LoginScreen() {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     style={LoginStyle.TextInput}
+                    value={email}
+                    onChangeText={setEmail}
                   />
                 </View>
 
@@ -66,6 +96,10 @@ export default function LoginScreen() {
                     placeholderTextColor="#888888"
                     style={LoginStyle.TextInput}
                     secureTextEntry={!verSenha}
+                    value={senha}
+                    onChangeText={setSenha}
+                    returnKeyType="go"
+                    onSubmitEditing={entrar}
                   />
 
                   <Pressable
@@ -92,14 +126,20 @@ export default function LoginScreen() {
                   </Text>
                 </Pressable>
 
+                {erro !== "" && <Text style={LoginStyle.txtErro}>{erro}</Text>}
+
                 <Pressable
                   style={({ pressed }) => [
                     LoginStyle.btnEntrar,
                     pressed && LoginStyle.btnEntrarPressed,
-                    
+                    carregando && { opacity: 0.6 },
                   ]}
+                  onPress={entrar}
+                  disabled={carregando}
                 >
-                  <Text style={LoginStyle.txtEntrar} onPress={()=>router.navigate('/home')}>Entrar</Text>
+                  <Text style={LoginStyle.txtEntrar}>
+                    {carregando ? "Entrando..." : "Entrar"}
+                  </Text>
                 </Pressable>
 
                 <View style={LoginStyle.Separador}>

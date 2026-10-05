@@ -36,6 +36,16 @@ const homeStyle = StyleSheet.create({
         width: 50,
         height: 50,
     },
+    // Quando o cliente tem foto, ela ocupa o círculo inteiro
+    bordaPerfilFoto: {
+        padding: 0,
+        overflow: "hidden",
+    },
+    fotoPerfil: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+    },
     subtitulo: {
         marginTop: 10,
         fontSize: 18,
@@ -101,8 +111,7 @@ conteudoCategoria:{
     width:'100%',
     flexDirection:'row',
     flexWrap:'wrap',
-    justifyContent:'space-between',
-    rowGap:10,
+    rowGap:8,
 },
 
 tituloSecao:{
@@ -112,31 +121,38 @@ tituloSecao:{
     marginBottom:10,
 },
 
+// 3 por linha, todas do mesmo tamanho (32% + 2% de espaço)
 itemCategoria:{
-    width:55,
+    width:'32%',
+    minHeight:40,
     borderRadius:10,
-    borderColor:cores.laranja,
-    borderWidth:2,
     paddingVertical:8,
-    paddingHorizontal:6,
+    paddingHorizontal:4,
     alignItems:'center',
     justifyContent:'center',
-    backgroundColor:cores.laranjaclaro,
+    backgroundColor:cores.laranja,
 },
 
-imgCategoria:{
-    width:30,
-    height:30,
-
+// Sem margem na última de cada linha
+itemCategoriaMeio:{
+    marginRight:'2%',
 },
 
 txtCategoria:{
+fontSize:15,
+lineHeight:18,
+fontFamily:fontes.comum,
+color:cores.branco,
+textAlign:'center',
+},
+
+// Mensagem de "nenhum produto encontrado"
+txtMensagem:{
 fontSize:10,
 fontFamily:fontes.comum,
 color:cores.cinzclaro,
 marginTop:6,
 textAlign:'center',
-
 },
 
 destaque:{

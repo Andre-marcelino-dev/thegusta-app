@@ -64,7 +64,16 @@ export default function BannerCarrossel() {
         return () => clearTimeout(timer);
     }, [atual, banners.length, largura]);
 
-    if (banners.length === 0) return null;
+    // Enquanto carrega ou se não vier nenhum banner do banco, mostra o banner fixo
+    if (banners.length === 0) {
+        return (
+            <Image
+                style={[bannerCarrosselStyle.container, bannerCarrosselStyle.imagem]}
+                source={require("@/assets/images/img/banner.png")}
+                resizeMode="stretch"
+            />
+        );
+    }
 
     return (
         <View

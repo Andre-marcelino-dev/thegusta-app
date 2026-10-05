@@ -5,7 +5,7 @@ const bannerCarrosselStyle = StyleSheet.create({
 
     container: {
         width: '100%',
-        marginTop: 20,
+        marginTop: 30,
         borderRadius: 20,
         overflow: 'hidden',
     },

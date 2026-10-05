@@ -18,6 +18,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import homeStyle from "@/styles/homeStyle";
 import Footer from "@/components/footer";
+import BannerCarrossel from "@/components/bannerCarrossel";
 
 import { cores } from "@/styles/variaveis";
 import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
@@ -301,11 +302,7 @@ export default function HomeScreen() {
                                 </Pressable>
                             </View>
 
-                            <Image
-                                style={homeStyle.banner}
-                                source={require("@/assets/images/img/banner.png")}
-                                resizeMode="stretch"
-                            />
+                            <BannerCarrossel />
 
 
                             <View style={homeStyle.categoria}>

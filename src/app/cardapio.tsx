@@ -16,7 +16,6 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import cardapioStyle from "@/styles/cardapioStyle";
 import Footer from "@/components/footer";
-import BannerCarrossel from "@/components/bannerCarrossel";
 
 import { cores } from "@/styles/variaveis";
 import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
@@ -235,8 +234,6 @@ export default function CardapioScreen() {
                                     />
                                 </Pressable>
                             </View>
-
-                            <BannerCarrossel />
 
                             <View style={cardapioStyle.categoria}>
                                 <View style={cardapioStyle.conteudoCategoria}>

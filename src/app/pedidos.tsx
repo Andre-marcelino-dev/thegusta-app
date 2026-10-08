@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -14,50 +14,51 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import pedidosStyle from "@/styles/pedidosStyle";
 import Footer from "@/components/footer";
+import { buscarPedidos, etapaDoStatus, Pedido, textoDoStatus } from "@/utils/pedidos";
 
 type AbaPedido = "andamento" | "entregues";
 
-const pedidosAndamento = [
-    {
-        id: 1,
-        numero: 1035,
-        statusLabel: "Aguardando",
-        statusIcone: require("@/assets/images/img/aguardando-laranja.png"),
-        itens: ["2x Bolo de Banana Fit", "2x Bolo de Banana Fit"],
-        total: 142.56,
-        previsao: "45 - 60 min",
-    },
-    {
-        id: 2,
-        numero: 1032,
-        statusLabel: "Em preparo",
-        statusIcone: require("@/assets/images/img/preparando-laranja.png"),
-        itens: ["2x Bolo de Banana Fit", "2x Bolo de Banana Fit"],
-        total: 142.56,
-        previsao: "45 - 60 min",
-    },
-    {
-        id: 3,
-        numero: 1030,
-        statusLabel: "A caminho",
-        statusIcone: require("@/assets/images/img/delivery-laranja.png"),
-        itens: ["2x Bolo de Banana Fit", "2x Bolo de Banana Fit"],
-        total: 142.56,
-        previsao: "35 - 60 min",
-    },
-];
+const previsaoEntrega = "45 - 60 min";
 
-const pedidosEntregues = [
-    {
-        id: 4,
-        numero: 999,
-        itens: ["2x Bolo de Banana Fit", "2x Bolo de Banana Fit", "2x Bolo de Banana Fit"],
-        total: 142.56,
-    },
-];
+function iconeDoStatus(etapa: number) {
+    if (etapa === 1) return require("@/assets/images/img/aguardando-laranja.png");
+    if (etapa === 3) return require("@/assets/images/img/delivery-laranja.png");
+    return require("@/assets/images/img/preparando-laranja.png");
+}
 
 export default function PedidosScreen() {
     const [aba, setAba] = useState<AbaPedido>("andamento");
+    const [pedidos, setPedidos] = useState<Pedido[]>([]);
+
+    // Carrega do banco os pedidos do cliente logado
+    useFocusEffect(useCallback(() => {
+        async function carregarPedidos() {
+            try {
+                setPedidos(await buscarPedidos());
+            } catch (erro) {
+                console.error("Erro ao carregar pedidos:", erro);
+            }
+        }
+
+        carregarPedidos();
+    }, []));
+
+    // Aguardando, em preparo e a caminho ficam na primeira aba;
+    // finalizados na de entregues. Cancelados não aparecem.
+    const pedidosAndamento = pedidos
+        .filter((pedido) => [1, 2, 3].includes(etapaDoStatus(pedido.status)))
+        .map((pedido) => {
+            const etapa = etapaDoStatus(pedido.status);
+            return {
+                ...pedido,
+                statusLabel: etapa === 3 ? "A caminho" : textoDoStatus(etapa),
+                statusIcone: iconeDoStatus(etapa),
+                previsao: previsaoEntrega,
+            };
+        });
+    const pedidosEntregues = pedidos.filter(
+        (pedido) => etapaDoStatus(pedido.status) === 5
+    );
 
     return (
         <View style={globalStyle.container}>
@@ -119,7 +120,7 @@ export default function PedidosScreen() {
 
                             {aba === "andamento" &&
                                 pedidosAndamento.map((pedido) => (
-                                    <View key={pedido.id} style={pedidosStyle.cardPedido}>
+                                    <View key={pedido.numero} style={pedidosStyle.cardPedido}>
                                         <View style={pedidosStyle.topoPedido}>
                                             <View style={pedidosStyle.linhaNumeroPedido}>
                                                 <View style={pedidosStyle.iconeCaixaPedido}>
@@ -144,13 +145,13 @@ export default function PedidosScreen() {
                                         </View>
 
                                         <View style={pedidosStyle.listaItens}>
-                                            {pedido.itens.map((item, index) => (
-                                                <View key={index} style={pedidosStyle.linhaItem}>
+                                            {pedido.itens.map((item) => (
+                                                <View key={item.id} style={pedidosStyle.linhaItem}>
                                                     <Image
                                                         style={pedidosStyle.imgItem}
-                                                        source={require("@/assets/images/img/bolo01.png")}
+                                                        source={item.imagem}
                                                     />
-                                                    <Text style={pedidosStyle.txtItem}>{item}</Text>
+                                                    <Text style={pedidosStyle.txtItem}>{item.nome}</Text>
                                                 </View>
                                             ))}
                                         </View>
@@ -182,7 +183,12 @@ export default function PedidosScreen() {
 
                                         <Pressable
                                             style={pedidosStyle.btnDetalhes}
-                                            onPress={() => router.push("/detalhesPedido")}
+                                            onPress={() =>
+                                                router.push({
+                                                    pathname: "/detalhesPedido",
+                                                    params: { id: pedido.numero },
+                                                })
+                                            }
                                         >
                                             <Text style={pedidosStyle.txtDetalhes}>
                                                 Ver detalhes
@@ -194,7 +200,7 @@ export default function PedidosScreen() {
                             {aba === "entregues" &&
                                 pedidosEntregues.map((pedido) => (
                                     <View
-                                        key={pedido.id}
+                                        key={pedido.numero}
                                         style={pedidosStyle.cardPedidoEntregue}
                                     >
                                         <View style={pedidosStyle.topoPedido}>
@@ -221,13 +227,13 @@ export default function PedidosScreen() {
                                         </View>
 
                                         <View style={pedidosStyle.listaItens}>
-                                            {pedido.itens.map((item, index) => (
-                                                <View key={index} style={pedidosStyle.linhaItem}>
+                                            {pedido.itens.map((item) => (
+                                                <View key={item.id} style={pedidosStyle.linhaItem}>
                                                     <Image
                                                         style={pedidosStyle.imgItem}
-                                                        source={require("@/assets/images/img/bolo01.png")}
+                                                        source={item.imagem}
                                                     />
-                                                    <Text style={pedidosStyle.txtItem}>{item}</Text>
+                                                    <Text style={pedidosStyle.txtItem}>{item.nome}</Text>
                                                 </View>
                                             ))}
                                         </View>
@@ -244,7 +250,12 @@ export default function PedidosScreen() {
                                             <View style={pedidosStyle.linhaBotoesEntregue}>
                                                 <Pressable
                                                     style={pedidosStyle.btnVerDetalhesPeq}
-                                                    onPress={() => router.push("/detalhesPedido")}
+                                                    onPress={() =>
+                                                router.push({
+                                                    pathname: "/detalhesPedido",
+                                                    params: { id: pedido.numero },
+                                                })
+                                            }
                                                 >
                                                     <Text style={pedidosStyle.txtVerDetalhesPeq}>
                                                         Ver detalhes
@@ -264,7 +275,9 @@ export default function PedidosScreen() {
 
                     <Pressable
                         style={pedidosStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/home")
+                        }
                     >
                         <Image
                             style={pedidosStyle.iconeVoltar}

@@ -94,6 +94,13 @@ const editarPerfilStyle = StyleSheet.create({
         tintColor: cores.laranja,
     },
 
+    // Foto real do cliente: ocupa o círculo todo e não recebe cor
+    fotoAvatar: {
+        width: 54,
+        height: 54,
+        borderRadius: 27,
+    },
+
     btnAlterarFoto: {
         borderColor: cores.laranja,
         borderWidth: 2,
@@ -227,6 +234,20 @@ const editarPerfilStyle = StyleSheet.create({
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
         color: cores.laranja,
+    },
+
+    txtErro: {
+        color: "#d32f2f",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 10,
+    },
+
+    txtSucesso: {
+        color: cores.verde,
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 10,
     },
 
 });

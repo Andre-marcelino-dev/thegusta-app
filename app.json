@@ -39,7 +39,13 @@
         }
       ],
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O app precisa acessar suas fotos para você escolher a foto do perfil."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

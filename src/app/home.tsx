@@ -24,6 +24,8 @@ import { cores } from "@/styles/variaveis";
 import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
 import { buscarClienteLogado, urlFotoCliente } from "@/utils/auth";
 
+import {API,IMAGEM} from "@/config/api";
+
 const IMAGEM_PADRAO = require("@/assets/images/img/sem-imagem.png");
 
 
@@ -111,6 +113,7 @@ const categoriasIniciais: Categoria[] = [
 ];
 
 export default function HomeScreen() {
+  
     const [destaques, setDestaques] = useState<ProdutoDestaque[]>(destaquesIniciais);
     const [imagensComErro, setImagensComErro] = useState<number[]>([]);
     const [categorias, setCategorias] = useState<Categoria[]>(categoriasIniciais);
@@ -362,6 +365,8 @@ export default function HomeScreen() {
                                         <View key={item.id} style={homeStyle.cardDestaque}>
                                             <Pressable
                                                 onPress={() =>
+                                                    // Produto de exemplo (sem slug) não abre detalhes
+                                                    item.slug &&
                                                     router.push({
                                                         pathname: "/detalhesProduto",
                                                         params: { slug: item.slug },

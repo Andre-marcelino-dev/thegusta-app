@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { Fragment } from "react";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { Fragment, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -15,57 +15,98 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import detalhesPedidoStyle from "@/styles/detalhesPedidoStyle";
 import Footer from "@/components/footer";
+import { buscarPedido, etapaDoStatus, Pedido, textoDoStatus } from "@/utils/pedidos";
 
 const numeroWhatsappLoja = "5511988161211";
 
-const pedido = {
-    numero: 132,
-    data: "Hoje, 08:00",
-    status: "Em preparo",
-    previsao: "40 - 55 min",
-    formaPagamento: "Pix",
-    observacao: "Nenhuma observação para seu pedido",
+const previsaoEntrega = "40 - 55 min";
+
+// Usado enquanto a API carrega
+const pedidoVazio: Pedido = {
+    numero: 0,
+    data: "",
+    status: "",
+    formaPagamento: "",
+    observacao: "",
+    cupom: null,
+    desconto: 0,
+    total: 0,
+    itens: [],
 };
-
-const itensPedido = [
-    { id: 1, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-    { id: 2, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-    { id: 3, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-    { id: 4, nome: "2x Bolo de Banana Fit", preco: 37.6, imagem: require("@/assets/images/img/bolo01.png") },
-];
-
-const taxaEntrega = 8.0;
-const cupomAplicado = "THEGUSTEX10";
 
 function formatarPreco(valor: number) {
     return `R$ ${valor.toFixed(2).replace(".", ",")}`;
 }
 
-const etapas = [
+const etapasPedido = [
     {
         id: 2,
         label: "Em\npreparo",
-        icone: require("@/assets/images/img/preparando-verde.png"),
-        estado: "atual" as const,
+        iconeAtivo: require("@/assets/images/img/preparando-verde.png"),
+        iconePendente: require("@/assets/images/img/preparando-cinza.png"),
     },
     {
         id: 3,
         label: "Saiu para\nentrega",
-        icone: require("@/assets/images/img/delivery-cinza.png"),
-        estado: "pendente" as const,
+        iconeAtivo: require("@/assets/images/img/delivery-verde.png"),
+        iconePendente: require("@/assets/images/img/delivery-cinza.png"),
     },
     {
         id: 4,
         label: "Entrega\nrealizada",
-        icone: require("@/assets/images/img/entregue-cinza.png"),
-        estado: "pendente" as const,
+        iconeAtivo: require("@/assets/images/img/entregue-verde.png"),
+        iconePendente: require("@/assets/images/img/entregue-cinza.png"),
     },
 ];
 
+function iconePagamento(forma: string) {
+    const valor = forma.toLowerCase();
+    if (valor.includes("pix")) return require("@/assets/images/img/pix.png");
+    if (valor.includes("cart") || valor.includes("créd") || valor.includes("déb"))
+        return require("@/assets/images/img/cartao.png");
+    return require("@/assets/images/img/carteira.png");
+}
+
 export default function DetalhesPedidoScreen() {
+    // Número do pedido vindo da lista (?id=). Sem ele, mostra o mais recente.
+    const { id } = useLocalSearchParams<{ id?: string }>();
+    const [pedido, setPedido] = useState<Pedido>(pedidoVazio);
+
+    // Carrega do banco o pedido do cliente logado
+    useFocusEffect(useCallback(() => {
+        async function carregarPedido() {
+            try {
+                const pedidoApi = await buscarPedido(id ? Number(id) : undefined);
+                if (pedidoApi) setPedido(pedidoApi);
+            } catch (erro) {
+                console.error("Erro ao carregar pedido:", erro);
+            }
+        }
+
+        carregarPedido();
+    }, [id]));
+
+    const itensPedido = pedido.itens;
+    const etapaAtual = etapaDoStatus(pedido.status);
+    const etapas = etapasPedido.map((etapa) => {
+        const estado: "completo" | "atual" | "pendente" =
+            etapa.id < etapaAtual ? "completo" : etapa.id === etapaAtual ? "atual" : "pendente";
+        return {
+            ...etapa,
+            estado,
+            icone: estado === "pendente" ? etapa.iconePendente : etapa.iconeAtivo,
+        };
+    });
+    const iconeStatus =
+        etapas.find((etapa) => etapa.estado === "atual")?.icone ??
+        (etapaAtual === 5 ? etapasPedido[2].iconeAtivo : etapasPedido[0].iconePendente);
+
     const subtotal = itensPedido.reduce((soma, item) => soma + item.preco, 0);
-    const desconto = cupomAplicado ? subtotal * 0.1053 : 0;
-    const total = subtotal + taxaEntrega - desconto;
+    const desconto = pedido.desconto;
+    const cupomAplicado = pedido.cupom;
+    const total = pedido.total;
+    // Não há coluna de frete: é o que sobra do total depois dos itens e do desconto
+    const taxaEntrega = Math.max(0, total + desconto - subtotal);
 
     return (
         <View style={globalStyle.container}>
@@ -109,10 +150,10 @@ export default function DetalhesPedidoScreen() {
                                     <View style={detalhesPedidoStyle.badgeStatus}>
                                         <Image
                                             style={detalhesPedidoStyle.imgBadgeStatus}
-                                            source={require("@/assets/images/img/preparando-verde.png")}
+                                            source={iconeStatus}
                                         />
                                         <Text style={detalhesPedidoStyle.txtBadgeStatus}>
-                                            {pedido.status}
+                                            {textoDoStatus(etapaAtual)}
                                         </Text>
                                     </View>
                                 </View>
@@ -170,7 +211,7 @@ export default function DetalhesPedidoScreen() {
                                         source={require("@/assets/images/img/delivery-laranja.png")}
                                     />
                                     <Text style={detalhesPedidoStyle.txtPrevisao}>
-                                        Previsão estimada {pedido.previsao}
+                                        Previsão estimada {previsaoEntrega}
                                     </Text>
                                 </View>
                             </View>
@@ -217,7 +258,7 @@ export default function DetalhesPedidoScreen() {
                                         {formatarPreco(taxaEntrega)}
                                     </Text>
                                 </View>
-                                {cupomAplicado && (
+                                {desconto > 0 && (
                                     <View style={detalhesPedidoStyle.linhaResumo}>
                                         <Text style={detalhesPedidoStyle.txtLabelDesconto}>
                                             Desconto
@@ -253,7 +294,7 @@ export default function DetalhesPedidoScreen() {
                                     <View style={detalhesPedidoStyle.pillPagamento}>
                                         <Image
                                             style={detalhesPedidoStyle.imgPagamento}
-                                            source={require("@/assets/images/img/pix.png")}
+                                            source={iconePagamento(pedido.formaPagamento)}
                                         />
                                         <Text style={detalhesPedidoStyle.txtPagamento}>
                                             {pedido.formaPagamento}
@@ -309,7 +350,9 @@ export default function DetalhesPedidoScreen() {
 
                     <Pressable
                         style={detalhesPedidoStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/pedidos")
+                        }
                     >
                         <Image
                             style={detalhesPedidoStyle.iconeVoltar}

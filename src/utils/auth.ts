@@ -12,6 +12,14 @@ export type Cliente = {
     email_cliente: string;
     telefone_cliente: string;
     foto_cliente?: string | null;
+    cpf_cnpj_cliente?: string;
+    data_nasc_cliente?: string;
+};
+
+export type DadosPerfil = {
+    nome_cliente: string;
+    telefone_cliente: string;
+    data_nasc_cliente: string; // aaaa-mm-dd
 };
 
 // O SecureStore não funciona na web, então lá usamos o localStorage.
@@ -74,6 +82,70 @@ export async function buscarClienteLogado(): Promise<Cliente | null> {
     if (!resposta.ok) return null;
 
     const json = await resposta.json();
+    await salvar(CHAVE_CLIENTE, JSON.stringify(json.data));
+    return json.data;
+}
+
+// Salva na API os dados do perfil de quem está logado.
+// Se der errado, lança um erro com a mensagem da API para mostrar na tela.
+export async function atualizarCliente(dados: DadosPerfil): Promise<Cliente> {
+    const token = await pegarToken();
+    if (!token) throw new Error("Faça login novamente.");
+
+    const resposta = await fetch(`${API_BASE_URL}/api/v1/cliente`, {
+        method: "PUT",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(dados),
+    });
+
+    const json = await resposta.json().catch(() => null);
+    if (!resposta.ok || !json?.success) {
+        throw new Error(json?.message ?? `Erro ${resposta.status} ao salvar o perfil.`);
+    }
+
+    await salvar(CHAVE_CLIENTE, JSON.stringify(json.data));
+    return json.data;
+}
+
+type FotoEscolhida = {
+    uri: string;
+    mimeType?: string | null;
+    fileName?: string | null;
+    file?: File;
+};
+
+// Envia para a API a foto escolhida na galeria e devolve o cliente atualizado.
+export async function enviarFotoCliente(foto: FotoEscolhida): Promise<Cliente> {
+    const token = await pegarToken();
+    if (!token) throw new Error("Faça login novamente.");
+
+    const formulario = new FormData();
+    if (Platform.OS === "web" && foto.file) {
+        formulario.append("foto", foto.file);
+    } else {
+        // No celular o React Native envia o arquivo a partir do uri
+        formulario.append("foto", {
+            uri: foto.uri,
+            name: foto.fileName ?? "foto.jpg",
+            type: foto.mimeType ?? "image/jpeg",
+        } as any);
+    }
+
+    const resposta = await fetch(`${API_BASE_URL}/api/v1/cliente/foto`, {
+        method: "POST",
+        headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+        body: formulario,
+    });
+
+    const json = await resposta.json().catch(() => null);
+    if (!resposta.ok || !json?.success) {
+        throw new Error(json?.message ?? `Erro ${resposta.status} ao enviar a foto.`);
+    }
+
     await salvar(CHAVE_CLIENTE, JSON.stringify(json.data));
     return json.data;
 }

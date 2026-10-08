@@ -1,5 +1,6 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -16,6 +17,33 @@ import globalStyle from "@/styles/globalStyle";
 import editarPerfilStyle from "@/styles/editarPerfilStyle";
 import Footer from "@/components/footer";
 import { cores } from "@/styles/variaveis";
+import {
+    atualizarCliente,
+    buscarClienteLogado,
+    enviarFotoCliente,
+    urlFotoCliente,
+} from "@/utils/auth";
+
+// "aaaa-mm-dd..." (banco) -> "dd/mm/aaaa" (tela)
+function dataParaTela(data?: string) {
+    if (!data) return "";
+    const [ano, mes, dia] = data.slice(0, 10).split("-");
+    return `${dia}/${mes}/${ano}`;
+}
+
+// "dd/mm/aaaa" (tela) -> "aaaa-mm-dd" (banco)
+function dataParaBanco(data: string) {
+    const [dia, mes, ano] = data.split("/");
+    return `${ano}-${mes}-${dia}`;
+}
+
+// Coloca as barras sozinho enquanto a pessoa digita a data
+function mascararData(texto: string) {
+    const numeros = texto.replace(/\D/g, "").slice(0, 8);
+    if (numeros.length > 4) return `${numeros.slice(0, 2)}/${numeros.slice(2, 4)}/${numeros.slice(4)}`;
+    if (numeros.length > 2) return `${numeros.slice(0, 2)}/${numeros.slice(2)}`;
+    return numeros;
+}
 
 export default function EditarPerfilScreen() {
     const [nome, setNome] = useState("");
@@ -24,6 +52,94 @@ export default function EditarPerfilScreen() {
     const [cpf, setCpf] = useState("");
     const [nascimento, setNascimento] = useState("");
     const [receberNovidades, setReceberNovidades] = useState(true);
+    const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
+    const [salvando, setSalvando] = useState(false);
+    const [enviandoFoto, setEnviandoFoto] = useState(false);
+    const [erro, setErro] = useState("");
+    const [sucesso, setSucesso] = useState("");
+
+    // Carrega do banco os dados de quem está logado
+    useEffect(() => {
+        async function carregarPerfil() {
+            try {
+                const cliente = await buscarClienteLogado();
+                if (!cliente) {
+                    setErro("Não foi possível carregar seus dados. Faça login novamente.");
+                    return;
+                }
+                setNome(cliente.nome_cliente ?? "");
+                setEmail(cliente.email_cliente ?? "");
+                setTelefone(cliente.telefone_cliente ?? "");
+                setCpf(cliente.cpf_cnpj_cliente ?? "");
+                setNascimento(dataParaTela(cliente.data_nasc_cliente));
+                setFotoPerfil(urlFotoCliente(cliente));
+            } catch (e) {
+                console.error("Erro ao carregar perfil:", e);
+                setErro("Não foi possível carregar seus dados.");
+            }
+        }
+
+        carregarPerfil();
+    }, []);
+
+    // Abre a galeria, deixa recortar em quadrado e envia a foto para a API
+    async function alterarFoto() {
+        setErro("");
+        setSucesso("");
+
+        const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissao.granted) {
+            setErro("Permita o acesso às fotos para alterar a foto do perfil.");
+            return;
+        }
+
+        const resultado = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: "images",
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5, // a API aceita até 2 MB
+        });
+        if (resultado.canceled || !resultado.assets?.[0]) return;
+
+        setEnviandoFoto(true);
+        try {
+            const cliente = await enviarFotoCliente(resultado.assets[0]);
+            setFotoPerfil(urlFotoCliente(cliente));
+            setSucesso("Foto atualizada com sucesso.");
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível enviar a foto.");
+        } finally {
+            setEnviandoFoto(false);
+        }
+    }
+
+    async function salvarPerfil() {
+        setErro("");
+        setSucesso("");
+
+        if (nome.trim() === "" || telefone.trim() === "") {
+            setErro("Preencha o nome e o telefone.");
+            return;
+        }
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) {
+            setErro("Informe a data de nascimento no formato dd/mm/aaaa.");
+            return;
+        }
+
+        setSalvando(true);
+        try {
+            await atualizarCliente({
+                nome_cliente: nome.trim(),
+                telefone_cliente: telefone.trim(),
+                data_nasc_cliente: dataParaBanco(nascimento),
+            });
+            setSucesso("Dados atualizados com sucesso.");
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível salvar.");
+        } finally {
+            setSalvando(false);
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -51,14 +167,26 @@ export default function EditarPerfilScreen() {
                             <View style={editarPerfilStyle.cardFoto}>
                                 <View style={editarPerfilStyle.linhaFoto}>
                                     <View style={editarPerfilStyle.avatarFoto}>
-                                        <Image
-                                            style={editarPerfilStyle.imgAvatarFoto}
-                                            source={require("@/assets/images/img/perfil.png")}
-                                        />
+                                        {fotoPerfil !== null ? (
+                                            <Image
+                                                style={editarPerfilStyle.fotoAvatar}
+                                                source={{ uri: fotoPerfil }}
+                                                onError={() => setFotoPerfil(null)}
+                                            />
+                                        ) : (
+                                            <Image
+                                                style={editarPerfilStyle.imgAvatarFoto}
+                                                source={require("@/assets/images/img/perfil.png")}
+                                            />
+                                        )}
                                     </View>
-                                    <Pressable style={editarPerfilStyle.btnAlterarFoto}>
+                                    <Pressable
+                                        style={editarPerfilStyle.btnAlterarFoto}
+                                        onPress={alterarFoto}
+                                        disabled={enviandoFoto}
+                                    >
                                         <Text style={editarPerfilStyle.txtAlterarFoto}>
-                                            Alterar foto
+                                            {enviandoFoto ? "Enviando..." : "Alterar foto"}
                                         </Text>
                                     </Pressable>
                                 </View>
@@ -96,6 +224,7 @@ export default function EditarPerfilScreen() {
                                         autoCapitalize="none"
                                         value={email}
                                         onChangeText={setEmail}
+                                        editable={false}
                                     />
                                 </View>
 
@@ -126,6 +255,7 @@ export default function EditarPerfilScreen() {
                                         keyboardType="numeric"
                                         value={cpf}
                                         onChangeText={setCpf}
+                                        editable={false}
                                     />
                                 </View>
 
@@ -140,7 +270,7 @@ export default function EditarPerfilScreen() {
                                         placeholderTextColor={cores.cinzclaro}
                                         keyboardType="numeric"
                                         value={nascimento}
-                                        onChangeText={setNascimento}
+                                        onChangeText={(texto) => setNascimento(mascararData(texto))}
                                     />
                                 </View>
                             </View>
@@ -176,9 +306,20 @@ export default function EditarPerfilScreen() {
                                 </Pressable>
                             </View>
 
-                            <Pressable style={editarPerfilStyle.btnSalvar}>
+                            {erro !== "" && (
+                                <Text style={editarPerfilStyle.txtErro}>{erro}</Text>
+                            )}
+                            {sucesso !== "" && (
+                                <Text style={editarPerfilStyle.txtSucesso}>{sucesso}</Text>
+                            )}
+
+                            <Pressable
+                                style={editarPerfilStyle.btnSalvar}
+                                onPress={salvarPerfil}
+                                disabled={salvando}
+                            >
                                 <Text style={editarPerfilStyle.txtSalvar}>
-                                    Salvar alterações
+                                    {salvando ? "Salvando..." : "Salvar alterações"}
                                 </Text>
                             </Pressable>
 
@@ -193,7 +334,9 @@ export default function EditarPerfilScreen() {
 
                     <Pressable
                         style={editarPerfilStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/configuracoes")
+                        }
                     >
                         <Image
                             style={editarPerfilStyle.iconeVoltar}

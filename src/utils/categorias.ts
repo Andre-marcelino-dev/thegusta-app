@@ -1,9 +1,7 @@
-import Constants from "expo-constants";
+import { SERVIDOR } from "@/config/api";
 
-// No celular/emulador "localhost" aponta para o próprio aparelho, então usamos
-// o IP do PC que está rodando o Expo (o mesmo onde a API está na porta 8081).
-const hostDoPc = Constants.expoConfig?.hostUri?.split(":")[0] ?? "localhost";
-export const API_BASE_URL = `http://${hostDoPc}:8081`;
+// O endereço do servidor fica só no config/api.ts
+export const API_BASE_URL = SERVIDOR;
 
 export type Categoria = {
     id: number;

@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -17,33 +17,12 @@ import sacolaStyle from "@/styles/sacolaStyle";
 import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
-
-const itensIniciais = [
-    {
-        id: 1,
-        nome: "Bolo de Banana Fit",
-        descricao: "Banana Prata com canela e gergelim",
-        preco: 18.8,
-        quantidade: 2,
-        imagem: require("@/assets/images/img/bolo01.png"),
-    },
-    {
-        id: 2,
-        nome: "Bolo de Banana Fit",
-        descricao: "Banana Prata com canela e gergelim",
-        preco: 18.8,
-        quantidade: 3,
-        imagem: require("@/assets/images/img/bolo01.png"),
-    },
-    {
-        id: 3,
-        nome: "Bolo de Banana Fit",
-        descricao: "Banana Prata com canela e gergelim",
-        preco: 18.8,
-        quantidade: 1,
-        imagem: require("@/assets/images/img/bolo01.png"),
-    },
-];
+import {
+    alterarQuantidadeSacola,
+    buscarSacola,
+    ItemSacola,
+    removerDaSacola,
+} from "@/utils/sacola";
 
 const taxaEntrega = 6.0;
 
@@ -56,24 +35,47 @@ function formatarPrecoResumo(valor: number) {
 }
 
 export default function SacolaScreen() {
-    const [itens, setItens] = useState(itensIniciais);
+    const [itens, setItens] = useState<ItemSacola[]>([]);
     const [cupom, setCupom] = useState("");
     const [cupomAplicado, setCupomAplicado] = useState<string | null>(
         "THEGUSTA10"
     );
 
+    // Carrega do banco os produtos que o cliente logado escolheu
+    // (toda vez que a tela aparece, para pegar o que foi adicionado depois)
+    useFocusEffect(useCallback(() => {
+        async function carregarSacola() {
+            try {
+                setItens(await buscarSacola());
+            } catch (erro) {
+                console.error("Erro ao carregar sacola:", erro);
+            }
+        }
+
+        carregarSacola();
+    }, []));
+
     function alterarQuantidade(id: number, delta: number) {
+        const item = itens.find((item) => item.id === id);
+        if (!item) return;
+        const novaQuantidade = Math.max(1, item.quantidade + delta);
+        if (novaQuantidade === item.quantidade) return;
+
         setItens((atual) =>
             atual.map((item) =>
-                item.id === id
-                    ? { ...item, quantidade: Math.max(1, item.quantidade + delta) }
-                    : item
+                item.id === id ? { ...item, quantidade: novaQuantidade } : item
             )
+        );
+        alterarQuantidadeSacola(id, novaQuantidade).catch((erro) =>
+            console.error("Erro ao alterar quantidade:", erro)
         );
     }
 
     function removerItem(id: number) {
         setItens((atual) => atual.filter((item) => item.id !== id));
+        removerDaSacola(id).catch((erro) =>
+            console.error("Erro ao remover item:", erro)
+        );
     }
 
     function aplicarCupom() {
@@ -271,7 +273,9 @@ export default function SacolaScreen() {
 
                     <Pressable
                         style={sacolaStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/home")
+                        }
                     >
                         <Image
                             style={sacolaStyle.iconeVoltar}

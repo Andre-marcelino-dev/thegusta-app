@@ -107,6 +107,34 @@ export function textoDoStatus(etapa: number) {
     return "Em preparo";
 }
 
+export type NovoPedido = {
+    entrega: boolean;
+    forma_pagamento: "pix" | "cartao" | "dinheiro";
+    observacao?: string;
+};
+
+// Transforma a sacola do cliente logado em um pedido (a API esvazia a sacola).
+export async function criarPedido(dados: NovoPedido): Promise<Pedido> {
+    const token = await pegarToken();
+    if (!token) throw new Error("Faça login novamente.");
+
+    const resposta = await fetch(`${API_BASE_URL}/api/v1/pedidos`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(dados),
+    });
+
+    const json = await resposta.json().catch(() => null);
+    if (!resposta.ok || !json?.success) {
+        throw new Error(json?.message ?? `Erro ${resposta.status} ao fazer o pedido.`);
+    }
+    return converterPedido(json.data);
+}
+
 // Busca no banco os pedidos do cliente logado (o mais novo primeiro).
 export async function buscarPedidos(): Promise<Pedido[]> {
     const json = await chamarPedidos("");

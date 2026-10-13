@@ -327,6 +327,14 @@ const pagamentoStyle = StyleSheet.create({
         color: cores.preto,
     },
 
+    txtErro: {
+        color: "#d32f2f",
+        fontSize: 14,
+        textAlign: "center",
+        marginHorizontal: 20,
+        marginBottom: 10,
+    },
+
 });
 
 export default pagamentoStyle;

@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -20,36 +20,13 @@ import pagamentoStyle from "@/styles/pagamentoStyle";
 import Footer from "@/components/footer";
 
 import { cores } from "@/styles/variaveis";
+import { buscarSacola, ItemSacola } from "@/utils/sacola";
+import { criarPedido } from "@/utils/pedidos";
 
 type TipoEntrega = "entrega" | "retirada";
 type FormaPagamento = "pix" | "cartao" | "dinheiro";
 
-const itensPedido = [
-    {
-        id: 1,
-        nome: "Bolo de Banana Fit",
-        preco: 18.8,
-        quantidade: 2,
-        imagem: require("@/assets/images/img/bolo01.png"),
-    },
-    {
-        id: 2,
-        nome: "Bolo de Banana Fit",
-        preco: 18.8,
-        quantidade: 2,
-        imagem: require("@/assets/images/img/bolo01.png"),
-    },
-    {
-        id: 3,
-        nome: "Bolo de Banana Fit",
-        preco: 18.8,
-        quantidade: 2,
-        imagem: require("@/assets/images/img/bolo01.png"),
-    },
-];
-
 const taxaEntrega = 6.0;
-const cupomAplicado = "THEGUSTA10";
 const numeroWhatsapp = "5511988161211";
 const rotulosEntrega: Record<TipoEntrega, string> = {
     entrega: "Entrega",
@@ -103,16 +80,60 @@ export default function PagamentoScreen() {
         "pix"
     );
     const [observacao, setObservacao] = useState("");
+    const [itensPedido, setItensPedido] = useState<ItemSacola[]>([]);
+    const [enviando, setEnviando] = useState(false);
+    const [erro, setErro] = useState("");
+
+    // Os itens do pedido são os da sacola do cliente logado
+    useFocusEffect(useCallback(() => {
+        async function carregarItens() {
+            try {
+                setItensPedido(await buscarSacola());
+            } catch (e) {
+                console.error("Erro ao carregar a sacola:", e);
+            }
+        }
+
+        carregarItens();
+    }, []));
 
     const subtotal = itensPedido.reduce(
         (soma, item) => soma + item.preco * item.quantidade,
         0
     );
     const valorEntrega = tipoEntrega === "entrega" ? taxaEntrega : 0;
-    const desconto = cupomAplicado ? subtotal * 0.1 : 0;
+    // Cupom ainda não é validado no banco, então o pedido sai sem desconto
+    const desconto = 0;
+    const cupomAplicado: string | null = null;
     const total = subtotal + valorEntrega - desconto;
  
     async function confirmarPedido() {
+        if (enviando) return;
+        setErro("");
+
+        if (itensPedido.length === 0) {
+            setErro("Sua sacola está vazia.");
+            return;
+        }
+
+        // 1. Grava o pedido no banco (a API esvazia a sacola)
+        setEnviando(true);
+        let numeroPedido: number;
+        try {
+            const pedido = await criarPedido({
+                entrega: tipoEntrega === "entrega",
+                forma_pagamento: formaPagamento,
+                observacao: observacao.trim() || undefined,
+            });
+            numeroPedido = pedido.numero;
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível fazer o pedido.");
+            setEnviando(false);
+            return;
+        }
+        setEnviando(false);
+
+        // 2. Avisa a loja pelo WhatsApp, como antes, agora com o número do pedido
         const linhasItens = itensPedido
             .map((item) => `- ${item.quantidade}x ${item.nome}`)
             .join("\n");
@@ -126,35 +147,42 @@ export default function PagamentoScreen() {
             ? `\n*Observação:* ${observacao.trim()}`
             : "";
 
-        const mensagem = `*Novo pedido - TheGusta*\n\n${linhasItens}\n\n*Entrega/Retirada:* ${rotulosEntrega[tipoEntrega]}${linhasEndereco}\n*Forma de pagamento:* ${rotulosPagamento[formaPagamento]}${linhaObservacao}\n\n*Subtotal:* ${formatarPrecoResumo(
+        const mensagem = `*Novo pedido #${numeroPedido} - TheGusta*\n\n${linhasItens}\n\n*Entrega/Retirada:* ${rotulosEntrega[tipoEntrega]}${linhasEndereco}\n*Forma de pagamento:* ${rotulosPagamento[formaPagamento]}${linhaObservacao}\n\n*Subtotal:* ${formatarPrecoResumo(
             subtotal
         )}\n*Entrega:* ${formatarPrecoResumo(
             valorEntrega
-        )}\n*Desconto (${cupomAplicado}):* -${formatarPrecoResumo(
-            desconto
         )}\n*Total:* ${formatarPrecoResumo(total)}`;
  
         const textoCodificado = encodeURIComponent(mensagem);
         const urlApp = `whatsapp://send?phone=${numeroWhatsapp}&text=${textoCodificado}`;
         const urlWeb = `https://wa.me/${numeroWhatsapp}?text=${textoCodificado}`;
  
+        let whatsappAberto = false;
         if (Platform.OS !== "web") {
             try {
                 await Linking.openURL(urlApp);
-                return;
+                whatsappAberto = true;
             } catch {
                 // WhatsApp não instalado, segue para o link web
             }
         }
  
-        try {
-            await Linking.openURL(urlWeb);
-        } catch {
-            Alert.alert(
-                "WhatsApp não encontrado",
-                "Não foi possível abrir o WhatsApp neste dispositivo."
-            );
+        if (!whatsappAberto) {
+            try {
+                await Linking.openURL(urlWeb);
+            } catch {
+                Alert.alert(
+                    "WhatsApp não encontrado",
+                    "Seu pedido foi feito, mas não foi possível abrir o WhatsApp."
+                );
+            }
         }
+
+        // 3. Mostra o pedido que acabou de ser criado
+        router.replace({
+            pathname: "/detalhesPedido",
+            params: { id: numeroPedido },
+        });
     }
     return (
         <View style={globalStyle.container}>
@@ -355,11 +383,11 @@ export default function PagamentoScreen() {
                                                 source={item.imagem}
                                             />
                                             <Text style={pagamentoStyle.txtItemResumo}>
-                                                {item.nome}
+                                                {item.quantidade}x {item.nome}
                                             </Text>
                                         </View>
                                         <Text style={pagamentoStyle.txtValorItemResumo}>
-                                            {formatarPrecoResumo(item.preco)}
+                                            {formatarPrecoResumo(item.preco * item.quantidade)}
                                         </Text>
                                     </View>
                                 ))}
@@ -401,17 +429,24 @@ export default function PagamentoScreen() {
                             </View>
                         </View>
 
+                        {erro !== "" && <Text style={pagamentoStyle.txtErro}>{erro}</Text>}
+
                         <Pressable
                             style={pagamentoStyle.btnConfirmar}
                             onPress={confirmarPedido}
+                            disabled={enviando}
                         >
-                            <Text style={pagamentoStyle.txtConfirmar}>Confirma Pedido</Text>
+                            <Text style={pagamentoStyle.txtConfirmar}>
+                                {enviando ? "Enviando pedido..." : "Confirma Pedido"}
+                            </Text>
                         </Pressable>
                     </ScrollView>
 
                     <Pressable
                         style={pagamentoStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/sacola")
+                        }
                     >
                         <Image
                             style={pagamentoStyle.iconeVoltar}

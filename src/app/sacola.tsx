@@ -37,9 +37,8 @@ function formatarPrecoResumo(valor: number) {
 export default function SacolaScreen() {
     const [itens, setItens] = useState<ItemSacola[]>([]);
     const [cupom, setCupom] = useState("");
-    const [cupomAplicado, setCupomAplicado] = useState<string | null>(
-        "THEGUSTA10"
-    );
+    // Começa sem cupom: o pedido ainda não aplica desconto (cupons não existem no banco)
+    const [cupomAplicado, setCupomAplicado] = useState<string | null>(null);
 
     // Carrega do banco os produtos que o cliente logado escolheu
     // (toda vez que a tela aparece, para pegar o que foi adicionado depois)

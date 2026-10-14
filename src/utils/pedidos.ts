@@ -1,8 +1,12 @@
 import { pegarToken } from "@/utils/auth";
 import { API_BASE_URL } from "@/utils/categorias";
+import { adicionarNaSacola } from "@/utils/sacola";
 
 export type ItemPedido = {
     id: number;
+    idProduto: number;
+    nomeProduto: string;
+    quantidade: number;
     nome: string;
     preco: number;
     imagem: any;
@@ -31,6 +35,7 @@ type PedidoApi = {
     cupom: { codigo_cupom: string } | null;
     itens: {
         id_item: number;
+        id_produto: number;
         valor_unit_item: number;
         qtde_item: number;
         produto: { nome_produto: string; foto_produto: string };
@@ -81,6 +86,9 @@ function converterPedido(pedido: PedidoApi): Pedido {
         total: pedido.valor_venda,
         itens: pedido.itens.map((item) => ({
             id: item.id_item,
+            idProduto: item.id_produto,
+            nomeProduto: item.produto.nome_produto,
+            quantidade: Number(item.qtde_item),
             nome: `${item.qtde_item}x ${item.produto.nome_produto}`,
             preco: item.valor_unit_item * item.qtde_item,
             imagem: { uri: `${API_BASE_URL}/davilla/images/${item.produto.foto_produto}` },
@@ -134,6 +142,23 @@ export async function criarPedido(dados: NovoPedido): Promise<Pedido> {
         throw new Error(json?.message ?? `Erro ${resposta.status} ao fazer o pedido.`);
     }
     return converterPedido(json.data);
+}
+
+// "Pedir novamente": coloca na sacola os mesmos produtos e quantidades do pedido.
+// Os preços são os atuais do cardápio. Produtos que saíram de venda são pulados.
+export async function pedirNovamente(pedido: Pedido) {
+    let adicionados = 0;
+    const indisponiveis: string[] = [];
+
+    for (const item of pedido.itens) {
+        try {
+            await adicionarNaSacola(item.idProduto, item.quantidade);
+            adicionados++;
+        } catch {
+            indisponiveis.push(item.nomeProduto);
+        }
+    }
+    return { adicionados, indisponiveis };
 }
 
 // Busca no banco os pedidos do cliente logado (o mais novo primeiro).

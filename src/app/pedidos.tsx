@@ -14,7 +14,14 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import pedidosStyle from "@/styles/pedidosStyle";
 import Footer from "@/components/footer";
-import { buscarPedidos, etapaDoStatus, Pedido, textoDoStatus } from "@/utils/pedidos";
+import {
+    buscarPedidos,
+    etapaDoStatus,
+    Pedido,
+    pedirNovamente,
+    textoDoStatus,
+} from "@/utils/pedidos";
+import { avisar } from "@/utils/avisar";
 
 type AbaPedido = "andamento" | "entregues";
 
@@ -29,6 +36,29 @@ function iconeDoStatus(etapa: number) {
 export default function PedidosScreen() {
     const [aba, setAba] = useState<AbaPedido>("andamento");
     const [pedidos, setPedidos] = useState<Pedido[]>([]);
+    // Número do pedido que está sendo repetido (evita toque duplo)
+    const [repetindo, setRepetindo] = useState<number | null>(null);
+
+    // Coloca os itens do pedido na sacola e abre a Sacola
+    async function repetirPedido(pedido: Pedido) {
+        if (repetindo !== null) return;
+        setRepetindo(pedido.numero);
+        try {
+            const { adicionados, indisponiveis } = await pedirNovamente(pedido);
+            if (adicionados === 0) {
+                avisar("Os produtos deste pedido não estão mais disponíveis.");
+                return;
+            }
+            if (indisponiveis.length > 0) {
+                avisar(`Estes produtos não estão mais disponíveis e ficaram de fora: ${indisponiveis.join(", ")}.`);
+            }
+            router.push("/sacola");
+        } catch (e) {
+            avisar(e instanceof Error ? e.message : "Não foi possível repetir o pedido.");
+        } finally {
+            setRepetindo(null);
+        }
+    }
 
     // Carrega do banco os pedidos do cliente logado
     useFocusEffect(useCallback(() => {
@@ -261,9 +291,15 @@ export default function PedidosScreen() {
                                                         Ver detalhes
                                                     </Text>
                                                 </Pressable>
-                                                <Pressable style={pedidosStyle.btnPedirNovamentePeq}>
+                                                <Pressable
+                                                    style={pedidosStyle.btnPedirNovamentePeq}
+                                                    onPress={() => repetirPedido(pedido)}
+                                                    disabled={repetindo !== null}
+                                                >
                                                     <Text style={pedidosStyle.txtPedirNovamentePeq}>
-                                                        Pedir novamente
+                                                        {repetindo === pedido.numero
+                                                            ? "Adicionando..."
+                                                            : "Pedir novamente"}
                                                     </Text>
                                                 </Pressable>
                                             </View>

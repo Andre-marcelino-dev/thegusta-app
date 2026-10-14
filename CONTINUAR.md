@@ -24,6 +24,7 @@ O app conversa com o site pela API (`/api/v1/...`). O endereço do servidor fica
 | Site da confeitaria | `https://ctrlaltdev.tipi5.smpsistema.com.br/confeitaria/` |
 | Painel admin | `https://ctrlaltdev.tipi5.smpsistema.com.br/confeitaria/admin` |
 | API (o app usa) | `https://ctrlaltdev.tipi5.smpsistema.com.br/confeitaria/api/v1/...` |
+| **Documentação da API** (pedida pelo professor) | `https://ctrlaltdev.tipi5.smpsistema.com.br/confeitaria/api/documentacao` |
 | App publicado na web | `https://thegust-app.expo.app` (endereço fixo de produção) |
 
 - Os endereços antigos `thegust-app--xxxx.expo.app` são **prévias paradas no tempo**. Não usar.
@@ -140,6 +141,8 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 **Site público:** os formulários da página Contato e do rodapé gravam em `tbl_contato` e **mandam um aviso por e-mail** para a loja.
 
+**Documentação da API:** página `/api/documentacao` (arquivo `resources/views/api/documentacao.blade.php`) com todas as rotas. Ao criar uma rota nova, acrescente-a na lista `$grupos` no topo desse arquivo.
+
 **Banco:** tabela nova `tbl_sacola`; `tbl_vendas.id_usuario` passou a aceitar vazio (pedido do app não tem funcionário).
 
 ---
@@ -179,6 +182,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** `40133ba` — Botão "Pedir novamente" funcionando.
-- **Site:** `d07710d` — Cupons de desconto (admin e API).
+- **Site:** `5696782` — Documentação da API completa.
 
 Para ver tudo: `git log --oneline` em cada projeto.

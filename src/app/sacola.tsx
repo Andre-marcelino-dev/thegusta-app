@@ -24,6 +24,7 @@ import {
     removerDaSacola,
 } from "@/utils/sacola";
 import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
+import { calcularDesconto, Cupom, validarCupom } from "@/utils/cupons";
 
 const taxaEntrega = 6.0;
 
@@ -39,8 +40,9 @@ export default function SacolaScreen() {
     const [itens, setItens] = useState<ItemSacola[]>([]);
     const [enderecoEntrega, setEnderecoEntrega] = useState<EnderecoEntrega | null>(null);
     const [cupom, setCupom] = useState("");
-    // Começa sem cupom: o pedido ainda não aplica desconto (cupons não existem no banco)
-    const [cupomAplicado, setCupomAplicado] = useState<string | null>(null);
+    const [cupomAplicado, setCupomAplicado] = useState<Cupom | null>(null);
+    const [mensagemCupom, setMensagemCupom] = useState("");
+    const [erroCupom, setErroCupom] = useState(false);
 
     // Carrega do banco os produtos que o cliente logado escolheu
     // (toda vez que a tela aparece, para pegar o que foi adicionado depois)
@@ -84,9 +86,25 @@ export default function SacolaScreen() {
         );
     }
 
-    function aplicarCupom() {
-        if (cupom.trim().length === 0) return;
-        setCupomAplicado(cupom.trim().toUpperCase());
+    // Valida o cupom na API. Com o campo vazio, remove o cupom aplicado.
+    async function aplicarCupom() {
+        if (cupom.trim().length === 0) {
+            setCupomAplicado(null);
+            setMensagemCupom("");
+            return;
+        }
+        try {
+            const encontrado = await validarCupom(cupom);
+            setCupomAplicado(encontrado);
+            setErroCupom(false);
+            setMensagemCupom(
+                `Cupom ${encontrado.codigo} aplicado: ${encontrado.percentual}% de desconto nos produtos.`
+            );
+        } catch (e) {
+            setCupomAplicado(null);
+            setErroCupom(true);
+            setMensagemCupom(e instanceof Error ? e.message : "Cupom inválido.");
+        }
     }
 
     const subtotal = itens.reduce(
@@ -94,7 +112,7 @@ export default function SacolaScreen() {
         0
     );
     const entrega = itens.length > 0 ? taxaEntrega : 0;
-    const desconto = cupomAplicado ? subtotal * 0.1 : 0;
+    const desconto = calcularDesconto(subtotal, cupomAplicado);
     const total = subtotal + entrega - desconto;
 
     return (
@@ -198,6 +216,17 @@ export default function SacolaScreen() {
                                         <Text style={sacolaStyle.txtBtnCupom}>Aplicar</Text>
                                     </Pressable>
                                 </View>
+                                {mensagemCupom !== "" && (
+                                    <Text
+                                        style={
+                                            erroCupom
+                                                ? sacolaStyle.txtErroCupom
+                                                : sacolaStyle.txtMensagemCupom
+                                        }
+                                    >
+                                        {mensagemCupom}
+                                    </Text>
+                                )}
                             </View>
 
                             <View style={sacolaStyle.cardEntrega}>
@@ -250,7 +279,7 @@ export default function SacolaScreen() {
                                             Desconto
                                         </Text>
                                         <Text style={sacolaStyle.txtCodigoCupom}>
-                                            {cupomAplicado}
+                                            {cupomAplicado.codigo}
                                         </Text>
                                         <Text style={sacolaStyle.txtValorDesconto}>
                                             {formatarPrecoResumo(desconto)}
@@ -269,7 +298,12 @@ export default function SacolaScreen() {
 
                         <Pressable
                             style={sacolaStyle.btnFinalizar}
-                            onPress={() => router.push("/pagamento")}
+                            onPress={() =>
+                                router.push({
+                                    pathname: "/pagamento",
+                                    params: cupomAplicado ? { cupom: cupomAplicado.codigo } : {},
+                                })
+                            }
                         >
                             <Text style={sacolaStyle.txtFinalizar}>
                                 Continuar para pagamento

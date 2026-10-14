@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -23,6 +23,7 @@ import { cores } from "@/styles/variaveis";
 import { buscarSacola, ItemSacola } from "@/utils/sacola";
 import { criarPedido } from "@/utils/pedidos";
 import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
+import { calcularDesconto, Cupom, validarCupom } from "@/utils/cupons";
 
 type TipoEntrega = "entrega" | "retirada";
 type FormaPagamento = "pix" | "cartao" | "dinheiro";
@@ -85,6 +86,9 @@ export default function PagamentoScreen() {
     const [enderecoEntrega, setEnderecoEntrega] = useState<EnderecoEntrega | null>(null);
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState("");
+    // Cupom aplicado na Sacola (?cupom=CODIGO); é validado de novo aqui
+    const { cupom: codigoCupom } = useLocalSearchParams<{ cupom?: string }>();
+    const [cupom, setCupom] = useState<Cupom | null>(null);
 
     // Os itens do pedido são os da sacola do cliente logado
     useFocusEffect(useCallback(() => {
@@ -99,19 +103,27 @@ export default function PagamentoScreen() {
             } catch (e) {
                 console.error("Erro ao carregar endereço:", e);
             }
+            if (codigoCupom) {
+                try {
+                    setCupom(await validarCupom(codigoCupom));
+                } catch {
+                    setCupom(null);
+                    setErro(`O cupom ${codigoCupom} não vale mais. O pedido sairá sem desconto.`);
+                }
+            }
         }
 
         carregarItens();
-    }, []));
+    }, [codigoCupom]));
 
     const subtotal = itensPedido.reduce(
         (soma, item) => soma + item.preco * item.quantidade,
         0
     );
     const valorEntrega = tipoEntrega === "entrega" ? taxaEntrega : 0;
-    // Cupom ainda não é validado no banco, então o pedido sai sem desconto
-    const desconto = 0;
-    const cupomAplicado: string | null = null;
+    // Mesmo cálculo da API: porcentagem sobre os produtos, sem a entrega
+    const desconto = calcularDesconto(subtotal, cupom);
+    const cupomAplicado = cupom?.codigo ?? null;
     const total = subtotal + valorEntrega - desconto;
  
     async function confirmarPedido() {
@@ -135,6 +147,7 @@ export default function PagamentoScreen() {
                 entrega: tipoEntrega === "entrega",
                 forma_pagamento: formaPagamento,
                 observacao: observacao.trim() || undefined,
+                cupom: cupom?.codigo,
             });
             numeroPedido = pedido.numero;
         } catch (e) {
@@ -162,7 +175,9 @@ export default function PagamentoScreen() {
             subtotal
         )}\n*Entrega:* ${formatarPrecoResumo(
             valorEntrega
-        )}\n*Total:* ${formatarPrecoResumo(total)}`;
+        )}${
+            cupom ? `\n*Desconto (${cupom.codigo}):* -${formatarPrecoResumo(desconto)}` : ""
+        }\n*Total:* ${formatarPrecoResumo(total)}`;
  
         const textoCodificado = encodeURIComponent(mensagem);
         const urlApp = `whatsapp://send?phone=${numeroWhatsapp}&text=${textoCodificado}`;

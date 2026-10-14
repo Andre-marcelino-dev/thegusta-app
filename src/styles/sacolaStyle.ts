@@ -243,6 +243,20 @@ const sacolaStyle = StyleSheet.create({
         color: cores.branco,
     },
 
+    txtMensagemCupom: {
+        fontSize: 12,
+        fontFamily: fontes.comum,
+        color: cores.verde,
+        marginTop: 8,
+    },
+
+    txtErroCupom: {
+        fontSize: 12,
+        fontFamily: fontes.comum,
+        color: "#d32f2f",
+        marginTop: 8,
+    },
+
     cardEntrega: {
         width: '100%',
         backgroundColor: cores.branco,

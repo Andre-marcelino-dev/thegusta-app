@@ -111,6 +111,7 @@ export type NovoPedido = {
     entrega: boolean;
     forma_pagamento: "pix" | "cartao" | "dinheiro";
     observacao?: string;
+    cupom?: string;
 };
 
 // Transforma a sacola do cliente logado em um pedido (a API esvazia a sacola).

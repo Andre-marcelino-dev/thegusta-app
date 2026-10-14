@@ -16,7 +16,7 @@ import globalStyle from "@/styles/globalStyle";
 import editarEnderecoStyle from "@/styles/editarEnderecoStyle";
 import Footer from "@/components/footer";
 import { cores } from "@/styles/variaveis";
-import { buscarEndereco, salvarEndereco } from "@/utils/enderecos";
+import { buscarCep, buscarEndereco, salvarEndereco } from "@/utils/enderecos";
 
 // Coloca o traço sozinho enquanto a pessoa digita o CEP
 function mascararCep(texto: string) {
@@ -38,6 +38,7 @@ export default function EditarEnderecoScreen() {
     const [uf, setUf] = useState("");
     const [cep, setCep] = useState("");
     const [salvando, setSalvando] = useState(false);
+    const [buscandoCep, setBuscandoCep] = useState(false);
     const [erro, setErro] = useState("");
 
     // Carrega do banco o endereço escolhido na lista
@@ -63,6 +64,32 @@ export default function EditarEnderecoScreen() {
 
         carregarEndereco();
     }, [idEndereco]);
+
+    // Ao completar os 8 números do CEP, preenche rua, bairro, cidade e UF
+    async function alterarCep(texto: string) {
+        const cepFormatado = mascararCep(texto);
+        setCep(cepFormatado);
+        if (cepFormatado.length !== 9) return;
+
+        setErro("");
+        setBuscandoCep(true);
+        try {
+            const encontrado = await buscarCep(cepFormatado);
+            if (!encontrado) {
+                setErro("CEP não encontrado. Confira o número ou preencha o endereço.");
+                return;
+            }
+            // Respeita o tamanho máximo das colunas do banco
+            if (encontrado.endereco) setEndereco(encontrado.endereco.slice(0, 40));
+            if (encontrado.bairro) setBairro(encontrado.bairro.slice(0, 40));
+            if (encontrado.cidade) setCidade(encontrado.cidade.slice(0, 40));
+            if (encontrado.uf) setUf(encontrado.uf);
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível consultar o CEP.");
+        } finally {
+            setBuscandoCep(false);
+        }
+    }
 
     async function salvar() {
         setErro("");
@@ -147,6 +174,27 @@ export default function EditarEnderecoScreen() {
                                         maxLength={30}
                                         value={nomeEndereco}
                                         onChangeText={setNomeEndereco}
+                                    />
+                                </View>
+
+                                <View style={editarEnderecoStyle.campo}>
+                                    <View style={editarEnderecoStyle.linhaLabel}>
+                                        <Image
+                                            style={editarEnderecoStyle.iconeCampo}
+                                            source={require("@/assets/images/img/local.png")}
+                                        />
+                                        <Text style={editarEnderecoStyle.labelCampo}>
+                                            {buscandoCep ? "CEP (buscando endereço...)" : "CEP"}
+                                        </Text>
+                                    </View>
+                                    <TextInput
+                                        style={editarEnderecoStyle.inputCampo}
+                                        placeholder="00000-000"
+                                        placeholderTextColor={cores.cinzclaro}
+                                        keyboardType="numeric"
+                                        maxLength={9}
+                                        value={cep}
+                                        onChangeText={alterarCep}
                                     />
                                 </View>
 
@@ -271,26 +319,6 @@ export default function EditarEnderecoScreen() {
                                     />
                                 </View>
 
-                                <View style={editarEnderecoStyle.campo}>
-                                    <View style={editarEnderecoStyle.linhaLabel}>
-                                        <Image
-                                            style={editarEnderecoStyle.iconeCampo}
-                                            source={require("@/assets/images/img/local.png")}
-                                        />
-                                        <Text style={editarEnderecoStyle.labelCampo}>
-                                            CEP
-                                        </Text>
-                                    </View>
-                                    <TextInput
-                                        style={editarEnderecoStyle.inputCampo}
-                                        placeholder="00000-000"
-                                        placeholderTextColor={cores.cinzclaro}
-                                        keyboardType="numeric"
-                                        maxLength={9}
-                                        value={cep}
-                                        onChangeText={(texto) => setCep(mascararCep(texto))}
-                                    />
-                                </View>
                             </View>
 
                             {erro !== "" && (

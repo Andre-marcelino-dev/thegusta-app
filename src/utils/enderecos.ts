@@ -51,6 +51,33 @@ export function formatarEndereco(endereco: Endereco) {
     return `${endereco.endereco}, ${endereco.numero}${complemento}\n${endereco.bairro} - ${endereco.cidade} - ${endereco.uf}\nCEP: ${endereco.cep}`;
 }
 
+export type EnderecoDoCep = {
+    endereco: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+};
+
+// Busca rua, bairro, cidade e UF pelo CEP no ViaCEP (serviço gratuito).
+// Retorna null se o CEP não existir.
+export async function buscarCep(cep: string): Promise<EnderecoDoCep | null> {
+    const numeros = cep.replace(/\D/g, "");
+    if (numeros.length !== 8) return null;
+
+    const resposta = await fetch(`https://viacep.com.br/ws/${numeros}/json/`);
+    if (!resposta.ok) throw new Error("Não foi possível consultar o CEP agora.");
+
+    const json = await resposta.json();
+    if (json.erro) return null;
+
+    return {
+        endereco: json.logradouro ?? "",
+        bairro: json.bairro ?? "",
+        cidade: json.localidade ?? "",
+        uf: json.uf ?? "",
+    };
+}
+
 // Endereços ativos do cliente logado (o principal vem primeiro)
 export async function buscarEnderecos(): Promise<Endereco[]> {
     return (await chamarEnderecos("")).data;

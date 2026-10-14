@@ -22,6 +22,7 @@ import Footer from "@/components/footer";
 import { cores } from "@/styles/variaveis";
 import { buscarSacola, ItemSacola } from "@/utils/sacola";
 import { criarPedido } from "@/utils/pedidos";
+import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
 
 type TipoEntrega = "entrega" | "retirada";
 type FormaPagamento = "pix" | "cartao" | "dinheiro";
@@ -81,6 +82,7 @@ export default function PagamentoScreen() {
     );
     const [observacao, setObservacao] = useState("");
     const [itensPedido, setItensPedido] = useState<ItemSacola[]>([]);
+    const [enderecoEntrega, setEnderecoEntrega] = useState<EnderecoEntrega | null>(null);
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState("");
 
@@ -91,6 +93,11 @@ export default function PagamentoScreen() {
                 setItensPedido(await buscarSacola());
             } catch (e) {
                 console.error("Erro ao carregar a sacola:", e);
+            }
+            try {
+                setEnderecoEntrega(await buscarEnderecoEntrega());
+            } catch (e) {
+                console.error("Erro ao carregar endereço:", e);
             }
         }
 
@@ -113,6 +120,10 @@ export default function PagamentoScreen() {
 
         if (itensPedido.length === 0) {
             setErro("Sua sacola está vazia.");
+            return;
+        }
+        if (tipoEntrega === "entrega" && !enderecoEntrega) {
+            setErro("Cadastre um endereço de entrega ou escolha Retirada.");
             return;
         }
 
@@ -140,7 +151,7 @@ export default function PagamentoScreen() {
  
         const linhasEndereco =
             tipoEntrega === "entrega"
-                ? `\n*Endereço:* Avenida Marechal Tito, 1500 - São Miguel Paulista - São Paulo - SP\n*Telefone:* (11) 9999-99999`
+                ? `\n*Endereço:* ${enderecoEntrega?.texto ?? ""}\n*Telefone:* ${enderecoEntrega?.telefone ?? ""}`
                 : "";
 
         const linhaObservacao = observacao.trim()
@@ -219,15 +230,17 @@ export default function PagamentoScreen() {
                                         </Text>
                                     </View>
                                     <Pressable
-                                        onPress={() => router.push("/editarEndereco")}
+                                        onPress={() => router.push("/enderecos")}
                                     >
                                         <Text style={pagamentoStyle.txtAlterar}>Alterar &gt;</Text>
                                     </Pressable>
                                 </View>
-                                <Text style={pagamentoStyle.txtEnderecoTitulo}>Casa</Text>
+                                <Text style={pagamentoStyle.txtEnderecoTitulo}>
+                                    {enderecoEntrega?.nome ?? "Sem endereço"}
+                                </Text>
                                 <Text style={pagamentoStyle.txtEndereco}>
-                                    Avenida Marechal Tito, 1500{"\n"}
-                                    São Miguel Paulista - São Paulo - SP
+                                    {enderecoEntrega?.texto ??
+                                        "Toque em Alterar para cadastrar um endereço."}
                                 </Text>
                             </View>
 

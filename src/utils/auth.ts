@@ -14,6 +14,11 @@ export type Cliente = {
     foto_cliente?: string | null;
     cpf_cnpj_cliente?: string;
     data_nasc_cliente?: string;
+    endereco_cliente?: string;
+    numero_cliente?: string;
+    bairro_cliente?: string;
+    cidade_cliente?: string;
+    uf_cliente?: string;
 };
 
 export type DadosPerfil = {

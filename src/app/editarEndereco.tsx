@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -16,14 +16,91 @@ import globalStyle from "@/styles/globalStyle";
 import editarEnderecoStyle from "@/styles/editarEnderecoStyle";
 import Footer from "@/components/footer";
 import { cores } from "@/styles/variaveis";
+import { buscarEndereco, salvarEndereco } from "@/utils/enderecos";
+
+// Coloca o traço sozinho enquanto a pessoa digita o CEP
+function mascararCep(texto: string) {
+    const numeros = texto.replace(/\D/g, "").slice(0, 8);
+    return numeros.length > 5 ? `${numeros.slice(0, 5)}-${numeros.slice(5)}` : numeros;
+}
 
 export default function EditarEnderecoScreen() {
-    const [nomeEndereco, setNomeEndereco] = useState("Casa");
-    const [endereco, setEndereco] = useState("Avenida Marechal Tito, 1500");
-    const [bairro, setBairro] = useState("São Miguel Paulista");
-    const [cidade, setCidade] = useState("São Paulo");
-    const [uf, setUf] = useState("SP");
+    // Com ?id= edita aquele endereço; sem id, adiciona um novo
+    const { id } = useLocalSearchParams<{ id?: string }>();
+    const idEndereco = id ? Number(id) : undefined;
+
+    const [nomeEndereco, setNomeEndereco] = useState("");
+    const [endereco, setEndereco] = useState("");
+    const [numero, setNumero] = useState("");
+    const [complemento, setComplemento] = useState("");
+    const [bairro, setBairro] = useState("");
+    const [cidade, setCidade] = useState("");
+    const [uf, setUf] = useState("");
     const [cep, setCep] = useState("");
+    const [salvando, setSalvando] = useState(false);
+    const [erro, setErro] = useState("");
+
+    // Carrega do banco o endereço escolhido na lista
+    useEffect(() => {
+        if (!idEndereco) return;
+
+        async function carregarEndereco() {
+            try {
+                const dados = await buscarEndereco(idEndereco!);
+                setNomeEndereco(dados.nome_endereco);
+                setEndereco(dados.endereco);
+                setNumero(dados.numero);
+                setComplemento(dados.complemento ?? "");
+                setBairro(dados.bairro);
+                setCidade(dados.cidade);
+                setUf(dados.uf);
+                setCep(dados.cep);
+            } catch (e) {
+                console.error("Erro ao carregar endereço:", e);
+                setErro("Não foi possível carregar este endereço.");
+            }
+        }
+
+        carregarEndereco();
+    }, [idEndereco]);
+
+    async function salvar() {
+        setErro("");
+
+        const obrigatorios = [nomeEndereco, endereco, numero, bairro, cidade, uf, cep];
+        if (obrigatorios.some((campo) => campo.trim() === "")) {
+            setErro("Preencha todos os campos (só o complemento é opcional).");
+            return;
+        }
+        if (uf.trim().length !== 2) {
+            setErro("A UF deve ter 2 letras, por exemplo SP.");
+            return;
+        }
+
+        setSalvando(true);
+        try {
+            await salvarEndereco(
+                {
+                    nome_endereco: nomeEndereco.trim(),
+                    endereco: endereco.trim(),
+                    numero: numero.trim(),
+                    complemento: complemento.trim() || null,
+                    bairro: bairro.trim(),
+                    cidade: cidade.trim(),
+                    uf: uf.trim().toUpperCase(),
+                    cep: cep.trim(),
+                },
+                idEndereco
+            );
+            // Volta para a lista, que recarrega sozinha
+            if (router.canGoBack()) router.back();
+            else router.replace("/enderecos");
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível salvar o endereço.");
+        } finally {
+            setSalvando(false);
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -42,10 +119,12 @@ export default function EditarEnderecoScreen() {
                                 />
                             </View>
                             <Text style={editarEnderecoStyle.titulo}>
-                                Editar endereço
+                                {idEndereco ? "Editar endereço" : "Novo endereço"}
                             </Text>
                             <Text style={editarEnderecoStyle.subtitulo}>
-                                Edite o endereço selecionado
+                                {idEndereco
+                                    ? "Edite o endereço selecionado"
+                                    : "Cadastre um endereço de entrega"}
                             </Text>
                         </View>
 
@@ -63,8 +142,9 @@ export default function EditarEnderecoScreen() {
                                     </View>
                                     <TextInput
                                         style={editarEnderecoStyle.inputCampo}
-                                        placeholder="Casa"
+                                        placeholder="Casa, Trabalho..."
                                         placeholderTextColor={cores.cinzclaro}
+                                        maxLength={30}
                                         value={nomeEndereco}
                                         onChangeText={setNomeEndereco}
                                     />
@@ -82,10 +162,51 @@ export default function EditarEnderecoScreen() {
                                     </View>
                                     <TextInput
                                         style={editarEnderecoStyle.inputCampo}
-                                        placeholder="Avenida Marechal Tito, 1500"
+                                        placeholder="Rua, avenida..."
                                         placeholderTextColor={cores.cinzclaro}
+                                        maxLength={40}
                                         value={endereco}
                                         onChangeText={setEndereco}
+                                    />
+                                </View>
+
+                                <View style={editarEnderecoStyle.campo}>
+                                    <View style={editarEnderecoStyle.linhaLabel}>
+                                        <Image
+                                            style={editarEnderecoStyle.iconeCampo}
+                                            source={require("@/assets/images/img/local.png")}
+                                        />
+                                        <Text style={editarEnderecoStyle.labelCampo}>
+                                            Número
+                                        </Text>
+                                    </View>
+                                    <TextInput
+                                        style={editarEnderecoStyle.inputCampo}
+                                        placeholder="1500"
+                                        placeholderTextColor={cores.cinzclaro}
+                                        maxLength={6}
+                                        value={numero}
+                                        onChangeText={setNumero}
+                                    />
+                                </View>
+
+                                <View style={editarEnderecoStyle.campo}>
+                                    <View style={editarEnderecoStyle.linhaLabel}>
+                                        <Image
+                                            style={editarEnderecoStyle.iconeCampo}
+                                            source={require("@/assets/images/img/local.png")}
+                                        />
+                                        <Text style={editarEnderecoStyle.labelCampo}>
+                                            Complemento (opcional)
+                                        </Text>
+                                    </View>
+                                    <TextInput
+                                        style={editarEnderecoStyle.inputCampo}
+                                        placeholder="Apto, bloco, sala..."
+                                        placeholderTextColor={cores.cinzclaro}
+                                        maxLength={50}
+                                        value={complemento}
+                                        onChangeText={setComplemento}
                                     />
                                 </View>
 
@@ -101,8 +222,9 @@ export default function EditarEnderecoScreen() {
                                     </View>
                                     <TextInput
                                         style={editarEnderecoStyle.inputCampo}
-                                        placeholder="São Miguel Paulista"
+                                        placeholder="Bairro"
                                         placeholderTextColor={cores.cinzclaro}
+                                        maxLength={40}
                                         value={bairro}
                                         onChangeText={setBairro}
                                     />
@@ -120,8 +242,9 @@ export default function EditarEnderecoScreen() {
                                     </View>
                                     <TextInput
                                         style={editarEnderecoStyle.inputCampo}
-                                        placeholder="São Paulo"
+                                        placeholder="Cidade"
                                         placeholderTextColor={cores.cinzclaro}
+                                        maxLength={40}
                                         value={cidade}
                                         onChangeText={setCidade}
                                     />
@@ -165,14 +288,26 @@ export default function EditarEnderecoScreen() {
                                         keyboardType="numeric"
                                         maxLength={9}
                                         value={cep}
-                                        onChangeText={setCep}
+                                        onChangeText={(texto) => setCep(mascararCep(texto))}
                                     />
                                 </View>
                             </View>
 
-                            <Pressable style={editarEnderecoStyle.btnSalvar}>
+                            {erro !== "" && (
+                                <Text style={editarEnderecoStyle.txtErro}>{erro}</Text>
+                            )}
+
+                            <Pressable
+                                style={editarEnderecoStyle.btnSalvar}
+                                onPress={salvar}
+                                disabled={salvando}
+                            >
                                 <Text style={editarEnderecoStyle.txtSalvar}>
-                                    Salvar alterações
+                                    {salvando
+                                        ? "Salvando..."
+                                        : idEndereco
+                                          ? "Salvar alterações"
+                                          : "Adicionar endereço"}
                                 </Text>
                             </Pressable>
 
@@ -189,7 +324,9 @@ export default function EditarEnderecoScreen() {
 
                     <Pressable
                         style={editarEnderecoStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/enderecos")
+                        }
                     >
                         <Image
                             style={editarEnderecoStyle.iconeVoltar}

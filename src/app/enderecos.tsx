@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -14,33 +14,64 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import enderecosStyle from "@/styles/enderecosStyle";
 import Footer from "@/components/footer";
+import {
+    buscarEnderecos,
+    Endereco,
+    excluirEndereco,
+    formatarEndereco,
+    tornarPrincipal,
+} from "@/utils/enderecos";
 
-const enderecos = [
-    {
-        id: 1,
-        tipo: "Casa",
-        icone: require("@/assets/images/img/home.png"),
-        endereco:
-            "Avenida Marechal Tito, 1500\nSão Paulo - SP\nCEP: 00000-000",
-    },
-    {
-        id: 2,
-        tipo: "Trabalho",
-        icone: require("@/assets/images/img/trabalho.png"),
-        endereco:
-            "Avenida Marechal Tito, 1500\nSão Paulo - SP\nCEP: 00000-000",
-    },
-    {
-        id: 3,
-        tipo: "Academia",
-        icone: require("@/assets/images/img/academia.png"),
-        endereco:
-            "Avenida Marechal Tito, 1500\nSão Paulo - SP\nCEP: 00000-000",
-    },
-];
+// Ícone do card pelo nome que o cliente deu ao endereço
+function iconeDoEndereco(nome: string) {
+    const valor = nome.toLowerCase();
+    if (valor.includes("trabalho") || valor.includes("escrit"))
+        return require("@/assets/images/img/trabalho.png");
+    if (valor.includes("academia")) return require("@/assets/images/img/academia.png");
+    if (valor.includes("casa")) return require("@/assets/images/img/home.png");
+    return require("@/assets/images/img/local.png");
+}
 
 export default function EnderecosScreen() {
-    const [enderecoAtivoId, setEnderecoAtivoId] = useState(1);
+    const [enderecos, setEnderecos] = useState<Endereco[]>([]);
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
+
+    async function carregarEnderecos() {
+        try {
+            setEnderecos(await buscarEnderecos());
+        } catch (e) {
+            console.error("Erro ao carregar endereços:", e);
+            setErro("Não foi possível carregar seus endereços.");
+        } finally {
+            setCarregando(false);
+        }
+    }
+
+    // Recarrega toda vez que a tela aparece (ex.: ao voltar da edição)
+    useFocusEffect(useCallback(() => {
+        carregarEnderecos();
+    }, []));
+
+    async function usarEndereco(id: number) {
+        setErro("");
+        try {
+            await tornarPrincipal(id);
+            await carregarEnderecos();
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível trocar o endereço.");
+        }
+    }
+
+    async function excluir(id: number) {
+        setErro("");
+        try {
+            await excluirEndereco(id);
+            await carregarEnderecos();
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível excluir o endereço.");
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -65,26 +96,33 @@ export default function EnderecosScreen() {
                         </View>
 
                         <View style={enderecosStyle.main}>
+                            {!carregando && enderecos.length === 0 && (
+                                <Text style={enderecosStyle.txtEndereco}>
+                                    Você ainda não cadastrou nenhum endereço. Toque em
+                                    "Adicionar novo endereço".
+                                </Text>
+                            )}
+
                             {enderecos.map((endereco) => {
-                                const ativo = endereco.id === enderecoAtivoId;
+                                const ativo = endereco.principal_endereco === "SIM";
 
                                 return (
-                                    <View key={endereco.id} style={enderecosStyle.card}>
+                                    <View key={endereco.id_endereco} style={enderecosStyle.card}>
                                         <View style={enderecosStyle.linhaTopoCard}>
                                             <View style={enderecosStyle.linhaTipo}>
                                                 <View style={enderecosStyle.iconeCaixaTipo}>
                                                     <Image
                                                         style={enderecosStyle.imgTipo}
-                                                        source={endereco.icone}
+                                                        source={iconeDoEndereco(endereco.nome_endereco)}
                                                     />
                                                 </View>
                                                 <Text style={enderecosStyle.txtTipo}>
-                                                    {endereco.tipo}
+                                                    {endereco.nome_endereco}
                                                 </Text>
                                             </View>
                                             <Pressable
                                                 style={enderecosStyle.btnFavorito}
-                                                onPress={() => setEnderecoAtivoId(endereco.id)}
+                                                onPress={() => usarEndereco(endereco.id_endereco)}
                                             >
                                                 <Image
                                                     style={[
@@ -97,7 +135,7 @@ export default function EnderecosScreen() {
                                         </View>
 
                                         <Text style={enderecosStyle.txtEndereco}>
-                                            {endereco.endereco}
+                                            {formatarEndereco(endereco)}
                                         </Text>
 
                                         <View style={enderecosStyle.linhaStatus}>
@@ -110,7 +148,7 @@ export default function EnderecosScreen() {
                                             ) : (
                                                 <Pressable
                                                     onPress={() =>
-                                                        setEnderecoAtivoId(endereco.id)
+                                                        usarEndereco(endereco.id_endereco)
                                                     }
                                                 >
                                                     <Text style={enderecosStyle.txtUsarEndereco}>
@@ -123,13 +161,21 @@ export default function EnderecosScreen() {
                                         <View style={enderecosStyle.linhaBotoes}>
                                             <Pressable
                                                 style={enderecosStyle.btnEditar}
-                                                onPress={() => router.push("/editarEndereco")}
+                                                onPress={() =>
+                                                    router.push({
+                                                        pathname: "/editarEndereco",
+                                                        params: { id: endereco.id_endereco },
+                                                    })
+                                                }
                                             >
                                                 <Text style={enderecosStyle.txtEditar}>
                                                     Editar
                                                 </Text>
                                             </Pressable>
-                                            <Pressable style={enderecosStyle.btnExcluir}>
+                                            <Pressable
+                                                style={enderecosStyle.btnExcluir}
+                                                onPress={() => excluir(endereco.id_endereco)}
+                                            >
                                                 <Text style={enderecosStyle.txtExcluir}>
                                                     Excluir
                                                 </Text>
@@ -139,7 +185,14 @@ export default function EnderecosScreen() {
                                 );
                             })}
 
-                            <Pressable style={enderecosStyle.btnAdicionar}>
+                            {erro !== "" && (
+                                <Text style={enderecosStyle.txtErro}>{erro}</Text>
+                            )}
+
+                            <Pressable
+                                style={enderecosStyle.btnAdicionar}
+                                onPress={() => router.push("/editarEndereco")}
+                            >
                                 <Text style={enderecosStyle.txtAdicionar}>
                                     + Adicionar novo endereço
                                 </Text>
@@ -156,7 +209,9 @@ export default function EnderecosScreen() {
 
                     <Pressable
                         style={enderecosStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/configuracoes")
+                        }
                     >
                         <Image
                             style={enderecosStyle.iconeVoltar}

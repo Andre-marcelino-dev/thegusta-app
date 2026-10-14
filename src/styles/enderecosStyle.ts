@@ -222,6 +222,13 @@ const enderecosStyle = StyleSheet.create({
         color: cores.laranja,
     },
 
+    txtErro: {
+        color: "#d32f2f",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 10,
+    },
+
 });
 
 export default enderecosStyle;

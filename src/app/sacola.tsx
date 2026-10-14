@@ -23,6 +23,7 @@ import {
     ItemSacola,
     removerDaSacola,
 } from "@/utils/sacola";
+import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
 
 const taxaEntrega = 6.0;
 
@@ -36,6 +37,7 @@ function formatarPrecoResumo(valor: number) {
 
 export default function SacolaScreen() {
     const [itens, setItens] = useState<ItemSacola[]>([]);
+    const [enderecoEntrega, setEnderecoEntrega] = useState<EnderecoEntrega | null>(null);
     const [cupom, setCupom] = useState("");
     // Começa sem cupom: o pedido ainda não aplica desconto (cupons não existem no banco)
     const [cupomAplicado, setCupomAplicado] = useState<string | null>(null);
@@ -48,6 +50,11 @@ export default function SacolaScreen() {
                 setItens(await buscarSacola());
             } catch (erro) {
                 console.error("Erro ao carregar sacola:", erro);
+            }
+            try {
+                setEnderecoEntrega(await buscarEnderecoEntrega());
+            } catch (erro) {
+                console.error("Erro ao carregar endereço:", erro);
             }
         }
 
@@ -202,12 +209,12 @@ export default function SacolaScreen() {
                                         resizeMode="stretch"
                                     />
                                     <Text style={sacolaStyle.txtEndereco}>
-                                        Avenida Marechal Tito, 1500 - São Miguel Paulista - São
-                                        Paulo - SP
+                                        {enderecoEntrega?.texto ??
+                                            "Nenhum endereço cadastrado. Toque em Trocar endereço."}
                                     </Text>
                                 </View>
                                 <Text style={sacolaStyle.txtTelefone}>
-                                    (11)9999-99999
+                                    {enderecoEntrega?.telefone ?? ""}
                                 </Text>
                                 <View style={sacolaStyle.linhaRodapeEntrega}>
                                     <Text style={sacolaStyle.txtPrevisaoLabel}>
@@ -217,7 +224,7 @@ export default function SacolaScreen() {
                                         45 - 60 min
                                     </Text>
                                     <Pressable>
-                                        <Text style={sacolaStyle.txtTrocarEndereco}onPress={()=>router.navigate('/editarEndereco')}>
+                                        <Text style={sacolaStyle.txtTrocarEndereco} onPress={() => router.navigate("/enderecos")}>
                                             Trocar endereço
                                         </Text>
                                     </Pressable>

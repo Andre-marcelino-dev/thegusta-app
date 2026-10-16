@@ -137,6 +137,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | **Comercial → Pedidos** | lista, filtro, detalhes (itens, endereço, observação) e troca de status |
 | **Sistema → Configurações da loja** | taxa de entrega e previsão de entrega |
 | **Catálogo → Kits** | criar, editar e excluir os kits da Home (produtos do kit, preço promocional, etiqueta, foto) |
+| **Sistema → Meu Perfil** | o usuário logado edita nome, e-mail, foto e senha; o topo do painel mostra a foto e o cargo reais |
 | **Comercial → Cupons** | criar, editar, ativar/desativar e excluir (só se nunca usado); mostra situação e usos |
 | **Conteúdo do Site → Banners** | criar, editar, ativar/desativar e excluir, com miniatura |
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
@@ -163,7 +164,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 8. O que falta (em ordem sugerida)
 
-1. **Telas do admin que faltam:** Estoque (matérias-primas, movimentações, fornecedores) e Meu Perfil.
+1. **Telas do admin que faltam:** Estoque (matérias-primas, movimentações, fornecedores).
 2. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
    1. GitHub → `confeitaria-davilla` → Settings → Danger Zone → **Change to private**.
    2. Criar um token fine-grained (`servidor-plesk`) só para esse repositório, com **Contents: Read-only**.
@@ -182,6 +183,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** `5f380e4` — Taxa e previsão de entrega vindas do painel.
-- **Site:** `cd2cde0` — Tela de Kits no painel admin.
+- **Site:** `53421da` — Meu Perfil no painel admin.
 
 Para ver tudo: `git log --oneline` em cada projeto.

@@ -19,12 +19,14 @@ export type Cliente = {
     bairro_cliente?: string;
     cidade_cliente?: string;
     uf_cliente?: string;
+    novidades_cliente?: "SIM" | "NAO";
 };
 
 export type DadosPerfil = {
     nome_cliente: string;
     telefone_cliente: string;
     data_nasc_cliente: string; // aaaa-mm-dd
+    novidades_cliente: "SIM" | "NAO"; // aceita receber novidades e promoções
 };
 
 // O SecureStore não funciona na web, então lá usamos o localStorage.

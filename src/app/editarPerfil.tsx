@@ -64,7 +64,8 @@ export default function EditarPerfilScreen() {
     const [telefone, setTelefone] = useState("");
     const [cpf, setCpf] = useState("");
     const [nascimento, setNascimento] = useState("");
-    const [receberNovidades, setReceberNovidades] = useState(true);
+    // Começa desligado: só recebe promoções quem aceitar (o valor salvo vem do banco)
+    const [receberNovidades, setReceberNovidades] = useState(false);
     const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
     const [salvando, setSalvando] = useState(false);
     const [enviandoFoto, setEnviandoFoto] = useState(false);
@@ -85,6 +86,7 @@ export default function EditarPerfilScreen() {
                 setTelefone(mascararTelefone(cliente.telefone_cliente ?? ""));
                 setCpf(cliente.cpf_cnpj_cliente ?? "");
                 setNascimento(dataParaTela(cliente.data_nasc_cliente));
+                setReceberNovidades(cliente.novidades_cliente === "SIM");
                 setFotoPerfil(urlFotoCliente(cliente));
             } catch (e) {
                 console.error("Erro ao carregar perfil:", e);
@@ -149,6 +151,7 @@ export default function EditarPerfilScreen() {
                 nome_cliente: nome.trim(),
                 telefone_cliente: telefone.trim(),
                 data_nasc_cliente: dataParaBanco(nascimento),
+                novidades_cliente: receberNovidades ? "SIM" : "NAO",
             });
             setSucesso("Dados atualizados com sucesso.");
         } catch (e) {

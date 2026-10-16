@@ -356,6 +356,19 @@ const pedidosStyle = StyleSheet.create({
         color: cores.branco,
     },
 
+    // Pedido cancelado na aba de histórico
+    cardPedidoCancelado: {
+        borderColor: '#e57373',
+    },
+
+    badgeCancelado: {
+        backgroundColor: '#fde2e1',
+    },
+
+    txtBadgeCancelado: {
+        color: '#d32f2f',
+    },
+
 });
 
 export default pedidosStyle;

@@ -87,8 +87,9 @@ export default function PedidosScreen() {
                 previsao: previsaoEntrega,
             };
         });
-    const pedidosEntregues = pedidos.filter(
-        (pedido) => etapaDoStatus(pedido.status) === 5
+    // Aba "Entregues" funciona como histórico: finalizados e cancelados
+    const pedidosEntregues = pedidos.filter((pedido) =>
+        [0, 5].includes(etapaDoStatus(pedido.status))
     );
 
     return (
@@ -229,10 +230,15 @@ export default function PedidosScreen() {
                                 ))}
 
                             {aba === "entregues" &&
-                                pedidosEntregues.map((pedido) => (
+                                pedidosEntregues.map((pedido) => {
+                                    const cancelado = etapaDoStatus(pedido.status) === 0;
+                                    return (
                                     <View
                                         key={pedido.numero}
-                                        style={pedidosStyle.cardPedidoEntregue}
+                                        style={[
+                                            pedidosStyle.cardPedidoEntregue,
+                                            cancelado && pedidosStyle.cardPedidoCancelado,
+                                        ]}
                                     >
                                         <View style={pedidosStyle.topoPedido}>
                                             <View style={pedidosStyle.linhaNumeroPedido}>
@@ -246,13 +252,25 @@ export default function PedidosScreen() {
                                                     Pedido #{pedido.numero}
                                                 </Text>
                                             </View>
-                                            <View style={pedidosStyle.badgeEntregue}>
-                                                <Image
-                                                    style={pedidosStyle.imgBadgeEntregue}
-                                                    source={require("@/assets/images/img/entregue-verde.png")}
-                                                />
-                                                <Text style={pedidosStyle.txtBadgeEntregue}>
-                                                    Entregue
+                                            <View
+                                                style={[
+                                                    pedidosStyle.badgeEntregue,
+                                                    cancelado && pedidosStyle.badgeCancelado,
+                                                ]}
+                                            >
+                                                {!cancelado && (
+                                                    <Image
+                                                        style={pedidosStyle.imgBadgeEntregue}
+                                                        source={require("@/assets/images/img/entregue-verde.png")}
+                                                    />
+                                                )}
+                                                <Text
+                                                    style={[
+                                                        pedidosStyle.txtBadgeEntregue,
+                                                        cancelado && pedidosStyle.txtBadgeCancelado,
+                                                    ]}
+                                                >
+                                                    {cancelado ? "Cancelado" : "Entregue"}
                                                 </Text>
                                             </View>
                                         </View>
@@ -306,7 +324,8 @@ export default function PedidosScreen() {
                                             </View>
                                         </View>
                                     </View>
-                                ))}
+                                    );
+                                })}
                         </View>
                     </ScrollView>
 

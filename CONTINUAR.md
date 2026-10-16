@@ -10,7 +10,7 @@ Este documento resume o que foi feito no app e no site, como rodar tudo em outro
 
 - **Em teste:** um pedido **cancelado** no painel deve aparecer no app em **Meus pedidos → aba "Entregues"**, com borda e etiqueta vermelhas **"Cancelado"** (o #14 da Fernanda). A versão publicada já tem a correção; se não aparecer, recarregue com **Ctrl + Shift + R** em `https://thegust-app.expo.app`.
 - **Tradução do navegador:** o Chrome traduz o app sozinho ("Em preparo" vira "Em", "Home" vira "Lar"). Desligue em "Nunca traduzir este site". Ficou a ideia de marcar o app como pt-BR para o navegador não oferecer tradução.
-- **Melhorias sugeridas (não feitas):** na janela de detalhes do pedido (👁) do painel, mostrar subtotal, taxa de entrega, desconto e total, e permitir mudar o status ali dentro.
+- **Melhorias sugeridas (não feitas):** na janela de detalhes do pedido (botão do olho) do painel, mostrar subtotal, taxa de entrega, desconto e total, e permitir mudar o status ali dentro.
 - **No painel, falta você fazer:** excluir ou reenviar os 4 banners inativos sem imagem; nos 2 kits, trocar o WhatsApp de exemplo (`5511999999999`) e a foto do "Kit Bolo cenoura".
 
 ---

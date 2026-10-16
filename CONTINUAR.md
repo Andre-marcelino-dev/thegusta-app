@@ -138,6 +138,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | **Sistema → Configurações da loja** | taxa de entrega e previsão de entrega |
 | **Catálogo → Kits** | criar, editar e excluir os kits da Home (produtos do kit, preço promocional, etiqueta, foto) |
 | **Sistema → Meu Perfil** | o usuário logado edita nome, e-mail, foto e senha; o topo do painel mostra a foto e o cargo reais |
+| **Estoque → Fornecedores / Matérias-primas / Movimentações** | fornecedores (ativar/desativar); matérias-primas com estoque atual; entradas e saídas que atualizam a quantidade e não deixam ficar negativa |
 | **Comercial → Cupons** | criar, editar, ativar/desativar e excluir (só se nunca usado); mostra situação e usos |
 | **Conteúdo do Site → Banners** | criar, editar, ativar/desativar e excluir, com miniatura |
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
@@ -164,14 +165,13 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 8. O que falta (em ordem sugerida)
 
-1. **Telas do admin que faltam:** Estoque (matérias-primas, movimentações, fornecedores).
-2. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
+1. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
    1. GitHub → `confeitaria-davilla` → Settings → Danger Zone → **Change to private**.
    2. Criar um token fine-grained (`servidor-plesk`) só para esse repositório, com **Contents: Read-only**.
    3. No servidor: `cd ~/confeitaria-davilla && git config credential.helper store && git pull` (usuário `Andre-marcelino-dev`, senha = o token).
 
    Sem os passos 2 e 3, o `git pull` do servidor para de funcionar depois do passo 1.
-3. **Opcionais:**
+2. **Opcionais:**
    - "Receber novidades" no Editar perfil (não há coluna no banco);
    - limitar o telefone do perfil a 14 caracteres (limite da coluna);
    - os 4 banners inativos apontam para imagens que não existem (reenviar ou excluir);
@@ -183,6 +183,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** `5f380e4` — Taxa e previsão de entrega vindas do painel.
-- **Site:** `53421da` — Meu Perfil no painel admin.
+- **Site:** `b4d7aee` — Telas de Estoque no painel admin.
 
 Para ver tudo: `git log --oneline` em cada projeto.

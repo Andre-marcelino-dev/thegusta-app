@@ -173,7 +173,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
    Sem os passos 2 e 3, o `git pull` do servidor para de funcionar depois do passo 1.
 2. **Opcionais:**
    - "Receber novidades" no Editar perfil (não há coluna no banco);
-   - limitar o telefone do perfil a 14 caracteres (limite da coluna);
    - os 4 banners inativos apontam para imagens que não existem (reenviar ou excluir);
    - apagar `~/confeitaria-davilla-antigo` no servidor (cópia antiga, tem um `.env` com senhas);
    - apagar `~/confeitaria-davilla/src/.env.save` no servidor, se ainda existir.

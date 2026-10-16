@@ -45,6 +45,19 @@ function mascararData(texto: string) {
     return numeros;
 }
 
+// Formata o telefone enquanto a pessoa digita: "(11)98888-7777".
+// Sem espaço, para caber nos 14 caracteres da coluna do banco.
+function mascararTelefone(texto: string) {
+    const numeros = texto.replace(/\D/g, "").slice(0, 11);
+    if (numeros.length <= 2) return numeros.length ? `(${numeros}` : "";
+    const ddd = numeros.slice(0, 2);
+    const resto = numeros.slice(2);
+    // Celular (9 dígitos) quebra depois do 5º; fixo (8 dígitos) depois do 4º
+    const corte = resto.length > 8 ? 5 : 4;
+    if (resto.length <= corte) return `(${ddd})${resto}`;
+    return `(${ddd})${resto.slice(0, corte)}-${resto.slice(corte)}`;
+}
+
 export default function EditarPerfilScreen() {
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
@@ -69,7 +82,7 @@ export default function EditarPerfilScreen() {
                 }
                 setNome(cliente.nome_cliente ?? "");
                 setEmail(cliente.email_cliente ?? "");
-                setTelefone(cliente.telefone_cliente ?? "");
+                setTelefone(mascararTelefone(cliente.telefone_cliente ?? ""));
                 setCpf(cliente.cpf_cnpj_cliente ?? "");
                 setNascimento(dataParaTela(cliente.data_nasc_cliente));
                 setFotoPerfil(urlFotoCliente(cliente));
@@ -119,6 +132,10 @@ export default function EditarPerfilScreen() {
 
         if (nome.trim() === "" || telefone.trim() === "") {
             setErro("Preencha o nome e o telefone.");
+            return;
+        }
+        if (telefone.replace(/\D/g, "").length < 10) {
+            setErro("Informe o telefone com DDD, ex.: (11)98888-7777.");
             return;
         }
         if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) {
@@ -235,11 +252,12 @@ export default function EditarPerfilScreen() {
                                     />
                                     <TextInput
                                         style={editarPerfilStyle.inputCampo}
-                                        placeholder="(11) 99999-99999"
+                                        placeholder="(11)98888-7777"
                                         placeholderTextColor={cores.cinzclaro}
                                         keyboardType="phone-pad"
+                                        maxLength={14}
                                         value={telefone}
-                                        onChangeText={setTelefone}
+                                        onChangeText={(texto) => setTelefone(mascararTelefone(texto))}
                                     />
                                 </View>
 

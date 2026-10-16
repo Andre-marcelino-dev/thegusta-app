@@ -14,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import pedidosStyle from "@/styles/pedidosStyle";
 import Footer from "@/components/footer";
+import { useConfiguracoes } from "@/utils/loja";
 import {
     buscarPedidos,
     etapaDoStatus,
@@ -25,7 +26,6 @@ import { avisar } from "@/utils/avisar";
 
 type AbaPedido = "andamento" | "entregues";
 
-const previsaoEntrega = "45 - 60 min";
 
 function iconeDoStatus(etapa: number) {
     if (etapa === 1) return require("@/assets/images/img/aguardando-laranja.png");
@@ -35,6 +35,7 @@ function iconeDoStatus(etapa: number) {
 
 export default function PedidosScreen() {
     const [aba, setAba] = useState<AbaPedido>("andamento");
+    const { previsaoEntrega } = useConfiguracoes();
     const [pedidos, setPedidos] = useState<Pedido[]>([]);
     // Número do pedido que está sendo repetido (evita toque duplo)
     const [repetindo, setRepetindo] = useState<number | null>(null);

@@ -15,6 +15,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import detalhesPedidoStyle from "@/styles/detalhesPedidoStyle";
 import Footer from "@/components/footer";
+import { useConfiguracoes } from "@/utils/loja";
 import {
     buscarPedido,
     etapaDoStatus,
@@ -26,7 +27,6 @@ import { avisar } from "@/utils/avisar";
 
 const numeroWhatsappLoja = "5511988161211";
 
-const previsaoEntrega = "40 - 55 min";
 
 // Usado enquanto a API carrega
 const pedidoVazio: Pedido = {
@@ -78,6 +78,7 @@ export default function DetalhesPedidoScreen() {
     // Número do pedido vindo da lista (?id=). Sem ele, mostra o mais recente.
     const { id } = useLocalSearchParams<{ id?: string }>();
     const [pedido, setPedido] = useState<Pedido>(pedidoVazio);
+    const { previsaoEntrega } = useConfiguracoes();
     // Número do pedido que está sendo repetido (evita toque duplo)
     const [repetindo, setRepetindo] = useState<number | null>(null);
 

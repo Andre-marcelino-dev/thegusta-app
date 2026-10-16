@@ -18,6 +18,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import pagamentoStyle from "@/styles/pagamentoStyle";
 import Footer from "@/components/footer";
+import { useConfiguracoes } from "@/utils/loja";
 
 import { cores } from "@/styles/variaveis";
 import { buscarSacola, ItemSacola } from "@/utils/sacola";
@@ -28,7 +29,6 @@ import { calcularDesconto, Cupom, validarCupom } from "@/utils/cupons";
 type TipoEntrega = "entrega" | "retirada";
 type FormaPagamento = "pix" | "cartao" | "dinheiro";
 
-const taxaEntrega = 6.0;
 const numeroWhatsapp = "5511988161211";
 const rotulosEntrega: Record<TipoEntrega, string> = {
     entrega: "Entrega",
@@ -78,6 +78,8 @@ function formatarPrecoResumo(valor: number) {
  
 export default function PagamentoScreen() {
     const [tipoEntrega, setTipoEntrega] = useState<TipoEntrega>("entrega");
+    // Taxa e previsão de entrega vêm do painel admin (a API cobra o mesmo valor)
+    const { taxaEntrega, previsaoEntrega } = useConfiguracoes();
     const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>(
         "pix"
     );
@@ -301,7 +303,7 @@ export default function PagamentoScreen() {
                                     </View>
                                     <View style={pagamentoStyle.previsao}>
                                         <Text style={pagamentoStyle.txtPrevisaoValor}>
-                                            45 - 60 min
+                                            {previsaoEntrega}
                                         </Text>
                                         <Text style={pagamentoStyle.txtPrevisaoLabel}>
                                             Previsto

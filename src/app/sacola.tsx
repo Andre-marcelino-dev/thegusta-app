@@ -15,6 +15,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import sacolaStyle from "@/styles/sacolaStyle";
 import Footer from "@/components/footer";
+import { useConfiguracoes } from "@/utils/loja";
 
 import { cores } from "@/styles/variaveis";
 import {
@@ -26,7 +27,6 @@ import {
 import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
 import { calcularDesconto, Cupom, validarCupom } from "@/utils/cupons";
 
-const taxaEntrega = 6.0;
 
 function formatarPreco(valor: number) {
     return `R$${valor.toFixed(2).replace(".", ",")}`;
@@ -38,6 +38,8 @@ function formatarPrecoResumo(valor: number) {
 
 export default function SacolaScreen() {
     const [itens, setItens] = useState<ItemSacola[]>([]);
+    // Taxa e previsão de entrega vêm do painel admin
+    const { taxaEntrega, previsaoEntrega } = useConfiguracoes();
     const [enderecoEntrega, setEnderecoEntrega] = useState<EnderecoEntrega | null>(null);
     const [cupom, setCupom] = useState("");
     const [cupomAplicado, setCupomAplicado] = useState<Cupom | null>(null);
@@ -250,7 +252,7 @@ export default function SacolaScreen() {
                                         Entrega estimada em:
                                     </Text>
                                     <Text style={sacolaStyle.txtPrevisaoValor}>
-                                        45 - 60 min
+                                        {previsaoEntrega}
                                     </Text>
                                     <Pressable>
                                         <Text style={sacolaStyle.txtTrocarEndereco} onPress={() => router.navigate("/enderecos")}>

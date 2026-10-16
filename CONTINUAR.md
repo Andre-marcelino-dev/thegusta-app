@@ -139,7 +139,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
 | Menu lateral | removido o menu antigo duplicado do modelo, que escondia o menu certo |
 
-**Site público:** a página **Faça seu pedido** (`/pedidos`) explica como pedir (app, WhatsApp, encomendas) e mostra os produtos reais com o botão "Pedir pelo WhatsApp"; o número do WhatsApp e o link do app ficam em `config/services.php` (`loja`). O carrinho de exemplo do topo do site foi removido. Os formulários da página Contato e do rodapé gravam em `tbl_contato` e **mandam um aviso por e-mail** para a loja.
+**Site público:** a página **Faça seu pedido** (`/pedidos`) explica como pedir (app, WhatsApp, encomendas) e mostra os produtos reais com o botão "Pedir pelo WhatsApp"; o número do WhatsApp e o link do app ficam em `config/services.php` (`loja`). O carrinho de exemplo do topo do site foi removido. Os **dados da loja** (endereço, telefone/WhatsApp, e-mail) ficam em `config/services.php` (`loja`) e aparecem na página Contato, no rodapé e no mapa. Os formulários da página Contato e do rodapé gravam em `tbl_contato` e **mandam um aviso por e-mail** para a loja.
 
 **Documentação da API:** página `/api/documentacao` (arquivo `resources/views/api/documentacao.blade.php`) com todas as rotas. Ao criar uma rota nova, acrescente-a na lista `$grupos` no topo desse arquivo.
 
@@ -160,16 +160,15 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 8. O que falta (em ordem sugerida)
 
-1. **Dados reais da loja** na página Contato: endereço, telefone e e-mail ainda são os do modelo (EUA). Há um `TODO` em `resources/views/site/contato/contact.blade.php`. Confirmar também os horários.
-2. **Taxa e previsão de entrega** configuráveis (hoje fixas).
-3. **Telas do admin que faltam:** Kits, Estoque (matérias-primas, movimentações, fornecedores) e Meu Perfil.
-4. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
+1. **Taxa e previsão de entrega** configuráveis (hoje fixas).
+2. **Telas do admin que faltam:** Kits, Estoque (matérias-primas, movimentações, fornecedores) e Meu Perfil.
+3. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
    1. GitHub → `confeitaria-davilla` → Settings → Danger Zone → **Change to private**.
    2. Criar um token fine-grained (`servidor-plesk`) só para esse repositório, com **Contents: Read-only**.
    3. No servidor: `cd ~/confeitaria-davilla && git config credential.helper store && git pull` (usuário `Andre-marcelino-dev`, senha = o token).
 
    Sem os passos 2 e 3, o `git pull` do servidor para de funcionar depois do passo 1.
-5. **Opcionais:**
+4. **Opcionais:**
    - "Receber novidades" no Editar perfil (não há coluna no banco);
    - limitar o telefone do perfil a 14 caracteres (limite da coluna);
    - os 4 banners inativos apontam para imagens que não existem (reenviar ou excluir);
@@ -181,6 +180,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** `40133ba` — Botão "Pedir novamente" funcionando.
-- **Site:** `0558390` — Página Faça seu pedido no site.
+- **Site:** `3a3ad45` — Dados reais da loja no site.
 
 Para ver tudo: `git log --oneline` em cada projeto.

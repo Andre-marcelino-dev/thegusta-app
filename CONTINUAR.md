@@ -1,8 +1,17 @@
 # TheGusta / Confeitaria DaVilla — onde paramos e como continuar
 
-Última atualização: 16/10/2026.
+Última atualização: 16/10/2026 (fim do dia).
 
 Este documento resume o que foi feito no app e no site, como rodar tudo em outro computador e o que ainda falta. Não tem senhas: elas ficam só nos arquivos `.env` (que não vão para o Git).
+
+---
+
+## 0. Onde paramos (16/10/2026)
+
+- **Em teste:** um pedido **cancelado** no painel deve aparecer no app em **Meus pedidos → aba "Entregues"**, com borda e etiqueta vermelhas **"Cancelado"** (o #14 da Fernanda). A versão publicada já tem a correção; se não aparecer, recarregue com **Ctrl + Shift + R** em `https://thegust-app.expo.app`.
+- **Tradução do navegador:** o Chrome traduz o app sozinho ("Em preparo" vira "Em", "Home" vira "Lar"). Desligue em "Nunca traduzir este site". Ficou a ideia de marcar o app como pt-BR para o navegador não oferecer tradução.
+- **Melhorias sugeridas (não feitas):** na janela de detalhes do pedido (👁) do painel, mostrar subtotal, taxa de entrega, desconto e total, e permitir mudar o status ali dentro.
+- **No painel, falta você fazer:** excluir ou reenviar os 4 banners inativos sem imagem; nos 2 kits, trocar o WhatsApp de exemplo (`5511999999999`) e a foto do "Kit Bolo cenoura".
 
 ---
 
@@ -178,7 +187,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `5f380e4` — Taxa e previsão de entrega vindas do painel.
+- **App:** `a2273d4` — Meus pedidos: pedidos cancelados aparecem no histórico.
 - **Site:** `b4d7aee` — Telas de Estoque no painel admin.
 
 Para ver tudo: `git log --oneline` em cada projeto.

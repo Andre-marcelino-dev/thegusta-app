@@ -127,6 +127,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | `POST /cliente/foto` | foto de perfil |
 | `GET/POST /enderecos`, `GET/PUT/PATCH/DELETE /enderecos/{id}`, `PATCH /enderecos/{id}/principal` | endereços de entrega |
 | `GET /cupons/{codigo}` | valida cupom |
+| `GET /configuracoes` (pública) | taxa e previsão de entrega |
 
 **Painel admin:**
 
@@ -134,6 +135,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 |---|---|
 | **Dashboard** | pedidos hoje, em preparo, faturamento do mês, mensagens novas, gráfico dos 6 meses, últimos pedidos |
 | **Comercial → Pedidos** | lista, filtro, detalhes (itens, endereço, observação) e troca de status |
+| **Sistema → Configurações da loja** | taxa de entrega e previsão de entrega |
 | **Comercial → Cupons** | criar, editar, ativar/desativar e excluir (só se nunca usado); mostra situação e usos |
 | **Conteúdo do Site → Banners** | criar, editar, ativar/desativar e excluir, com miniatura |
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
@@ -152,7 +154,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 - **Cupom = porcentagem** sobre os **produtos** (a entrega não tem desconto). `valor_desconto_cupom = 10` significa 10%.
 - **Status de pedido:** `EM ANDAMENTO` (Em preparo) → `SAIU ENTREGA` (A caminho) → `FINALIZADA` (Entregue), ou `CANCELADA`. O app usa `etapaDoStatus` em `src/utils/pedidos.ts`.
 - **Datas** de pedido são gravadas no **horário de Brasília** (o Laravel está em UTC).
-- **Taxa de entrega R$ 6,00** e previsão "45–60 min" ainda são **fixas** (app e `PedidoController::TAXA_ENTREGA`).
+- **Taxa e previsão de entrega** são editadas no painel em **Sistema → Configurações da loja** (tabela `tbl_configuracoes`, rota `GET /api/v1/configuracoes`). O pedido cobra a taxa configurada; o app lê pelo hook `useConfiguracoes` (`src/utils/loja.ts`).
 - **E-mail do site:** sai pela conta do Plesk `contato_confeitaria@ctrlaltdev.tipi5.smpsistema.com.br` (SMTPS, porta 465). O destino dos avisos fica em `MAIL_CONTATO_DESTINO` no `.env` do servidor. **Nunca colocar e-mail pessoal ou senha no código**, porque os repositórios são públicos.
 - Banners: site e app mostram os ativos pela ordem do campo "Ordem". Imagens ideais: 1920×800 px, até 2 MB.
 
@@ -160,15 +162,14 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 8. O que falta (em ordem sugerida)
 
-1. **Taxa e previsão de entrega** configuráveis (hoje fixas).
-2. **Telas do admin que faltam:** Kits, Estoque (matérias-primas, movimentações, fornecedores) e Meu Perfil.
-3. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
+1. **Telas do admin que faltam:** Kits, Estoque (matérias-primas, movimentações, fornecedores) e Meu Perfil.
+2. **Segurança do GitHub:** os backups `.sql` saíram do repositório, mas **continuam no histórico** de commits, e o repositório é público. Fazer os 3 passos juntos:
    1. GitHub → `confeitaria-davilla` → Settings → Danger Zone → **Change to private**.
    2. Criar um token fine-grained (`servidor-plesk`) só para esse repositório, com **Contents: Read-only**.
    3. No servidor: `cd ~/confeitaria-davilla && git config credential.helper store && git pull` (usuário `Andre-marcelino-dev`, senha = o token).
 
    Sem os passos 2 e 3, o `git pull` do servidor para de funcionar depois do passo 1.
-4. **Opcionais:**
+3. **Opcionais:**
    - "Receber novidades" no Editar perfil (não há coluna no banco);
    - limitar o telefone do perfil a 14 caracteres (limite da coluna);
    - os 4 banners inativos apontam para imagens que não existem (reenviar ou excluir);
@@ -179,7 +180,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `40133ba` — Botão "Pedir novamente" funcionando.
-- **Site:** `3a3ad45` — Dados reais da loja no site.
+- **App:** `5f380e4` — Taxa e previsão de entrega vindas do painel.
+- **Site:** `0345584` — Taxa e previsão de entrega configuráveis no painel.
 
 Para ver tudo: `git log --oneline` em cada projeto.

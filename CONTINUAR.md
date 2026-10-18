@@ -1,15 +1,17 @@
 # TheGusta / Confeitaria DaVilla — onde paramos e como continuar
 
-Última atualização: 16/10/2026 (fim do dia).
+Última atualização: 18/10/2026.
 
 Este documento resume o que foi feito no app e no site, como rodar tudo em outro computador e o que ainda falta. Não tem senhas: elas ficam só nos arquivos `.env` (que não vão para o Git).
 
 ---
 
-## 0. Onde paramos (16/10/2026)
+## 0. Onde paramos (18/10/2026)
 
 - **Em teste:** um pedido **cancelado** no painel deve aparecer no app em **Meus pedidos → aba "Entregues"**, com borda e etiqueta vermelhas **"Cancelado"** (o #14 da Fernanda). A versão publicada já tem a correção; se não aparecer, recarregue com **Ctrl + Shift + R** em `https://thegust-app.expo.app`.
-- **Tradução do navegador:** o Chrome traduz o app sozinho ("Em preparo" vira "Em", "Home" vira "Lar"). Desligue em "Nunca traduzir este site". Ficou a ideia de marcar o app como pt-BR para o navegador não oferecer tradução.
+- **Tradução do navegador (resolvido em 18/10):** o Chrome traduzia o app e deixava textos errados (preço "R$ 0,00" no produto, "Home" virando "Lar"). O arquivo `src/app/+html.tsx` marca o app como pt-BR e "não traduzir". Já publicado.
+- **Depois de `git clone` ou `git pull` do app, rode `npm install`.** A pasta `node_modules` não vai para o Git; sem ela o login e o pagamento não funcionam (faltavam `expo-secure-store` e `expo-image-picker`).
+- **Servidor do site atrasado:** está no commit `a209b70`; o GitHub está no `982c046` (só arrumação: namespaces, `vendor` sem pacotes de teste, `public/build`). Na próxima atualização, use o comando do item 4 **com a linha do `rm`**.
 - **Melhorias sugeridas (não feitas):** na janela de detalhes do pedido (botão do olho) do painel, mostrar subtotal, taxa de entrega, desconto e total, e permitir mudar o status ali dentro.
 - **No painel, falta você fazer:** excluir ou reenviar os 4 banners inativos sem imagem; nos 2 kits, trocar o WhatsApp de exemplo (`5511999999999`) e a foto do "Kit Bolo cenoura".
 
@@ -85,8 +87,11 @@ docker compose up -d
 
 ```bash
 cd ~/confeitaria-davilla && git pull
+rm -f src/bootstrap/cache/packages.php src/bootstrap/cache/services.php
 cd ~/confeitaria-davilla/src && /opt/plesk/php/8.4/bin/php artisan optimize:clear
 ```
+
+- A linha do `rm` apaga a lista de pacotes guardada pelo Laravel (ele recria sozinho). Ela é necessária quando a pasta `vendor` muda no Git; sem ela o site pode sair do ar procurando um pacote que não existe mais. Pode rodar sempre.
 
 - Quando houver **migration nova**, rode também `/opt/plesk/php/8.4/bin/php artisan migrate --force`.
 - **Nunca** rodar `migrate:fresh`, `migrate:refresh`, `migrate:reset` nem `db:wipe` no servidor: apagam os dados.
@@ -187,7 +192,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `a2273d4` — Meus pedidos: pedidos cancelados aparecem no histórico.
-- **Site:** `b4d7aee` — Telas de Estoque no painel admin.
+- **App:** web em pt-BR sem tradução do Chrome (`src/app/+html.tsx`).
+- **Site:** `982c046` — atualiza autoload (no servidor ainda está `a209b70`).
 
 Para ver tudo: `git log --oneline` em cada projeto.

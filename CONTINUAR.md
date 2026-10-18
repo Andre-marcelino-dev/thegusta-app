@@ -11,7 +11,8 @@ Este documento resume o que foi feito no app e no site, como rodar tudo em outro
 - **Em teste:** um pedido **cancelado** no painel deve aparecer no app em **Meus pedidos → aba "Entregues"**, com borda e etiqueta vermelhas **"Cancelado"** (o #14 da Fernanda). A versão publicada já tem a correção; se não aparecer, recarregue com **Ctrl + Shift + R** em `https://thegust-app.expo.app`.
 - **Tradução do navegador (resolvido em 18/10):** o Chrome traduzia o app e deixava textos errados (preço "R$ 0,00" no produto, "Home" virando "Lar"). O arquivo `src/app/+html.tsx` marca o app como pt-BR e "não traduzir". Já publicado.
 - **Depois de `git clone` ou `git pull` do app, rode `npm install`.** A pasta `node_modules` não vai para o Git; sem ela o login e o pagamento não funcionam (faltavam `expo-secure-store` e `expo-image-picker`).
-- **Servidor do site atrasado:** está no commit `a209b70`; o GitHub está no `982c046` (só arrumação: namespaces, `vendor` sem pacotes de teste, `public/build`). Na próxima atualização, use o comando do item 4 **com a linha do `rm`**.
+- **Tudo em dia (18/10):** app, site, GitHub e servidor iguais. Servidor atualizado para o `982c046` com o comando do item 4 (com a linha do `rm`).
+- **Terminal do Plesk cai às vezes** ("Conexão Quebrada"): cole os comandos juntos numa linha só, com `&&`.
 - **Melhorias sugeridas (não feitas):** na janela de detalhes do pedido (botão do olho) do painel, mostrar subtotal, taxa de entrega, desconto e total, e permitir mudar o status ali dentro.
 - **No painel, falta você fazer:** excluir ou reenviar os 4 banners inativos sem imagem; nos 2 kits, trocar o WhatsApp de exemplo (`5511999999999`) e a foto do "Kit Bolo cenoura".
 
@@ -193,6 +194,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** web em pt-BR sem tradução do Chrome (`src/app/+html.tsx`).
-- **Site:** `982c046` — atualiza autoload (no servidor ainda está `a209b70`).
+- **Site:** `982c046` — atualiza autoload (já no servidor).
 
 Para ver tudo: `git log --oneline` em cada projeto.

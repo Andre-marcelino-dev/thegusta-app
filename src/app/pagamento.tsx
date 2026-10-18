@@ -39,39 +39,7 @@ const rotulosPagamento: Record<FormaPagamento, string> = {
     cartao: "Cartão",
     dinheiro: "Dinheiro",
 };
-const menuItens = [
-    {
-        id: 1,
-        rotulo: "Home",
-        icone: require("@/assets/images/img/home.png"),
-        rota: "/home",
-    },
-    {
-        id: 2,
-        rotulo: "Cardápio",
-        icone: require("@/assets/images/img/cardapio.png"),
-        rota: "/cardapio",
-    },
-    {
-        id: 3,
-        rotulo: "Sacola",
-        icone: require("@/assets/images/img/sacola.png"),
-        rota: "/sacola",
-    },
-    {
-        id: 4,
-        rotulo: "Pedido",
-        icone: require("@/assets/images/img/pedido.png"),
-        rota: null,
-    },
-    {
-        id: 5,
-        rotulo: "Config",
-        icone: require("@/assets/images/img/config.png"),
-        rota: null,
-    },
-];
- 
+
 function formatarPrecoResumo(valor: number) {
     return `R$ ${valor.toFixed(2).replace(".", ",")}`;
 }

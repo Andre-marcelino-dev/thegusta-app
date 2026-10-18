@@ -1,7 +1,7 @@
 import {Modal, View, Text, ScrollView, Pressable} from "react-native"
 
 
-import termosUsoStyle from "@/styles/termosUsoStyles";
+import termosUsoStyle from "@/styles/termosUsoStyle";
 import globalStyle from "@/styles/globalStyle";
 import enviaLinkStyle from "@/styles/enviaLinkStyle";
 

@@ -13,7 +13,6 @@ Este documento resume o que foi feito no app e no site, como rodar tudo em outro
 - **Depois de `git clone` ou `git pull` do app, rode `npm install`.** A pasta `node_modules` não vai para o Git; sem ela o login e o pagamento não funcionam (faltavam `expo-secure-store` e `expo-image-picker`).
 - **Tudo em dia (18/10):** app, site, GitHub e servidor iguais. Servidor atualizado para o `982c046` com o comando do item 4 (com a linha do `rm`).
 - **Terminal do Plesk cai às vezes** ("Conexão Quebrada"): cole os comandos juntos numa linha só, com `&&`.
-- **Melhorias sugeridas (não feitas):** na janela de detalhes do pedido (botão do olho) do painel, mostrar subtotal, taxa de entrega, desconto e total, e permitir mudar o status ali dentro.
 - **No painel, falta você fazer:** excluir ou reenviar os 4 banners inativos sem imagem; nos 2 kits, trocar o WhatsApp de exemplo (`5511999999999`) e a foto do "Kit Bolo cenoura".
 
 ---
@@ -149,7 +148,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | Tela | O que faz |
 |---|---|
 | **Dashboard** | pedidos hoje, em preparo, faturamento do mês, mensagens novas, gráfico dos 6 meses, últimos pedidos |
-| **Comercial → Pedidos** | lista, filtro, detalhes (itens, endereço, observação) e troca de status |
+| **Comercial → Pedidos** | lista, filtro, detalhes (itens, endereço, observação, subtotal + entrega + desconto do cupom + total) e troca de status na lista ou na janela de detalhes |
 | **Sistema → Configurações da loja** | taxa de entrega e previsão de entrega |
 | **Catálogo → Kits** | criar, editar e excluir os kits da Home (produtos do kit, preço promocional, etiqueta, foto) |
 | **Sistema → Meu Perfil** | o usuário logado edita nome, e-mail, foto e senha; o topo do painel mostra a foto e o cargo reais |
@@ -194,6 +193,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** web em pt-BR sem tradução do Chrome (`src/app/+html.tsx`).
-- **Site:** `982c046` — atualiza autoload (já no servidor).
+- **Site:** `ff8fc55` — Detalhes do pedido no admin: conta separada e troca de status.
 
 Para ver tudo: `git log --oneline` em cada projeto.

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -16,31 +17,57 @@ import depoimentosStyle from "@/styles/depoimentosStyle";
 import Footer from "@/components/footer";
 import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
+import { buscarDepoimentos, Depoimento, enviarDepoimento } from "@/utils/depoimentos";
 
-const avaliacoes = [
-    {
-        id: 1,
-        nota: 4,
-        texto:
-            "Produtos deliciosos e saudáveis! O sabor é incrível e a entrega foi super rápida. Já virei fã da The Gusta.",
-    },
-    {
-        id: 2,
-        nota: 4,
-        texto:
-            "Produtos deliciosos e saudáveis! O sabor é incrível e a entrega foi super rápida. Já virei fã da The Gusta.",
-    },
-    {
-        id: 3,
-        nota: 4,
-        texto:
-            "Produtos deliciosos e saudáveis! O sabor é incrível e a entrega foi super rápida. Já virei fã da The Gusta.",
-    },
-];
+// Cor da etiqueta de cada situação
+const corSituacao: Record<Depoimento["status"], { fundo: string; texto: string }> = {
+    PENDENTE: { fundo: cores.laranjaclaro, texto: "#b36b00" },
+    APROVADO: { fundo: cores.verdeClaro, texto: cores.verde },
+    RECUSADO: { fundo: "#eeeeee", texto: "#777777" },
+};
+
+// "2026-10-19 10:17:17" -> "19/10/2026"
+function dataParaTela(data: string) {
+    const [ano, mes, dia] = data.slice(0, 10).split("-");
+    return dia && mes && ano ? `${dia}/${mes}/${ano}` : "";
+}
 
 export default function DepoimentosScreen() {
     const [notaSelecionada, setNotaSelecionada] = useState(4);
     const [depoimento, setDepoimento] = useState("");
+    const [avaliacoes, setAvaliacoes] = useState<Depoimento[]>([]);
+    const [carregando, setCarregando] = useState(true);
+    const [enviando, setEnviando] = useState(false);
+    const [erro, setErro] = useState("");
+    const [sucesso, setSucesso] = useState("");
+
+    const carregar = useCallback(() => {
+        buscarDepoimentos()
+            .then(setAvaliacoes)
+            .catch((e) => console.error("Erro ao carregar depoimentos:", e))
+            .finally(() => setCarregando(false));
+    }, []);
+
+    useFocusEffect(carregar);
+
+    async function enviar() {
+        setErro("");
+        setSucesso("");
+        if (depoimento.trim().length < 5) {
+            return setErro("Escreva o seu depoimento (pelo menos 5 caracteres).");
+        }
+
+        setEnviando(true);
+        try {
+            setSucesso(await enviarDepoimento(notaSelecionada, depoimento));
+            setDepoimento("");
+            carregar();
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível enviar o depoimento.");
+        } finally {
+            setEnviando(false);
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -103,11 +130,21 @@ export default function DepoimentosScreen() {
                                     numberOfLines={4}
                                     value={depoimento}
                                     onChangeText={setDepoimento}
+                                    maxLength={1000}
                                 />
 
-                                <Pressable style={depoimentosStyle.btnEnviar}>
+                                {erro ? <Text style={depoimentosStyle.txtErro}>{erro}</Text> : null}
+                                {sucesso ? (
+                                    <Text style={depoimentosStyle.txtSucesso}>{sucesso}</Text>
+                                ) : null}
+
+                                <Pressable
+                                    style={[depoimentosStyle.btnEnviar, enviando && { opacity: 0.6 }]}
+                                    onPress={enviar}
+                                    disabled={enviando}
+                                >
                                     <Text style={depoimentosStyle.txtEnviar}>
-                                        Enviar depoimento
+                                        {enviando ? "Enviando..." : "Enviar depoimento"}
                                     </Text>
                                 </Pressable>
                             </View>
@@ -116,24 +153,50 @@ export default function DepoimentosScreen() {
                                 Suas avaliações
                             </Text>
 
+                            {!carregando && avaliacoes.length === 0 ? (
+                                <Text style={depoimentosStyle.txtVazio}>
+                                    Você ainda não enviou nenhum depoimento.
+                                </Text>
+                            ) : null}
+
                             {avaliacoes.map((avaliacao) => (
                                 <View key={avaliacao.id} style={depoimentosStyle.card}>
-                                    <View style={depoimentosStyle.linhaEstrelasCard}>
-                                        {[1, 2, 3, 4, 5].map((numero) => (
+                                    <View style={depoimentosStyle.linhaTopoCard}>
+                                        <View style={depoimentosStyle.linhaEstrelasCard}>
+                                            {[1, 2, 3, 4, 5].map((numero) => (
+                                                <Text
+                                                    key={numero}
+                                                    style={[
+                                                        depoimentosStyle.estrelaCard,
+                                                        numero > avaliacao.nota &&
+                                                            depoimentosStyle.estrelaVazia,
+                                                    ]}
+                                                >
+                                                    {numero <= avaliacao.nota ? "★" : "☆"}
+                                                </Text>
+                                            ))}
+                                        </View>
+                                        <View
+                                            style={[
+                                                depoimentosStyle.badgeSituacao,
+                                                { backgroundColor: corSituacao[avaliacao.status]?.fundo },
+                                            ]}
+                                        >
                                             <Text
-                                                key={numero}
                                                 style={[
-                                                    depoimentosStyle.estrelaCard,
-                                                    numero > avaliacao.nota &&
-                                                        depoimentosStyle.estrelaVazia,
+                                                    depoimentosStyle.txtSituacao,
+                                                    { color: corSituacao[avaliacao.status]?.texto },
                                                 ]}
                                             >
-                                                {numero <= avaliacao.nota ? "★" : "☆"}
+                                                {avaliacao.situacao}
                                             </Text>
-                                        ))}
+                                        </View>
                                     </View>
                                     <Text style={depoimentosStyle.txtAvaliacao}>
                                         {avaliacao.texto}
+                                    </Text>
+                                    <Text style={depoimentosStyle.txtData}>
+                                        Enviado em {dataParaTela(avaliacao.criado_em)}
                                     </Text>
                                 </View>
                             ))}

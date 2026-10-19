@@ -166,6 +166,54 @@ const depoimentosStyle = StyleSheet.create({
         lineHeight: 18,
     },
 
+    txtErro: {
+        color: "#d32f2f",
+        fontSize: 13,
+        textAlign: "center",
+        marginBottom: 10,
+    },
+
+    txtSucesso: {
+        color: cores.verde,
+        fontSize: 13,
+        textAlign: "center",
+        marginBottom: 10,
+    },
+
+    txtVazio: {
+        fontSize: 13,
+        fontFamily: fontes.comum,
+        color: cores.cinzclaro,
+        textAlign: "center",
+        marginBottom: 20,
+    },
+
+    // Estrelas à esquerda e a etiqueta da situação à direita
+    linhaTopoCard: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+
+    badgeSituacao: {
+        borderRadius: 10,
+        paddingVertical: 3,
+        paddingHorizontal: 10,
+        marginBottom: 10, // igual às estrelas, para ficarem alinhadas
+    },
+
+    txtSituacao: {
+        fontSize: 11,
+        fontFamily: fontes.negrito,
+    },
+
+    txtData: {
+        fontSize: 11,
+        fontFamily: fontes.comum,
+        color: cores.cinzclaro,
+        marginTop: 8,
+    },
+
 });
 
 export default depoimentosStyle;

@@ -8,7 +8,7 @@ Este documento resume o que foi feito no app e no site, como rodar tudo em outro
 
 ## 0. Onde paramos (18/10/2026)
 
-- **Em teste:** um pedido **cancelado** no painel deve aparecer no app em **Meus pedidos → aba "Entregues"**, com borda e etiqueta vermelhas **"Cancelado"** (o #14 da Fernanda). A versão publicada já tem a correção; se não aparecer, recarregue com **Ctrl + Shift + R** em `https://thegust-app.expo.app`.
+- **Pedidos cancelados** aparecem no app em **Meus pedidos → aba "Histórico"** (antes chamada "Entregues"), com borda e etiqueta vermelhas "Cancelado". Cada cliente vê só os próprios pedidos.
 - **Tradução do navegador (resolvido em 18/10):** o Chrome traduzia o app e deixava textos errados (preço "R$ 0,00" no produto, "Home" virando "Lar"). O arquivo `src/app/+html.tsx` marca o app como pt-BR e "não traduzir". Já publicado.
 - **Depois de `git clone` ou `git pull` do app, rode `npm install`.** A pasta `node_modules` não vai para o Git; sem ela o login e o pagamento não funcionam (faltavam `expo-secure-store` e `expo-image-picker`).
 - **Tudo em dia (18/10):** app, site, GitHub e servidor iguais. Servidor atualizado para o `982c046` com o comando do item 4 (com a linha do `rm`).
@@ -123,7 +123,7 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 | Detalhes do produto | do banco; sem produto falso enquanto carrega; quantidade começa em 1; resumo = tamanho + unidade |
 | **Sacola** | itens do cliente logado (`tbl_sacola`); +/−/excluir gravam no banco; endereço e telefone reais; cupom validado na API |
 | **Pagamento** | itens reais da sacola; entrega/retirada; forma de pagamento; **Confirma Pedido grava o pedido**, esvazia a sacola, abre o WhatsApp da loja com o número do pedido e mostra os detalhes |
-| **Meus pedidos / Detalhes do pedido** | do banco; etapas pelo status; **Pedir novamente** coloca os itens na sacola (preços atuais) |
+| **Meus pedidos / Detalhes do pedido** | do banco; etapas pelo status; **Pedir novamente** coloca os itens na sacola (preços atuais); abas "Em preparo" e "Histórico" (entregues e cancelados) |
 | **Editar perfil** | carrega e salva nome, telefone e nascimento; e-mail e CPF só leitura; **Alterar foto** (expo-image-picker) |
 | **Endereços** | lista, adicionar, editar (com número e complemento), excluir, "usar este endereço"; **busca por CEP (ViaCEP)** |
 | Seta de voltar | não dá mais erro `GO_BACK` quando a tela é aberta direto |

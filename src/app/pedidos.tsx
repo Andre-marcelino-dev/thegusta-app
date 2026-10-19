@@ -74,8 +74,7 @@ export default function PedidosScreen() {
         carregarPedidos();
     }, []));
 
-    // Aguardando, em preparo e a caminho ficam na primeira aba;
-    // finalizados na de entregues. Cancelados não aparecem.
+    // Aguardando, em preparo e a caminho ficam na aba "Em preparo"
     const pedidosAndamento = pedidos
         .filter((pedido) => [1, 2, 3].includes(etapaDoStatus(pedido.status)))
         .map((pedido) => {
@@ -87,7 +86,7 @@ export default function PedidosScreen() {
                 previsao: previsaoEntrega,
             };
         });
-    // Aba "Entregues" funciona como histórico: finalizados e cancelados
+    // Aba "Histórico": finalizados e cancelados
     const pedidosEntregues = pedidos.filter((pedido) =>
         [0, 5].includes(etapaDoStatus(pedido.status))
     );
@@ -145,7 +144,7 @@ export default function PedidosScreen() {
                                             aba === "entregues" && pedidosStyle.txtAbaAtiva,
                                         ]}
                                     >
-                                        Entregues
+                                        Histórico
                                     </Text>
                                 </Pressable>
                             </View>

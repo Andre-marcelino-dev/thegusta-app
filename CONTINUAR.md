@@ -166,7 +166,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
 | Menu lateral | removido o menu antigo duplicado do modelo, que escondia o menu certo |
 
-**Site público:** a página **Faça seu pedido** (`/pedidos`) explica como pedir (app, WhatsApp, encomendas) e mostra os produtos reais com o botão "Pedir pelo WhatsApp"; o número do WhatsApp e o link do app ficam em `config/services.php` (`loja`). O carrinho de exemplo do topo do site foi removido. Os **dados da loja** (endereço, telefone/WhatsApp, e-mail) ficam em `config/services.php` (`loja`) e aparecem na página Contato, no rodapé e no mapa. Os formulários da página Contato e do rodapé gravam em `tbl_contato` e **mandam um aviso por e-mail** para a loja.
+**Site público:** a seção de depoimentos da Home e do Sobre mostra os depoimentos **Publicados** no painel (até 10; foto ou inicial, estrelas, nome curto).  a página **Faça seu pedido** (`/pedidos`) explica como pedir (app, WhatsApp, encomendas) e mostra os produtos reais com o botão "Pedir pelo WhatsApp"; o número do WhatsApp e o link do app ficam em `config/services.php` (`loja`). O carrinho de exemplo do topo do site foi removido. Os **dados da loja** (endereço, telefone/WhatsApp, e-mail) ficam em `config/services.php` (`loja`) e aparecem na página Contato, no rodapé e no mapa. Os formulários da página Contato e do rodapé gravam em `tbl_contato` e **mandam um aviso por e-mail** para a loja.
 
 **Documentação da API:** página `/api/documentacao` (arquivo `resources/views/api/documentacao.blade.php`) com todas as rotas. Ao criar uma rota nova, acrescente-a na lista `$grupos` no topo desse arquivo.
 
@@ -201,6 +201,6 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 ## 9. Últimos commits
 
 - **App:** `6db1f84` — Depoimentos envia pela API.
-- **Site:** `4b0ecd0` — Depoimentos: API e tela no painel (servidor atualizado em 19/10). Falta: mostrar os aprovados no site (a seção ainda é o texto de exemplo do modelo).
+- **Site:** `ce5b25f` — Depoimentos aprovados aparecem na Home e no Sobre (`partials/depoimentos.blade.php`); servidor atualizado em 19/10.
 
 Para ver tudo: `git log --oneline` em cada projeto.

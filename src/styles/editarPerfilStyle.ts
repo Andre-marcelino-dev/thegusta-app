@@ -250,6 +250,61 @@ const editarPerfilStyle = StyleSheet.create({
         marginBottom: 10,
     },
 
+    // Janelinha "Tirar foto / Escolher da galeria"
+    modalFundo: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.45)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+    },
+
+    modalCaixa: {
+        width: '100%',
+        maxWidth: 340,
+        backgroundColor: cores.branco,
+        borderRadius: 15,
+        padding: 20,
+    },
+
+    modalTitulo: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: cores.preto,
+        textAlign: 'center',
+        marginBottom: 16,
+    },
+
+    btnOpcaoFoto: {
+        width: '100%',
+        backgroundColor: cores.laranja,
+        borderRadius: 12,
+        paddingVertical: 14,
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+
+    txtOpcaoFoto: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: cores.branco,
+    },
+
+    btnCancelarFoto: {
+        width: '100%',
+        borderColor: cores.laranja,
+        borderWidth: 2,
+        borderRadius: 12,
+        paddingVertical: 12,
+        alignItems: 'center',
+    },
+
+    txtCancelarFoto: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: cores.laranja,
+    },
+
 });
 
 export default editarPerfilStyle;

@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
     Image,
     ImageBackground,
+    Modal,
+    Platform,
     Pressable,
     Text,
     TextInput,
@@ -69,6 +71,8 @@ export default function EditarPerfilScreen() {
     const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
     const [salvando, setSalvando] = useState(false);
     const [enviandoFoto, setEnviandoFoto] = useState(false);
+    // Janelinha "Tirar foto / Escolher da galeria"
+    const [modalFoto, setModalFoto] = useState(false);
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
 
@@ -98,22 +102,39 @@ export default function EditarPerfilScreen() {
     }, []);
 
     // Abre a galeria, deixa recortar em quadrado e envia a foto para a API
-    async function alterarFoto() {
+    // Abre a câmera ou a galeria, deixa recortar em quadrado e envia a foto para a API
+    async function escolherFoto(origem: "camera" | "galeria") {
+        setModalFoto(false);
         setErro("");
         setSucesso("");
 
-        const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!permissao.granted) {
-            setErro("Permita o acesso às fotos para alterar a foto do perfil.");
-            return;
-        }
-
-        const resultado = await ImagePicker.launchImageLibraryAsync({
+        const opcoes: ImagePicker.ImagePickerOptions = {
             mediaTypes: "images",
             allowsEditing: true,
             aspect: [1, 1],
             quality: 0.5, // a API aceita até 2 MB
-        });
+        };
+
+        // Na web o navegador cuida da permissão, e a câmera precisa abrir direto no toque
+        if (Platform.OS !== "web") {
+            const permissao =
+                origem === "camera"
+                    ? await ImagePicker.requestCameraPermissionsAsync()
+                    : await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!permissao.granted) {
+                setErro(
+                    origem === "camera"
+                        ? "Permita o acesso à câmera para tirar a foto do perfil."
+                        : "Permita o acesso às fotos para alterar a foto do perfil."
+                );
+                return;
+            }
+        }
+
+        const resultado =
+            origem === "camera"
+                ? await ImagePicker.launchCameraAsync(opcoes)
+                : await ImagePicker.launchImageLibraryAsync(opcoes);
         if (resultado.canceled || !resultado.assets?.[0]) return;
 
         setEnviandoFoto(true);
@@ -186,7 +207,11 @@ export default function EditarPerfilScreen() {
                         <View style={editarPerfilStyle.main}>
                             <View style={editarPerfilStyle.cardFoto}>
                                 <View style={editarPerfilStyle.linhaFoto}>
-                                    <View style={editarPerfilStyle.avatarFoto}>
+                                    <Pressable
+                                        style={editarPerfilStyle.avatarFoto}
+                                        onPress={() => setModalFoto(true)}
+                                        disabled={enviandoFoto}
+                                    >
                                         {fotoPerfil !== null ? (
                                             <Image
                                                 style={editarPerfilStyle.fotoAvatar}
@@ -199,10 +224,10 @@ export default function EditarPerfilScreen() {
                                                 source={require("@/assets/images/img/perfil.png")}
                                             />
                                         )}
-                                    </View>
+                                    </Pressable>
                                     <Pressable
                                         style={editarPerfilStyle.btnAlterarFoto}
-                                        onPress={alterarFoto}
+                                        onPress={() => setModalFoto(true)}
                                         disabled={enviandoFoto}
                                     >
                                         <Text style={editarPerfilStyle.txtAlterarFoto}>
@@ -215,6 +240,46 @@ export default function EditarPerfilScreen() {
                                     conta
                                 </Text>
                             </View>
+
+                            <Modal
+                                visible={modalFoto}
+                                transparent
+                                animationType="fade"
+                                onRequestClose={() => setModalFoto(false)}
+                            >
+                                {/* Tocar fora da caixa fecha a janelinha */}
+                                <Pressable
+                                    style={editarPerfilStyle.modalFundo}
+                                    onPress={() => setModalFoto(false)}
+                                >
+                                    <Pressable style={editarPerfilStyle.modalCaixa} onPress={() => {}}>
+                                        <Text style={editarPerfilStyle.modalTitulo}>Foto do perfil</Text>
+
+                                        <Pressable
+                                            style={editarPerfilStyle.btnOpcaoFoto}
+                                            onPress={() => escolherFoto("camera")}
+                                        >
+                                            <Text style={editarPerfilStyle.txtOpcaoFoto}>Tirar foto</Text>
+                                        </Pressable>
+
+                                        <Pressable
+                                            style={editarPerfilStyle.btnOpcaoFoto}
+                                            onPress={() => escolherFoto("galeria")}
+                                        >
+                                            <Text style={editarPerfilStyle.txtOpcaoFoto}>
+                                                Escolher da galeria
+                                            </Text>
+                                        </Pressable>
+
+                                        <Pressable
+                                            style={editarPerfilStyle.btnCancelarFoto}
+                                            onPress={() => setModalFoto(false)}
+                                        >
+                                            <Text style={editarPerfilStyle.txtCancelarFoto}>Cancelar</Text>
+                                        </Pressable>
+                                    </Pressable>
+                                </Pressable>
+                            </Modal>
 
                             <View style={editarPerfilStyle.form}>
                                 <View style={editarPerfilStyle.campo}>

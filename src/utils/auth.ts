@@ -157,6 +157,32 @@ export async function enviarFotoCliente(foto: FotoEscolhida): Promise<Cliente> {
     return json.data;
 }
 
+// Troca a senha do cliente logado. A API confere a senha atual.
+// Se der errado, lança um erro com a mensagem da API para mostrar na tela.
+export async function alterarSenha(senhaAtual: string, novaSenha: string, confirmacao: string) {
+    const token = await pegarToken();
+    if (!token) throw new Error("Faça login novamente.");
+
+    const resposta = await fetch(`${API_BASE_URL}/api/v1/cliente/senha`, {
+        method: "PUT",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            senha_atual: senhaAtual,
+            nova_senha: novaSenha,
+            nova_senha_confirmation: confirmacao,
+        }),
+    });
+
+    const json = await resposta.json().catch(() => null);
+    if (!resposta.ok || !json?.success) {
+        throw new Error(json?.message ?? `Erro ${resposta.status} ao trocar a senha.`);
+    }
+}
+
 // Endereço da foto do cliente (as fotos ficam em davilla/images/cliente).
 export function urlFotoCliente(cliente: Cliente | null) {
     if (!cliente?.foto_cliente) return null;

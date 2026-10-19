@@ -125,6 +125,7 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 | **Pagamento** | itens reais da sacola; entrega/retirada; forma de pagamento; **Confirma Pedido grava o pedido**, esvazia a sacola, abre o WhatsApp da loja com o número do pedido e mostra os detalhes |
 | **Meus pedidos / Detalhes do pedido** | do banco; etapas pelo status; **Pedir novamente** coloca os itens na sacola (preços atuais); abas "Em preparo" e "Histórico" (entregues e cancelados) |
 | **Editar perfil** | carrega e salva nome, telefone e nascimento; e-mail e CPF só leitura; **Alterar foto** (expo-image-picker) |
+| **Alterar senha** | confere os campos e troca a senha pela API (`PUT /cliente/senha`, pede a senha atual) |
 | **Endereços** | lista, adicionar, editar (com número e complemento), excluir, "usar este endereço"; **busca por CEP (ViaCEP)** |
 | Seta de voltar | não dá mais erro `GO_BACK` quando a tela é aberta direto |
 

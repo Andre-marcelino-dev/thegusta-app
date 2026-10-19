@@ -16,6 +16,7 @@ import globalStyle from "@/styles/globalStyle";
 import alterarSenhaStyle from "@/styles/alterarSenhaStyle";
 import Footer from "@/components/footer";
 import { cores } from "@/styles/variaveis";
+import { alterarSenha } from "@/utils/auth";
 
 export default function AlterarSenhaScreen() {
     const [senhaAtual, setSenhaAtual] = useState("");
@@ -25,6 +26,46 @@ export default function AlterarSenhaScreen() {
     const [verSenhaAtual, setVerSenhaAtual] = useState(false);
     const [verNovaSenha, setVerNovaSenha] = useState(false);
     const [verConfirmarSenha, setVerConfirmarSenha] = useState(false);
+
+    const [salvando, setSalvando] = useState(false);
+    const [erro, setErro] = useState("");
+    const [sucesso, setSucesso] = useState("");
+
+    // Confere os campos aqui (mensagens em português) e depois a API confere a senha atual
+    async function salvarSenha() {
+        setErro("");
+        setSucesso("");
+
+        if (!senhaAtual || !novaSenha || !confirmarSenha) {
+            setErro("Preencha os três campos.");
+            return;
+        }
+        if (novaSenha.length < 8) {
+            setErro("A nova senha precisa ter pelo menos 8 caracteres.");
+            return;
+        }
+        if (novaSenha !== confirmarSenha) {
+            setErro("A confirmação não é igual à nova senha.");
+            return;
+        }
+        if (novaSenha === senhaAtual) {
+            setErro("A nova senha precisa ser diferente da atual.");
+            return;
+        }
+
+        setSalvando(true);
+        try {
+            await alterarSenha(senhaAtual, novaSenha, confirmarSenha);
+            setSenhaAtual("");
+            setNovaSenha("");
+            setConfirmarSenha("");
+            setSucesso("Senha alterada com sucesso.");
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível trocar a senha.");
+        } finally {
+            setSalvando(false);
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -57,7 +98,7 @@ export default function AlterarSenhaScreen() {
                                     />
                                     <TextInput
                                         style={alterarSenhaStyle.inputCampo}
-                                        placeholder="Senha"
+                                        placeholder="Senha atual"
                                         placeholderTextColor={cores.cinzclaro}
                                         secureTextEntry={!verSenhaAtual}
                                         value={senhaAtual}
@@ -87,7 +128,7 @@ export default function AlterarSenhaScreen() {
                                     />
                                     <TextInput
                                         style={alterarSenhaStyle.inputCampo}
-                                        placeholder="Senha"
+                                        placeholder="Nova senha"
                                         placeholderTextColor={cores.cinzclaro}
                                         secureTextEntry={!verNovaSenha}
                                         value={novaSenha}
@@ -117,7 +158,7 @@ export default function AlterarSenhaScreen() {
                                     />
                                     <TextInput
                                         style={alterarSenhaStyle.inputCampo}
-                                        placeholder="Senha"
+                                        placeholder="Repita a nova senha"
                                         placeholderTextColor={cores.cinzclaro}
                                         secureTextEntry={!verConfirmarSenha}
                                         value={confirmarSenha}
@@ -161,9 +202,20 @@ export default function AlterarSenhaScreen() {
                                 </View>
                             </View>
 
-                            <Pressable style={alterarSenhaStyle.btnSalvar}>
+                            {erro !== "" && (
+                                <Text style={alterarSenhaStyle.txtErro}>{erro}</Text>
+                            )}
+                            {sucesso !== "" && (
+                                <Text style={alterarSenhaStyle.txtSucesso}>{sucesso}</Text>
+                            )}
+
+                            <Pressable
+                                style={alterarSenhaStyle.btnSalvar}
+                                onPress={salvarSenha}
+                                disabled={salvando}
+                            >
                                 <Text style={alterarSenhaStyle.txtSalvar}>
-                                    Salvar nova senha
+                                    {salvando ? "Salvando..." : "Salvar nova senha"}
                                 </Text>
                             </Pressable>
 
@@ -180,7 +232,9 @@ export default function AlterarSenhaScreen() {
 
                     <Pressable
                         style={alterarSenhaStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() =>
+                            router.canGoBack() ? router.back() : router.replace("/configuracoes")
+                        }
                     >
                         <Image
                             style={alterarSenhaStyle.iconeVoltar}

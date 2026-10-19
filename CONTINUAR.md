@@ -1,6 +1,6 @@
 # TheGusta / Confeitaria DaVilla — onde paramos e como continuar
 
-Última atualização: 18/10/2026.
+Última atualização: 19/10/2026.
 
 Este documento resume o que foi feito no app e no site, como rodar tudo em outro computador e o que ainda falta. Não tem senhas: elas ficam só nos arquivos `.env` (que não vão para o Git).
 
@@ -124,7 +124,7 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 | **Sacola** | itens do cliente logado (`tbl_sacola`); +/−/excluir gravam no banco; endereço e telefone reais; cupom validado na API |
 | **Pagamento** | itens reais da sacola; entrega/retirada; forma de pagamento; **Confirma Pedido grava o pedido**, esvazia a sacola, abre o WhatsApp da loja com o número do pedido e mostra os detalhes |
 | **Meus pedidos / Detalhes do pedido** | do banco; etapas pelo status; **Pedir novamente** coloca os itens na sacola (preços atuais); abas "Em preparo" e "Histórico" (entregues e cancelados) |
-| **Editar perfil** | carrega e salva nome, telefone e nascimento; e-mail e CPF só leitura; **Alterar foto** (expo-image-picker) |
+| **Editar perfil** | carrega e salva nome, telefone e nascimento; e-mail e CPF só leitura; **Alterar foto** com janela para tirar foto ou escolher da galeria (expo-image-picker); "Receber novidades" grava SIM/NAO |
 | **Alterar senha** | confere os campos e troca a senha pela API (`PUT /cliente/senha`, pede a senha atual) |
 | **Endereços** | lista, adicionar, editar (com número e complemento), excluir, "usar este endereço"; **busca por CEP (ViaCEP)** |
 | Seta de voltar | não dá mais erro `GO_BACK` quando a tela é aberta direto |
@@ -154,6 +154,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | **Catálogo → Kits** | criar, editar e excluir os kits da Home (produtos do kit, preço promocional, etiqueta, foto) |
 | **Sistema → Meu Perfil** | o usuário logado edita nome, e-mail, foto e senha; o topo do painel mostra a foto e o cargo reais |
 | **Estoque → Fornecedores / Matérias-primas / Movimentações** | fornecedores (ativar/desativar); matérias-primas com estoque atual; entradas e saídas que atualizam a quantidade e não deixam ficar negativa |
+| **Comercial → Novidades e promoções** | clientes ativos que marcaram "Receber novidades" no app; WhatsApp/e-mail de cada um, copiar todos os e-mails (usar no Cco) e baixar planilha |
 | **Comercial → Cupons** | criar, editar, ativar/desativar e excluir (só se nunca usado); mostra situação e usos |
 | **Conteúdo do Site → Banners** | criar, editar, ativar/desativar e excluir, com miniatura |
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
@@ -193,7 +194,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** web em pt-BR sem tradução do Chrome (`src/app/+html.tsx`).
-- **Site:** `ff8fc55` — Detalhes do pedido no admin: conta separada e troca de status.
+- **App:** `2740b66` — Editar perfil: janela da foto no estilo de painel inferior, com ícones.
+- **Site:** `1c391c6` — Painel: tela Novidades e promoções (servidor já atualizado em 19/10).
 
 Para ver tudo: `git log --oneline` em cada projeto.

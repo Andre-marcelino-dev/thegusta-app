@@ -212,6 +212,81 @@ const configuracoesStyle = StyleSheet.create({
         color: cores.branco,
     },
 
+    // Janelinha "Sair da conta?" (abre na parte de baixo da tela)
+    modalFundo: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+
+    modalCaixa: {
+        width: '100%',
+        maxWidth: 480,
+        backgroundColor: cores.branco,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 30,
+    },
+
+    modalAlca: {
+        width: 42,
+        height: 5,
+        borderRadius: 3,
+        backgroundColor: '#dddddd',
+        alignSelf: 'center',
+        marginBottom: 18,
+    },
+
+    modalTitulo: {
+        fontSize: fontes.fontgrande,
+        fontFamily: fontes.negrito,
+        color: cores.preto,
+    },
+
+    modalSubtitulo: {
+        fontSize: 13,
+        fontFamily: fontes.comum,
+        color: cores.cinzclaro,
+        marginTop: 4,
+        marginBottom: 20,
+    },
+
+    btnConfirmarSair: {
+        width: '100%',
+        backgroundColor: '#d32f2f',
+        borderRadius: 14,
+        paddingVertical: 14,
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+
+    txtConfirmarSair: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: cores.branco,
+    },
+
+    btnFicar: {
+        width: '100%',
+        backgroundColor: '#f2f2f2',
+        borderRadius: 14,
+        paddingVertical: 14,
+        alignItems: 'center',
+    },
+
+    txtFicar: {
+        fontSize: fontes.fontmedia,
+        fontFamily: fontes.negrito,
+        color: '#555555',
+    },
+
+    btnPressionado: {
+        opacity: 0.6,
+    },
+
 });
 
 export default configuracoesStyle;

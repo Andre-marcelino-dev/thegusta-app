@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
     Image,
     ImageBackground,
+    Modal,
     Pressable,
     Text,
     View,
@@ -15,9 +16,25 @@ import globalStyle from "@/styles/globalStyle";
 import configuracoesStyle from "@/styles/configuracoesStyle";
 import Footer from "@/components/footer";
 import { voltar } from "@/utils/navegacao";
+import { fazerLogout } from "@/utils/auth";
 
 export default function ConfiguracoesScreen() {
     const [notificacoesAtivas, setNotificacoesAtivas] = useState(true);
+    // Janelinha "Deseja sair da conta?"
+    const [modalSair, setModalSair] = useState(false);
+    const [saindo, setSaindo] = useState(false);
+
+    // Apaga o login guardado no aparelho (e avisa a API) e volta para a tela de login
+    async function sairDaConta() {
+        setSaindo(true);
+        try {
+            await fazerLogout();
+        } finally {
+            setSaindo(false);
+            setModalSair(false);
+            router.replace("/");
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -232,10 +249,57 @@ export default function ConfiguracoesScreen() {
 
                             <Pressable
                                 style={configuracoesStyle.btnSair}
-                                onPress={() => router.replace("/")}
+                                onPress={() => setModalSair(true)}
                             >
                                 <Text style={configuracoesStyle.txtSair}>Sair da conta</Text>
                             </Pressable>
+
+                            <Modal
+                                visible={modalSair}
+                                transparent
+                                animationType="fade"
+                                onRequestClose={() => !saindo && setModalSair(false)}
+                            >
+                                {/* Tocar fora da caixa fecha a janelinha */}
+                                <Pressable
+                                    style={configuracoesStyle.modalFundo}
+                                    onPress={() => !saindo && setModalSair(false)}
+                                >
+                                    <Pressable style={configuracoesStyle.modalCaixa} onPress={() => {}}>
+                                        <View style={configuracoesStyle.modalAlca} />
+
+                                        <Text style={configuracoesStyle.modalTitulo}>Sair da conta?</Text>
+                                        <Text style={configuracoesStyle.modalSubtitulo}>
+                                            Você vai precisar entrar com seu e-mail e senha para fazer
+                                            novos pedidos. Sua sacola continua salva.
+                                        </Text>
+
+                                        <Pressable
+                                            style={({ pressed }) => [
+                                                configuracoesStyle.btnConfirmarSair,
+                                                (pressed || saindo) && configuracoesStyle.btnPressionado,
+                                            ]}
+                                            onPress={sairDaConta}
+                                            disabled={saindo}
+                                        >
+                                            <Text style={configuracoesStyle.txtConfirmarSair}>
+                                                {saindo ? "Saindo..." : "Sair"}
+                                            </Text>
+                                        </Pressable>
+
+                                        <Pressable
+                                            style={({ pressed }) => [
+                                                configuracoesStyle.btnFicar,
+                                                pressed && configuracoesStyle.btnPressionado,
+                                            ]}
+                                            onPress={() => setModalSair(false)}
+                                            disabled={saindo}
+                                        >
+                                            <Text style={configuracoesStyle.txtFicar}>Cancelar</Text>
+                                        </Pressable>
+                                    </Pressable>
+                                </Pressable>
+                            </Modal>
                         </View>
                     </ScrollView>
 

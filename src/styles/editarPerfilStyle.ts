@@ -140,6 +140,18 @@ const editarPerfilStyle = StyleSheet.create({
         marginBottom: 14,
     },
 
+    // Campo com valor errado (ex.: data que não existe)
+    campoInvalido: {
+        borderColor: "#d32f2f",
+    },
+
+    txtAvisoCampo: {
+        fontSize: 11,
+        fontFamily: fontes.comum,
+        color: "#d32f2f",
+        marginLeft: 8,
+    },
+
     iconeCampo: {
         width: 20,
         height: 20,

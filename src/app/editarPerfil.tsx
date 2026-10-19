@@ -39,6 +39,20 @@ function dataParaBanco(data: string) {
     return `${ano}-${mes}-${dia}`;
 }
 
+// Confere a data "dd/mm/aaaa": precisa existir no calendário (30/02 não existe e
+// 29/02 só em ano bissexto), não pode ser no futuro nem antes de 1900.
+// Devolve "" se estiver tudo certo ou a mensagem para mostrar no campo.
+function problemaNascimento(data: string) {
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(data)) return "Informe uma data válida";
+    const [dia, mes, ano] = data.split("/").map(Number);
+    const digitada = new Date(ano, mes - 1, dia);
+    const existe =
+        digitada.getFullYear() === ano && digitada.getMonth() === mes - 1 && digitada.getDate() === dia;
+    if (!existe || ano < 1900) return "Informe uma data válida";
+    if (digitada > new Date()) return "A data não pode ser no futuro";
+    return "";
+}
+
 // Coloca as barras sozinho enquanto a pessoa digita a data
 function mascararData(texto: string) {
     const numeros = texto.replace(/\D/g, "").slice(0, 8);
@@ -75,6 +89,8 @@ export default function EditarPerfilScreen() {
     const [modalFoto, setModalFoto] = useState(false);
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
+    // Só avisa depois que a data foi digitada inteira (dd/mm/aaaa)
+    const avisoNascimento = nascimento.length === 10 ? problemaNascimento(nascimento) : "";
 
     // Carrega do banco os dados de quem está logado
     useEffect(() => {
@@ -161,8 +177,8 @@ export default function EditarPerfilScreen() {
             setErro("Informe o telefone com DDD, ex.: (11)98888-7777.");
             return;
         }
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) {
-            setErro("Informe a data de nascimento no formato dd/mm/aaaa.");
+        if (problemaNascimento(nascimento)) {
+            setErro("Corrija a data de nascimento: " + problemaNascimento(nascimento).toLowerCase() + ".");
             return;
         }
 
@@ -383,7 +399,12 @@ export default function EditarPerfilScreen() {
                                     />
                                 </View>
 
-                                <View style={editarPerfilStyle.campo}>
+                                <View
+                                    style={[
+                                        editarPerfilStyle.campo,
+                                        avisoNascimento !== "" && editarPerfilStyle.campoInvalido,
+                                    ]}
+                                >
                                     <Image
                                         style={editarPerfilStyle.iconeCampo}
                                         source={require("@/assets/images/img/calendario.png")}
@@ -393,9 +414,13 @@ export default function EditarPerfilScreen() {
                                         placeholder="dd/mm/aaaa"
                                         placeholderTextColor={cores.cinzclaro}
                                         keyboardType="numeric"
+                                        maxLength={10}
                                         value={nascimento}
                                         onChangeText={(texto) => setNascimento(mascararData(texto))}
                                     />
+                                    {avisoNascimento !== "" && (
+                                        <Text style={editarPerfilStyle.txtAvisoCampo}>{avisoNascimento}</Text>
+                                    )}
                                 </View>
                             </View>
 

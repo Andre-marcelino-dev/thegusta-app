@@ -190,15 +190,6 @@ const configuracoesStyle = StyleSheet.create({
         color: cores.branco,
     },
 
-    btnToggle: {
-        marginLeft: 8,
-    },
-
-    imgToggle: {
-        width: 44,
-        height: 26,
-    },
-
     secao: {
         marginBottom: 10,
     },

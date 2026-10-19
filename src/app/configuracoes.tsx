@@ -19,7 +19,6 @@ import { voltar } from "@/utils/navegacao";
 import { buscarClienteLogado, Cliente, fazerLogout, urlFotoCliente } from "@/utils/auth";
 
 export default function ConfiguracoesScreen() {
-    const [notificacoesAtivas, setNotificacoesAtivas] = useState(true);
     // Janelinha "Deseja sair da conta?"
     const [modalSair, setModalSair] = useState(false);
     const [saindo, setSaindo] = useState(false);
@@ -187,38 +186,6 @@ export default function ConfiguracoesScreen() {
                                         <Text style={configuracoesStyle.txtBtnInstalar}>
                                             Instalar
                                         </Text>
-                                    </Pressable>
-                                </View>
-
-                                <View style={configuracoesStyle.itemConta}>
-                                    <View style={configuracoesStyle.iconeCaixaItem}>
-                                        <Image
-                                            style={configuracoesStyle.imgItem}
-                                            source={require("@/assets/images/img/notificacao.png")}
-                                        />
-                                    </View>
-                                    <View style={configuracoesStyle.infoItem}>
-                                        <Text style={configuracoesStyle.tituloItem}>
-                                            Ativar notificações
-                                        </Text>
-                                        <Text style={configuracoesStyle.descricaoItem}>
-                                            Receba status do pedido e promoções
-                                        </Text>
-                                    </View>
-                                    <Pressable
-                                        style={configuracoesStyle.btnToggle}
-                                        onPress={() =>
-                                            setNotificacoesAtivas((valor) => !valor)
-                                        }
-                                    >
-                                        <Image
-                                            style={configuracoesStyle.imgToggle}
-                                            source={
-                                                notificacoesAtivas
-                                                    ? require("@/assets/images/img/ativo.png")
-                                                    : require("@/assets/images/img/inativo.png")
-                                            }
-                                        />
                                     </Pressable>
                                 </View>
                             </View>

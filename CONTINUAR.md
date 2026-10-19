@@ -129,6 +129,7 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 | **Endereços** | lista, adicionar, editar (com número e complemento), excluir, "usar este endereço"; **busca por CEP (ViaCEP)** |
 | **Configurações** | cartão do topo com nome, e-mail e foto reais; **Sair da conta** pede confirmação e faz logout de verdade |
 | **Fale conosco** | envia pela API (`POST /contato`) para Mensagens de contato do painel + aviso por e-mail; WhatsApp e e-mail reais da loja (vêm de `GET /configuracoes`) |
+| **Depoimentos** | envia nota e texto pela API; lista os do cliente com a situação (Em análise / Publicado / Não publicado) |
 | Seta de voltar | não dá mais erro `GO_BACK` quando a tela é aberta direto |
 
 Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `enderecos.ts`, `cupons.ts`, `avisar.ts`.
@@ -146,6 +147,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | `GET /cupons/{codigo}` | valida cupom |
 | `GET /configuracoes` (pública) | taxa e previsão de entrega, WhatsApp e e-mail da loja |
 | `POST /contato` | Fale conosco do app (máx. 5 por minuto) |
+| `GET/POST /depoimentos` | depoimentos do cliente (entram como PENDENTE) |
 
 **Painel admin:**
 
@@ -160,6 +162,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | **Comercial → Novidades e promoções** | clientes ativos que marcaram "Receber novidades" no app; WhatsApp/e-mail de cada um, copiar todos os e-mails (usar no Cco) e baixar planilha |
 | **Comercial → Cupons** | criar, editar, ativar/desativar e excluir (só se nunca usado); mostra situação e usos |
 | **Conteúdo do Site → Banners** | criar, editar, ativar/desativar e excluir, com miniatura |
+| **Conteúdo do Site → Depoimentos** | aprovar (Publicado), recusar ou excluir os depoimentos do app; filtro por situação |
 | **Conteúdo do Site → Mensagens de contato** | lista, leitura, status; responder por WhatsApp ou e-mail |
 | Menu lateral | removido o menu antigo duplicado do modelo, que escondia o menu certo |
 
@@ -197,7 +200,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `18a37ff` — Fale conosco envia pela API.
-- **Site:** `7709fc0` — API: POST /contato e contato da loja em /configuracoes (servidor atualizado em 19/10).
+- **App:** `6db1f84` — Depoimentos envia pela API.
+- **Site:** `4b0ecd0` — Depoimentos: API e tela no painel (servidor atualizado em 19/10). Falta: mostrar os aprovados no site (a seção ainda é o texto de exemplo do modelo).
 
 Para ver tudo: `git log --oneline` em cada projeto.

@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
     Image,
     ImageBackground,
+    Linking,
     Pressable,
     Text,
     TextInput,
@@ -16,10 +17,34 @@ import faleConoscoStyle from "@/styles/faleConoscoStyle";
 import Footer from "@/components/footer";
 import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
+import { enviarMensagemContato } from "@/utils/contato";
+import { formatarWhatsapp, useConfiguracoes } from "@/utils/loja";
 
 export default function FaleConoscoScreen() {
     const [assunto, setAssunto] = useState("");
     const [mensagem, setMensagem] = useState("");
+    const [enviando, setEnviando] = useState(false);
+    const [erro, setErro] = useState("");
+    const [sucesso, setSucesso] = useState("");
+    const loja = useConfiguracoes();
+
+    async function enviar() {
+        setErro("");
+        setSucesso("");
+        if (!assunto.trim()) return setErro("Informe o assunto.");
+        if (!mensagem.trim()) return setErro("Escreva a mensagem.");
+
+        setEnviando(true);
+        try {
+            setSucesso(await enviarMensagemContato(assunto, mensagem));
+            setAssunto("");
+            setMensagem("");
+        } catch (e) {
+            setErro(e instanceof Error ? e.message : "Não foi possível enviar a mensagem.");
+        } finally {
+            setEnviando(false);
+        }
+    }
 
     return (
         <View style={globalStyle.container}>
@@ -55,6 +80,7 @@ export default function FaleConoscoScreen() {
                                     placeholderTextColor={cores.cinzclaro}
                                     value={assunto}
                                     onChangeText={setAssunto}
+                                    maxLength={30}
                                 />
                             </View>
 
@@ -71,12 +97,20 @@ export default function FaleConoscoScreen() {
                                     numberOfLines={6}
                                     value={mensagem}
                                     onChangeText={setMensagem}
+                                    maxLength={2000}
                                 />
                             </View>
 
-                            <Pressable style={faleConoscoStyle.btnEnviar}>
+                            {erro ? <Text style={faleConoscoStyle.txtErro}>{erro}</Text> : null}
+                            {sucesso ? <Text style={faleConoscoStyle.txtSucesso}>{sucesso}</Text> : null}
+
+                            <Pressable
+                                style={[faleConoscoStyle.btnEnviar, enviando && { opacity: 0.6 }]}
+                                onPress={enviar}
+                                disabled={enviando}
+                            >
                                 <Text style={faleConoscoStyle.txtEnviar}>
-                                    Enviar mensagem
+                                    {enviando ? "Enviando..." : "Enviar mensagem"}
                                 </Text>
                             </Pressable>
 
@@ -85,12 +119,19 @@ export default function FaleConoscoScreen() {
                                     <Text style={faleConoscoStyle.tituloAtendimento}>
                                         Atendimento
                                     </Text>
-                                    <Text style={faleConoscoStyle.txtValor}>
-                                        (11)99999-9999
+                                    {/* Tocar abre o WhatsApp / o e-mail da loja */}
+                                    <Text
+                                        style={faleConoscoStyle.txtValor}
+                                        onPress={() => Linking.openURL(`https://wa.me/${loja.whatsapp}`)}
+                                    >
+                                        {formatarWhatsapp(loja.whatsapp)} (WhatsApp)
                                     </Text>
                                     <Text style={faleConoscoStyle.txtLabel}>E-mail</Text>
-                                    <Text style={faleConoscoStyle.txtValor}>
-                                        contato@thegusta.com.br
+                                    <Text
+                                        style={faleConoscoStyle.txtValor}
+                                        onPress={() => Linking.openURL(`mailto:${loja.email}`)}
+                                    >
+                                        {loja.email}
                                     </Text>
                                     <Text style={faleConoscoStyle.txtLabel}>
                                         Horário de atendimento

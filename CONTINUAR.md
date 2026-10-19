@@ -127,6 +127,8 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 | **Editar perfil** | carrega e salva nome, telefone e nascimento; e-mail e CPF só leitura; **Alterar foto** com janela para tirar foto ou escolher da galeria (expo-image-picker); "Receber novidades" grava SIM/NAO |
 | **Alterar senha** | confere os campos e troca a senha pela API (`PUT /cliente/senha`, pede a senha atual) |
 | **Endereços** | lista, adicionar, editar (com número e complemento), excluir, "usar este endereço"; **busca por CEP (ViaCEP)** |
+| **Configurações** | cartão do topo com nome, e-mail e foto reais; **Sair da conta** pede confirmação e faz logout de verdade |
+| **Fale conosco** | envia pela API (`POST /contato`) para Mensagens de contato do painel + aviso por e-mail; WhatsApp e e-mail reais da loja (vêm de `GET /configuracoes`) |
 | Seta de voltar | não dá mais erro `GO_BACK` quando a tela é aberta direto |
 
 Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `enderecos.ts`, `cupons.ts`, `avisar.ts`.
@@ -142,7 +144,8 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | `POST /cliente/foto` | foto de perfil |
 | `GET/POST /enderecos`, `GET/PUT/PATCH/DELETE /enderecos/{id}`, `PATCH /enderecos/{id}/principal` | endereços de entrega |
 | `GET /cupons/{codigo}` | valida cupom |
-| `GET /configuracoes` (pública) | taxa e previsão de entrega |
+| `GET /configuracoes` (pública) | taxa e previsão de entrega, WhatsApp e e-mail da loja |
+| `POST /contato` | Fale conosco do app (máx. 5 por minuto) |
 
 **Painel admin:**
 
@@ -194,7 +197,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `2740b66` — Editar perfil: janela da foto no estilo de painel inferior, com ícones.
-- **Site:** `1c391c6` — Painel: tela Novidades e promoções (servidor já atualizado em 19/10).
+- **App:** `18a37ff` — Fale conosco envia pela API.
+- **Site:** `7709fc0` — API: POST /contato e contato da loja em /configuracoes (servidor atualizado em 19/10).
 
 Para ver tudo: `git log --oneline` em cada projeto.

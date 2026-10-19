@@ -253,26 +253,64 @@ export default function EditarPerfilScreen() {
                                     onPress={() => setModalFoto(false)}
                                 >
                                     <Pressable style={editarPerfilStyle.modalCaixa} onPress={() => {}}>
+                                        <View style={editarPerfilStyle.modalAlca} />
+
                                         <Text style={editarPerfilStyle.modalTitulo}>Foto do perfil</Text>
+                                        <Text style={editarPerfilStyle.modalSubtitulo}>
+                                            Escolha como deseja adicionar sua nova foto
+                                        </Text>
 
                                         <Pressable
-                                            style={editarPerfilStyle.btnOpcaoFoto}
+                                            style={({ pressed }) => [
+                                                editarPerfilStyle.opcaoFoto,
+                                                pressed && editarPerfilStyle.opcaoFotoPressionada,
+                                            ]}
                                             onPress={() => escolherFoto("camera")}
                                         >
-                                            <Text style={editarPerfilStyle.txtOpcaoFoto}>Tirar foto</Text>
+                                            <View style={editarPerfilStyle.iconeOpcaoFoto}>
+                                                <Image
+                                                    style={editarPerfilStyle.imgOpcaoFoto}
+                                                    source={require("@/assets/images/img/camera.png")}
+                                                />
+                                            </View>
+                                            <View style={editarPerfilStyle.infoOpcaoFoto}>
+                                                <Text style={editarPerfilStyle.tituloOpcaoFoto}>Tirar foto</Text>
+                                                <Text style={editarPerfilStyle.descricaoOpcaoFoto}>
+                                                    Use a câmera do seu aparelho
+                                                </Text>
+                                            </View>
+                                            <Text style={editarPerfilStyle.setaOpcaoFoto}>›</Text>
                                         </Pressable>
 
                                         <Pressable
-                                            style={editarPerfilStyle.btnOpcaoFoto}
+                                            style={({ pressed }) => [
+                                                editarPerfilStyle.opcaoFoto,
+                                                pressed && editarPerfilStyle.opcaoFotoPressionada,
+                                            ]}
                                             onPress={() => escolherFoto("galeria")}
                                         >
-                                            <Text style={editarPerfilStyle.txtOpcaoFoto}>
-                                                Escolher da galeria
-                                            </Text>
+                                            <View style={editarPerfilStyle.iconeOpcaoFoto}>
+                                                <Image
+                                                    style={editarPerfilStyle.imgOpcaoFoto}
+                                                    source={require("@/assets/images/img/galeria.png")}
+                                                />
+                                            </View>
+                                            <View style={editarPerfilStyle.infoOpcaoFoto}>
+                                                <Text style={editarPerfilStyle.tituloOpcaoFoto}>
+                                                    Escolher da galeria
+                                                </Text>
+                                                <Text style={editarPerfilStyle.descricaoOpcaoFoto}>
+                                                    Selecione uma foto já salva
+                                                </Text>
+                                            </View>
+                                            <Text style={editarPerfilStyle.setaOpcaoFoto}>›</Text>
                                         </Pressable>
 
                                         <Pressable
-                                            style={editarPerfilStyle.btnCancelarFoto}
+                                            style={({ pressed }) => [
+                                                editarPerfilStyle.btnCancelarFoto,
+                                                pressed && editarPerfilStyle.opcaoFotoPressionada,
+                                            ]}
                                             onPress={() => setModalFoto(false)}
                                         >
                                             <Text style={editarPerfilStyle.txtCancelarFoto}>Cancelar</Text>

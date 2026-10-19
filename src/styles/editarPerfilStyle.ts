@@ -250,59 +250,115 @@ const editarPerfilStyle = StyleSheet.create({
         marginBottom: 10,
     },
 
-    // Janelinha "Tirar foto / Escolher da galeria"
+    // Janelinha "Tirar foto / Escolher da galeria" (abre na parte de baixo da tela)
     modalFundo: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.45)',
-        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        padding: 24,
     },
 
     modalCaixa: {
         width: '100%',
-        maxWidth: 340,
+        maxWidth: 480,
         backgroundColor: cores.branco,
-        borderRadius: 15,
-        padding: 20,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 30,
+    },
+
+    modalAlca: {
+        width: 42,
+        height: 5,
+        borderRadius: 3,
+        backgroundColor: '#dddddd',
+        alignSelf: 'center',
+        marginBottom: 18,
     },
 
     modalTitulo: {
-        fontSize: fontes.fontmedia,
+        fontSize: fontes.fontgrande,
         fontFamily: fontes.negrito,
         color: cores.preto,
-        textAlign: 'center',
-        marginBottom: 16,
     },
 
-    btnOpcaoFoto: {
-        width: '100%',
-        backgroundColor: cores.laranja,
-        borderRadius: 12,
-        paddingVertical: 14,
+    modalSubtitulo: {
+        fontSize: 13,
+        fontFamily: fontes.comum,
+        color: cores.cinzclaro,
+        marginTop: 2,
+        marginBottom: 18,
+    },
+
+    opcaoFoto: {
+        flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: '#fafafa',
+        borderColor: '#eeeeee',
+        borderWidth: 1,
+        borderRadius: 14,
+        padding: 12,
         marginBottom: 10,
     },
 
-    txtOpcaoFoto: {
+    opcaoFotoPressionada: {
+        opacity: 0.6,
+    },
+
+    iconeOpcaoFoto: {
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        backgroundColor: cores.laranjaclaro,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 14,
+    },
+
+    imgOpcaoFoto: {
+        width: 22,
+        height: 22,
+        tintColor: cores.laranja,
+    },
+
+    infoOpcaoFoto: {
+        flex: 1,
+    },
+
+    tituloOpcaoFoto: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-        color: cores.branco,
+        color: cores.preto,
+    },
+
+    descricaoOpcaoFoto: {
+        fontSize: 12,
+        fontFamily: fontes.comum,
+        color: cores.cinzclaro,
+        marginTop: 1,
+    },
+
+    setaOpcaoFoto: {
+        fontSize: 26,
+        color: '#bbbbbb',
+        marginLeft: 8,
     },
 
     btnCancelarFoto: {
         width: '100%',
-        borderColor: cores.laranja,
-        borderWidth: 2,
-        borderRadius: 12,
-        paddingVertical: 12,
+        borderRadius: 14,
+        paddingVertical: 14,
         alignItems: 'center',
+        marginTop: 6,
+        backgroundColor: '#f2f2f2',
     },
 
     txtCancelarFoto: {
         fontSize: fontes.fontmedia,
         fontFamily: fontes.negrito,
-        color: cores.laranja,
+        color: '#555555',
     },
 
 });

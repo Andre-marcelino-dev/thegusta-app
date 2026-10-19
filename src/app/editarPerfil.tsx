@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +15,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import editarPerfilStyle from "@/styles/editarPerfilStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
 import {
     atualizarCliente,
@@ -346,7 +346,7 @@ export default function EditarPerfilScreen() {
 
                             <Pressable
                                 style={editarPerfilStyle.btnCancelar}
-                                onPress={() => router.back()}
+                                onPress={() => voltar("/configuracoes")}
                             >
                                 <Text style={editarPerfilStyle.txtCancelar}>Cancelar</Text>
                             </Pressable>
@@ -355,9 +355,7 @@ export default function EditarPerfilScreen() {
 
                     <Pressable
                         style={editarPerfilStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/configuracoes")
-                        }
+                        onPress={() => voltar("/configuracoes")}
                     >
                         <Image
                             style={editarPerfilStyle.iconeVoltar}

@@ -15,6 +15,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import detalhesPedidoStyle from "@/styles/detalhesPedidoStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { useConfiguracoes } from "@/utils/loja";
 import {
     buscarPedido,
@@ -385,9 +386,7 @@ export default function DetalhesPedidoScreen() {
 
                     <Pressable
                         style={detalhesPedidoStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/pedidos")
-                        }
+                        onPress={() => voltar("/pedidos")}
                     >
                         <Image
                             style={detalhesPedidoStyle.iconeVoltar}

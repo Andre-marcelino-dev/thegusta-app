@@ -15,6 +15,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import sacolaStyle from "@/styles/sacolaStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { useConfiguracoes } from "@/utils/loja";
 
 import { cores } from "@/styles/variaveis";
@@ -315,9 +316,7 @@ export default function SacolaScreen() {
 
                     <Pressable
                         style={sacolaStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/home")
-                        }
+                        onPress={() => voltar("/home")}
                     >
                         <Image
                             style={sacolaStyle.iconeVoltar}

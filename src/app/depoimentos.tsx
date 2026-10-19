@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import depoimentosStyle from "@/styles/depoimentosStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
 
 const avaliacoes = [
@@ -142,7 +142,7 @@ export default function DepoimentosScreen() {
 
                     <Pressable
                         style={depoimentosStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() => voltar("/configuracoes")}
                     >
                         <Image
                             style={depoimentosStyle.iconeVoltar}

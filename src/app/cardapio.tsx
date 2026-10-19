@@ -16,6 +16,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import cardapioStyle from "@/styles/cardapioStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 
 import { cores } from "@/styles/variaveis";
 import { API_BASE_URL, buscarCategorias, Categoria } from "@/utils/categorias";
@@ -330,7 +331,7 @@ export default function CardapioScreen() {
 
                     <Pressable
                         style={cardapioStyle.btnVoltarFixo}
-                        onPress={() => router.back()}
+                        onPress={() => voltar("/home")}
                     >
                         <Image
                             style={cardapioStyle.iconeVoltar}

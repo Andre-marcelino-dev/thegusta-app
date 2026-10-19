@@ -14,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import enderecosStyle from "@/styles/enderecosStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import {
     buscarEnderecos,
     Endereco,
@@ -200,7 +201,7 @@ export default function EnderecosScreen() {
 
                             <Pressable
                                 style={enderecosStyle.btnCancelar}
-                                onPress={() => router.back()}
+                                onPress={() => voltar("/configuracoes")}
                             >
                                 <Text style={enderecosStyle.txtCancelar}>Cancelar</Text>
                             </Pressable>
@@ -209,9 +210,7 @@ export default function EnderecosScreen() {
 
                     <Pressable
                         style={enderecosStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/configuracoes")
-                        }
+                        onPress={() => voltar("/configuracoes")}
                     >
                         <Image
                             style={enderecosStyle.iconeVoltar}

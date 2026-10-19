@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import alterarSenhaStyle from "@/styles/alterarSenhaStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
 import { alterarSenha } from "@/utils/auth";
 
@@ -221,7 +221,7 @@ export default function AlterarSenhaScreen() {
 
                             <Pressable
                                 style={alterarSenhaStyle.btnCancelar}
-                                onPress={() => router.back()}
+                                onPress={() => voltar("/configuracoes")}
                             >
                                 <Text style={alterarSenhaStyle.txtCancelar}>
                                     Cancelar
@@ -232,9 +232,7 @@ export default function AlterarSenhaScreen() {
 
                     <Pressable
                         style={alterarSenhaStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/configuracoes")
-                        }
+                        onPress={() => voltar("/configuracoes")}
                     >
                         <Image
                             style={alterarSenhaStyle.iconeVoltar}

@@ -14,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import configuracoesStyle from "@/styles/configuracoesStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 
 export default function ConfiguracoesScreen() {
     const [notificacoesAtivas, setNotificacoesAtivas] = useState(true);
@@ -240,7 +241,7 @@ export default function ConfiguracoesScreen() {
 
                     <Pressable
                         style={configuracoesStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() => voltar("/home")}
                     >
                         <Image
                             style={configuracoesStyle.iconeVoltar}

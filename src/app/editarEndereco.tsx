@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,6 +15,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import editarEnderecoStyle from "@/styles/editarEnderecoStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
 import { buscarCep, buscarEndereco, salvarEndereco } from "@/utils/enderecos";
 
@@ -120,8 +121,7 @@ export default function EditarEnderecoScreen() {
                 idEndereco
             );
             // Volta para a lista, que recarrega sozinha
-            if (router.canGoBack()) router.back();
-            else router.replace("/enderecos");
+            voltar("/enderecos");
         } catch (e) {
             setErro(e instanceof Error ? e.message : "Não foi possível salvar o endereço.");
         } finally {
@@ -341,7 +341,7 @@ export default function EditarEnderecoScreen() {
 
                             <Pressable
                                 style={editarEnderecoStyle.btnCancelar}
-                                onPress={() => router.back()}
+                                onPress={() => voltar("/enderecos")}
                             >
                                 <Text style={editarEnderecoStyle.txtCancelar}>
                                     Cancelar
@@ -352,9 +352,7 @@ export default function EditarEnderecoScreen() {
 
                     <Pressable
                         style={editarEnderecoStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/enderecos")
-                        }
+                        onPress={() => voltar("/enderecos")}
                     >
                         <Image
                             style={editarEnderecoStyle.iconeVoltar}

@@ -18,6 +18,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import pagamentoStyle from "@/styles/pagamentoStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { useConfiguracoes } from "@/utils/loja";
 
 import { cores } from "@/styles/variaveis";
@@ -442,9 +443,7 @@ export default function PagamentoScreen() {
 
                     <Pressable
                         style={pagamentoStyle.btnVoltar}
-                        onPress={() =>
-                            router.canGoBack() ? router.back() : router.replace("/sacola")
-                        }
+                        onPress={() => voltar("/sacola")}
                     >
                         <Image
                             style={pagamentoStyle.iconeVoltar}

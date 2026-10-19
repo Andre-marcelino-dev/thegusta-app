@@ -14,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import produtoStyle from "@/styles/produtoStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { API_BASE_URL } from "@/utils/categorias";
 import { adicionarNaSacola } from "@/utils/sacola";
 
@@ -179,7 +180,7 @@ export default function ProdutoScreen() {
 
                     <Pressable
                         style={produtoStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() => voltar("/cardapio")}
                     >
                         <Image
                             style={produtoStyle.iconeVoltar}

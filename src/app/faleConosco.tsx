@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,6 +14,7 @@ import {
 import globalStyle from "@/styles/globalStyle";
 import faleConoscoStyle from "@/styles/faleConoscoStyle";
 import Footer from "@/components/footer";
+import { voltar } from "@/utils/navegacao";
 import { cores } from "@/styles/variaveis";
 
 export default function FaleConoscoScreen() {
@@ -111,7 +111,7 @@ export default function FaleConoscoScreen() {
 
                     <Pressable
                         style={faleConoscoStyle.btnVoltar}
-                        onPress={() => router.back()}
+                        onPress={() => voltar("/configuracoes")}
                     >
                         <Image
                             style={faleConoscoStyle.iconeVoltar}

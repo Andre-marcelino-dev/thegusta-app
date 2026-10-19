@@ -91,6 +91,13 @@ const configuracoesStyle = StyleSheet.create({
         tintColor: cores.laranja,
     },
 
+    // Foto real do cliente: ocupa o círculo todo e não recebe cor
+    fotoAvatarUsuario: {
+        width: 46,
+        height: 46,
+        borderRadius: 23,
+    },
+
     infoUsuario: {
         flex: 1,
     },

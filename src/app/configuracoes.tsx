@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -16,13 +16,26 @@ import globalStyle from "@/styles/globalStyle";
 import configuracoesStyle from "@/styles/configuracoesStyle";
 import Footer from "@/components/footer";
 import { voltar } from "@/utils/navegacao";
-import { fazerLogout } from "@/utils/auth";
+import { buscarClienteLogado, Cliente, fazerLogout, urlFotoCliente } from "@/utils/auth";
 
 export default function ConfiguracoesScreen() {
     const [notificacoesAtivas, setNotificacoesAtivas] = useState(true);
     // Janelinha "Deseja sair da conta?"
     const [modalSair, setModalSair] = useState(false);
     const [saindo, setSaindo] = useState(false);
+    const [cliente, setCliente] = useState<Cliente | null>(null);
+
+    // Busca de novo sempre que a tela aparece (ex.: ao voltar do Editar perfil com nome ou foto novos)
+    useFocusEffect(
+        useCallback(() => {
+            buscarClienteLogado()
+                .then(setCliente)
+                .catch((e) => console.error("Erro ao carregar cliente:", e));
+        }, [])
+    );
+
+    const primeiroNome = cliente?.nome_cliente?.trim().split(/\s+/)[0] || "Cliente";
+    const fotoPerfil = urlFotoCliente(cliente);
 
     // Apaga o login guardado no aparelho (e avisa a API) e volta para a tela de login
     async function sairDaConta() {
@@ -59,22 +72,33 @@ export default function ConfiguracoesScreen() {
                         </View>
 
                         <View style={configuracoesStyle.main}>
-                            <View style={configuracoesStyle.cardUsuario}>
+                            <Pressable
+                                style={configuracoesStyle.cardUsuario}
+                                onPress={() => router.push("/editarPerfil")}
+                            >
                                 <View style={configuracoesStyle.avatarUsuario}>
-                                    <Image
-                                        style={configuracoesStyle.imgAvatarUsuario}
-                                        source={require("@/assets/images/img/perfil.png")}
-                                    />
+                                    {fotoPerfil !== null ? (
+                                        <Image
+                                            style={configuracoesStyle.fotoAvatarUsuario}
+                                            source={{ uri: fotoPerfil }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            style={configuracoesStyle.imgAvatarUsuario}
+                                            source={require("@/assets/images/img/perfil.png")}
+                                        />
+                                    )}
                                 </View>
                                 <View style={configuracoesStyle.infoUsuario}>
-                                    <Text style={configuracoesStyle.nomeUsuario}>
-                                        Olá, Cliente
+                                    <Text style={configuracoesStyle.nomeUsuario} numberOfLines={1}>
+                                        Olá, {primeiroNome}
                                     </Text>
-                                    <Text style={configuracoesStyle.descricaoUsuario}>
-                                        Acesse e organize sua experiência no app
+                                    <Text style={configuracoesStyle.descricaoUsuario} numberOfLines={1}>
+                                        {cliente?.email_cliente || "Acesse e organize sua experiência no app"}
                                     </Text>
                                 </View>
-                            </View>
+                                <Text style={configuracoesStyle.txtSeta}>&gt;</Text>
+                            </Pressable>
 
                             <View style={configuracoesStyle.secao}>
                                 <Text style={configuracoesStyle.tituloSecao}>Minha conta</Text>

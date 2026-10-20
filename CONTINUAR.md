@@ -1,12 +1,18 @@
 # TheGusta / Confeitaria DaVilla — onde paramos e como continuar
 
-Última atualização: 19/10/2026.
+Última atualização: 20/10/2026.
 
 Este documento resume o que foi feito no app e no site, como rodar tudo em outro computador e o que ainda falta. Não tem senhas: elas ficam só nos arquivos `.env` (que não vão para o Git).
 
 ---
 
-## 0. Onde paramos (18/10/2026)
+## 0. Onde paramos (20/10/2026)
+
+- **Tudo em dia (20/10):** app (`767a016`), site (`1208d0a` — "design modificado"), GitHub e servidor iguais.
+- **Não edite arquivos direto no servidor.** Em 20/10 o `git pull` travou porque 16 telas tinham sido alteradas lá. Se acontecer: `git diff origin/main --stat -- src/resources/views` mostra o que é diferente; se não houver nada importante, `git checkout -- src/resources/views` e depois o `git pull`.
+- **Falta:** deixar o repositório do site privado (item 8); no painel, os banners inativos sem imagem e os 2 kits; opcional: botão "Instalar" do app na web.
+
+### Antes (18/10/2026)
 
 - **Pedidos cancelados** aparecem no app em **Meus pedidos → aba "Histórico"** (antes chamada "Entregues"), com borda e etiqueta vermelhas "Cancelado". Cada cliente vê só os próprios pedidos.
 - **Tradução do navegador (resolvido em 18/10):** o Chrome traduzia o app e deixava textos errados (preço "R$ 0,00" no produto, "Home" virando "Lar"). O arquivo `src/app/+html.tsx` marca o app como pt-BR e "não traduzir". Já publicado.
@@ -200,7 +206,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `6db1f84` — Depoimentos envia pela API.
-- **Site:** `ce5b25f` — Depoimentos aprovados aparecem na Home e no Sobre (`partials/depoimentos.blade.php`); servidor atualizado em 19/10.
+- **App:** `767a016` — Editar perfil confere a data de nascimento (ano bissexto, sem data futura).
+- **Site:** `1208d0a` — design modificado (antes: `e3492fa`, API recusa data de nascimento futura). Servidor atualizado em 20/10.
 
 Para ver tudo: `git log --oneline` em cada projeto.

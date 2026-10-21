@@ -26,6 +26,7 @@ import {
     removerDaSacola,
 } from "@/utils/sacola";
 import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
+import { buscarEntregaCliente, EntregaCliente } from "@/utils/entrega";
 import { calcularDesconto, Cupom, validarCupom } from "@/utils/cupons";
 
 
@@ -39,8 +40,13 @@ function formatarPrecoResumo(valor: number) {
 
 export default function SacolaScreen() {
     const [itens, setItens] = useState<ItemSacola[]>([]);
-    // Taxa e previsão de entrega vêm do painel admin
-    const { taxaEntrega, previsaoEntrega } = useConfiguracoes();
+    // Taxa e previsão de entrega: as da zona do endereço do cliente; enquanto
+    // carrega (ou se falhar), as padrão das Configurações da loja
+    const configuracoes = useConfiguracoes();
+    const [entregaCliente, setEntregaCliente] = useState<EntregaCliente | null>(null);
+    const taxaEntrega = entregaCliente?.taxaEntrega ?? configuracoes.taxaEntrega;
+    const previsaoEntrega = entregaCliente?.previsaoEntrega ?? configuracoes.previsaoEntrega;
+    const foraDaArea = entregaCliente?.entregamos === false;
     const [enderecoEntrega, setEnderecoEntrega] = useState<EnderecoEntrega | null>(null);
     const [cupom, setCupom] = useState("");
     const [cupomAplicado, setCupomAplicado] = useState<Cupom | null>(null);
@@ -60,6 +66,12 @@ export default function SacolaScreen() {
                 setEnderecoEntrega(await buscarEnderecoEntrega());
             } catch (erro) {
                 console.error("Erro ao carregar endereço:", erro);
+            }
+            // Recarrega ao voltar da tela de endereços (a zona pode ter mudado)
+            try {
+                setEntregaCliente(await buscarEntregaCliente());
+            } catch (erro) {
+                console.error("Erro ao carregar taxa de entrega:", erro);
             }
         }
 
@@ -114,7 +126,8 @@ export default function SacolaScreen() {
         (soma, item) => soma + item.preco * item.quantidade,
         0
     );
-    const entrega = itens.length > 0 ? taxaEntrega : 0;
+    // Fora da área só dá para retirar na loja, que não paga entrega
+    const entrega = itens.length > 0 && !foraDaArea ? taxaEntrega : 0;
     const desconto = calcularDesconto(subtotal, cupomAplicado);
     const total = subtotal + entrega - desconto;
 
@@ -248,6 +261,12 @@ export default function SacolaScreen() {
                                 <Text style={sacolaStyle.txtTelefone}>
                                     {enderecoEntrega?.telefone ?? ""}
                                 </Text>
+                                {foraDaArea && (
+                                    <Text style={sacolaStyle.txtAvisoEntrega}>
+                                        Ainda não entregamos neste endereço. Você pode retirar o
+                                        pedido na loja ou trocar o endereço.
+                                    </Text>
+                                )}
                                 <View style={sacolaStyle.linhaRodapeEntrega}>
                                     <Text style={sacolaStyle.txtPrevisaoLabel}>
                                         Entrega estimada em:
@@ -271,7 +290,9 @@ export default function SacolaScreen() {
                                     </Text>
                                 </View>
                                 <View style={sacolaStyle.linhaResumo}>
-                                    <Text style={sacolaStyle.txtLabelResumo}>Entrega</Text>
+                                    <Text style={sacolaStyle.txtLabelResumo}>
+                                        {foraDaArea ? "Retirada na loja" : "Entrega"}
+                                    </Text>
                                     <Text style={sacolaStyle.txtValorResumo}>
                                         {formatarPrecoResumo(entrega)}
                                     </Text>

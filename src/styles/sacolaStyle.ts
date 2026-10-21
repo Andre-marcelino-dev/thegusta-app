@@ -306,6 +306,15 @@ const sacolaStyle = StyleSheet.create({
         marginLeft: 56,
     },
 
+    // Endereço fora da área de entrega
+    txtAvisoEntrega: {
+        fontSize: 12,
+        fontFamily: fontes.comum,
+        color: "#d32f2f",
+        marginLeft: 56,
+        marginTop: 6,
+    },
+
     linhaRodapeEntrega: {
         flexDirection: 'row',
         justifyContent: 'space-between',

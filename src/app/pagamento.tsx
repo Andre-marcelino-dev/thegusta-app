@@ -25,6 +25,7 @@ import { cores } from "@/styles/variaveis";
 import { buscarSacola, ItemSacola } from "@/utils/sacola";
 import { criarPedido } from "@/utils/pedidos";
 import { buscarEnderecoEntrega, EnderecoEntrega } from "@/utils/enderecos";
+import { buscarEntregaCliente, EntregaCliente } from "@/utils/entrega";
 import { calcularDesconto, Cupom, validarCupom } from "@/utils/cupons";
 
 type TipoEntrega = "entrega" | "retirada";
@@ -47,8 +48,13 @@ function formatarPrecoResumo(valor: number) {
  
 export default function PagamentoScreen() {
     const [tipoEntrega, setTipoEntrega] = useState<TipoEntrega>("entrega");
-    // Taxa e previsão de entrega vêm do painel admin (a API cobra o mesmo valor)
-    const { taxaEntrega, previsaoEntrega } = useConfiguracoes();
+    // Taxa e previsão da zona do endereço do cliente (a API cobra o mesmo valor);
+    // enquanto carrega (ou se falhar), as padrão das Configurações da loja
+    const configuracoes = useConfiguracoes();
+    const [entregaCliente, setEntregaCliente] = useState<EntregaCliente | null>(null);
+    const taxaEntrega = entregaCliente?.taxaEntrega ?? configuracoes.taxaEntrega;
+    const previsaoEntrega = entregaCliente?.previsaoEntrega ?? configuracoes.previsaoEntrega;
+    const foraDaArea = entregaCliente?.entregamos === false;
     const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>(
         "pix"
     );
@@ -73,6 +79,15 @@ export default function PagamentoScreen() {
                 setEnderecoEntrega(await buscarEnderecoEntrega());
             } catch (e) {
                 console.error("Erro ao carregar endereço:", e);
+            }
+            // Recarrega ao voltar da tela de endereços (a zona pode ter mudado)
+            try {
+                const entrega = await buscarEntregaCliente();
+                setEntregaCliente(entrega);
+                // Fora da área de entrega, só dá para retirar na loja
+                if (!entrega.entregamos) setTipoEntrega("retirada");
+            } catch (e) {
+                console.error("Erro ao carregar taxa de entrega:", e);
             }
             if (codigoCupom) {
                 try {
@@ -107,6 +122,10 @@ export default function PagamentoScreen() {
         }
         if (tipoEntrega === "entrega" && !enderecoEntrega) {
             setErro("Cadastre um endereço de entrega ou escolha Retirada.");
+            return;
+        }
+        if (tipoEntrega === "entrega" && foraDaArea) {
+            setErro("Ainda não entregamos neste endereço. Escolha Retirada ou troque o endereço.");
             return;
         }
 
@@ -228,6 +247,12 @@ export default function PagamentoScreen() {
                                     {enderecoEntrega?.texto ??
                                         "Toque em Alterar para cadastrar um endereço."}
                                 </Text>
+                                {foraDaArea && (
+                                    <Text style={pagamentoStyle.txtAvisoEntrega}>
+                                        Ainda não entregamos neste endereço. Você pode retirar o
+                                        pedido na loja ou trocar o endereço.
+                                    </Text>
+                                )}
                             </View>
 
                             <View style={pagamentoStyle.card}>
@@ -239,7 +264,13 @@ export default function PagamentoScreen() {
                                                 tipoEntrega === "entrega" &&
                                                     pagamentoStyle.segmentoItemAtivo,
                                             ]}
-                                            onPress={() => setTipoEntrega("entrega")}
+                                            onPress={() => {
+                                                if (foraDaArea) {
+                                                    setErro("Ainda não entregamos neste endereço. Escolha Retirada ou troque o endereço.");
+                                                    return;
+                                                }
+                                                setTipoEntrega("entrega");
+                                            }}
                                         >
                                             <Text
                                                 style={[

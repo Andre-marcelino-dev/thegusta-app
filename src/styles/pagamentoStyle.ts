@@ -121,6 +121,15 @@ const pagamentoStyle = StyleSheet.create({
         lineHeight: 18,
     },
 
+    // Endereço fora da área de entrega
+    txtAvisoEntrega: {
+        fontSize: 12,
+        fontFamily: fontes.comum,
+        color: "#d32f2f",
+        marginTop: 6,
+        lineHeight: 16,
+    },
+
     linhaEntregaRetirada: {
         flexDirection: 'row',
         justifyContent: 'space-between',

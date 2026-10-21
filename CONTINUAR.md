@@ -1,12 +1,19 @@
 # TheGusta / Confeitaria DaVilla — onde paramos e como continuar
 
-Última atualização: 20/10/2026.
+Última atualização: 21/10/2026.
 
 Este documento resume o que foi feito no app e no site, como rodar tudo em outro computador e o que ainda falta. Não tem senhas: elas ficam só nos arquivos `.env` (que não vão para o Git).
 
 ---
 
-## 0. Onde paramos (20/10/2026)
+## 0. Onde paramos (21/10/2026)
+
+- **Tudo em dia (21/10):** app (`194aed4`, publicado em `thegust-app.expo.app`), site (`02610cb`), GitHub e servidor iguais.
+- **Zonas de entrega (novo):** a taxa de entrega agora depende da zona do endereço do cliente. Cadastro no painel em **Sistema → Zonas de entrega** (com a caixa "Testar um CEP"). A página **Região** do site, o pedido da API e a Sacola/Pagamento do app usam a mesma regra. Detalhes no item 7.
+- **Falta você fazer no painel:** trocar os valores de exemplo das 3 zonas (Grátis / R$ 8 / R$ 15; 0–3 / 3–6 / 6–10 km; bairros) pelos reais da loja. Testar no app com um cliente logado trocando o endereço.
+- **Outras mudanças de 21/10 no site:** tela de login do painel sem cortar o botão Entrar; topo do painel com mensagens (Fale conosco) e notificações (pedidos em preparo, depoimentos pendentes, matéria-prima sem estoque) reais; novo visual das páginas do site; menu Região com atalhos para cada parte da página; editar cliente no painel voltou a salvar (inclusive a senha).
+
+### Antes (20/10/2026)
 
 - **Tudo em dia (20/10):** app (`767a016`), site (`1208d0a` — "design modificado"), GitHub e servidor iguais.
 - **Não edite arquivos direto no servidor.** Em 20/10 o `git pull` travou porque 16 telas tinham sido alteradas lá. Se acontecer: `git diff origin/main --stat -- src/resources/views` mostra o que é diferente; se não houver nada importante, `git checkout -- src/resources/views` e depois o `git pull`.
@@ -99,7 +106,8 @@ cd ~/confeitaria-davilla/src && /opt/plesk/php/8.4/bin/php artisan optimize:clea
 
 - A linha do `rm` apaga a lista de pacotes guardada pelo Laravel (ele recria sozinho). Ela é necessária quando a pasta `vendor` muda no Git; sem ela o site pode sair do ar procurando um pacote que não existe mais. Pode rodar sempre.
 
-- Quando houver **migration nova**, rode também `/opt/plesk/php/8.4/bin/php artisan migrate --force`.
+- Quando houver **migration nova**, rode também `/opt/plesk/php/8.4/bin/php artisan migrate --force`. (Em 21/10 a página Região deu erro 500 até rodar a migration das zonas de entrega.)
+- Quando mudar a regra das zonas de entrega, rode também `/opt/plesk/php/8.4/bin/php artisan cache:clear`: as consultas de CEP ficam guardadas em cache (até 30 dias; "não encontrado" por 1 dia).
 - **Nunca** rodar `migrate:fresh`, `migrate:refresh`, `migrate:reset` nem `db:wipe` no servidor: apagam os dados.
 - **Nunca** rodar `git clone` dentro da pasta do domínio. Isso já aconteceu e deixou os backups do banco abertos na internet. Para atualizar, é só `git pull`.
 - Imagens enviadas pelo painel (banners, fotos de cliente e de produto) ficam só no servidor e aparecem como `??` ou `D` no `git status`. É normal; não precisam ir para o Git.
@@ -127,8 +135,8 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 |---|---|
 | Login, Home, Cardápio, banners, categorias | do banco (já existia) |
 | Detalhes do produto | do banco; sem produto falso enquanto carrega; quantidade começa em 1; resumo = tamanho + unidade |
-| **Sacola** | itens do cliente logado (`tbl_sacola`); +/−/excluir gravam no banco; endereço e telefone reais; cupom validado na API |
-| **Pagamento** | itens reais da sacola; entrega/retirada; forma de pagamento; **Confirma Pedido grava o pedido**, esvazia a sacola, abre o WhatsApp da loja com o número do pedido e mostra os detalhes |
+| **Sacola** | itens do cliente logado (`tbl_sacola`); +/−/excluir gravam no banco; endereço e telefone reais; cupom validado na API; **taxa e previsão da zona de entrega do endereço** (`GET /entrega/minha`); aviso se o endereço está fora da área |
+| **Pagamento** | itens reais da sacola; entrega/retirada; forma de pagamento; **Confirma Pedido grava o pedido**, esvazia a sacola, abre o WhatsApp da loja com o número do pedido e mostra os detalhes; taxa da zona; **fora da área só permite Retirada** |
 | **Meus pedidos / Detalhes do pedido** | do banco; etapas pelo status; **Pedir novamente** coloca os itens na sacola (preços atuais); abas "Em preparo" e "Histórico" (entregues e cancelados) |
 | **Editar perfil** | carrega e salva nome, telefone e nascimento; e-mail e CPF só leitura; **Alterar foto** com janela para tirar foto ou escolher da galeria (expo-image-picker); "Receber novidades" grava SIM/NAO |
 | **Alterar senha** | confere os campos e troca a senha pela API (`PUT /cliente/senha`, pede a senha atual) |
@@ -138,7 +146,7 @@ O plano gratuito tem limite de acessos. Se aparecer *"This deployment is receivi
 | **Depoimentos** | envia nota e texto pela API; lista os do cliente com a situação (Em análise / Publicado / Não publicado) |
 | Seta de voltar | não dá mais erro `GO_BACK` quando a tela é aberta direto |
 
-Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `enderecos.ts`, `cupons.ts`, `avisar.ts`.
+Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `enderecos.ts`, `cupons.ts`, `avisar.ts`, `entrega.ts` (taxa da zona do cliente).
 
 ### Site e API (confeitaria-davilla)
 
@@ -151,7 +159,9 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 | `POST /cliente/foto` | foto de perfil |
 | `GET/POST /enderecos`, `GET/PUT/PATCH/DELETE /enderecos/{id}`, `PATCH /enderecos/{id}/principal` | endereços de entrega |
 | `GET /cupons/{codigo}` | valida cupom |
-| `GET /configuracoes` (pública) | taxa e previsão de entrega, WhatsApp e e-mail da loja |
+| `GET /configuracoes` (pública) | taxa **padrão** e previsão de entrega, WhatsApp e e-mail da loja |
+| `GET /entrega/zonas` e `GET /entrega/consultar?cep=` (públicas) | zonas de entrega com os bairros; em qual zona um CEP cai (máx. 20 consultas por minuto) |
+| `GET /entrega/minha` | taxa e previsão do cliente logado, pela zona do endereço principal (é o valor que o `POST /pedidos` cobra) |
 | `POST /contato` | Fale conosco do app (máx. 5 por minuto) |
 | `GET/POST /depoimentos` | depoimentos do cliente (entram como PENDENTE) |
 
@@ -161,7 +171,9 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 |---|---|
 | **Dashboard** | pedidos hoje, em preparo, faturamento do mês, mensagens novas, gráfico dos 6 meses, últimos pedidos |
 | **Comercial → Pedidos** | lista, filtro, detalhes (itens, endereço, observação, subtotal + entrega + desconto do cupom + total) e troca de status na lista ou na janela de detalhes |
-| **Sistema → Configurações da loja** | taxa de entrega e previsão de entrega |
+| **Sistema → Configurações da loja** | taxa de entrega **padrão** (usada só quando não dá para saber a zona), previsão de entrega e localização da loja (latitude/longitude) |
+| **Sistema → Zonas de entrega** | criar, editar, ativar/desativar e excluir zonas (km de/até, taxa, prazo, cor, bairros um por linha com faixa de CEP opcional); caixa **Testar um CEP** |
+| Topo do painel | mensagens novas do Fale conosco e notificações (pedidos em preparo, depoimentos pendentes, matéria-prima sem estoque), com link para cada tela |
 | **Catálogo → Kits** | criar, editar e excluir os kits da Home (produtos do kit, preço promocional, etiqueta, foto) |
 | **Sistema → Meu Perfil** | o usuário logado edita nome, e-mail, foto e senha; o topo do painel mostra a foto e o cargo reais |
 | **Estoque → Fornecedores / Matérias-primas / Movimentações** | fornecedores (ativar/desativar); matérias-primas com estoque atual; entradas e saídas que atualizam a quantidade e não deixam ficar negativa |
@@ -174,9 +186,11 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 **Site público:** a seção de depoimentos da Home e do Sobre mostra os depoimentos **Publicados** no painel (até 10; foto ou inicial, estrelas, nome curto).  a página **Faça seu pedido** (`/pedidos`) explica como pedir (app, WhatsApp, encomendas) e mostra os produtos reais com o botão "Pedir pelo WhatsApp"; o número do WhatsApp e o link do app ficam em `config/services.php` (`loja`). O carrinho de exemplo do topo do site foi removido. Os **dados da loja** (endereço, telefone/WhatsApp, e-mail) ficam em `config/services.php` (`loja`) e aparecem na página Contato, no rodapé e no mapa. Os formulários da página Contato e do rodapé gravam em `tbl_contato` e **mandam um aviso por e-mail** para a loja.
 
+**Página Região (`/regiao`, "Onde entregamos"):** consulta de CEP feita no servidor, radar e cards das zonas lidos do banco, retirada na loja, WhatsApp e perguntas frequentes. O menu Região do topo tem atalhos para cada parte.
+
 **Documentação da API:** página `/api/documentacao` (arquivo `resources/views/api/documentacao.blade.php`) com todas as rotas. Ao criar uma rota nova, acrescente-a na lista `$grupos` no topo desse arquivo.
 
-**Banco:** tabela nova `tbl_sacola`; coluna nova `tbl_clientes.novidades_cliente` (SIM/NAO, padrão NAO) para o "Receber novidades" do perfil; `tbl_vendas.id_usuario` passou a aceitar vazio (pedido do app não tem funcionário).
+**Banco:** tabela nova `tbl_sacola`; coluna nova `tbl_clientes.novidades_cliente` (SIM/NAO, padrão NAO) para o "Receber novidades" do perfil; `tbl_vendas.id_usuario` passou a aceitar vazio (pedido do app não tem funcionário); tabelas novas `tbl_zonas_entrega` e `tbl_bairros_entrega` (21/10).
 
 ---
 
@@ -185,7 +199,8 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 - **Cupom = porcentagem** sobre os **produtos** (a entrega não tem desconto). `valor_desconto_cupom = 10` significa 10%.
 - **Status de pedido:** `EM ANDAMENTO` (Em preparo) → `SAIU ENTREGA` (A caminho) → `FINALIZADA` (Entregue), ou `CANCELADA`. O app usa `etapaDoStatus` em `src/utils/pedidos.ts`.
 - **Datas** de pedido são gravadas no **horário de Brasília** (o Laravel está em UTC).
-- **Taxa e previsão de entrega** são editadas no painel em **Sistema → Configurações da loja** (tabela `tbl_configuracoes`, rota `GET /api/v1/configuracoes`). O pedido cobra a taxa configurada; o app lê pelo hook `useConfiguracoes` (`src/utils/loja.ts`).
+- **Taxa de entrega = zona do endereço** (desde 21/10). O servidor (`App\Services\AreaEntrega`) acha a zona de um CEP nesta ordem: 1) faixa de CEP cadastrada em um bairro; 2) nome do bairro dos Correios igual a um bairro cadastrado; 3) distância **em linha reta** até a loja comparada com o km das zonas (endereço pelo ViaCEP, coordenadas pelo OpenStreetMap). Se não der para localizar o CEP, vale a taxa **padrão** de Configurações da loja e o pedido não é recusado; se o endereço estiver fora de todas as zonas, o pedido com entrega é recusado. O app lê a taxa em `GET /entrega/minha` (`src/utils/entrega.ts`) e usa `useConfiguracoes` só enquanto carrega.
+- **Mapa:** a BrasilAPI devolve o centro de São Paulo para quase todo CEP, por isso não é usada. O resultado do OpenStreetMap só é aceito se tiver o nome da rua ou do bairro procurado (e, na busca só pela rua, o mesmo começo de CEP). Bairros que o mapa não conhece (ex.: Parque Paulistano): cadastrar o nome na zona certa.
 - **E-mail do site:** sai pela conta do Plesk `contato_confeitaria@ctrlaltdev.tipi5.smpsistema.com.br` (SMTPS, porta 465). O destino dos avisos fica em `MAIL_CONTATO_DESTINO` no `.env` do servidor. **Nunca colocar e-mail pessoal ou senha no código**, porque os repositórios são públicos.
 - Banners: site e app mostram os ativos pela ordem do campo "Ordem". Imagens ideais: 1920×800 px, até 2 MB.
 
@@ -206,7 +221,7 @@ Arquivos de apoio em `src/utils/`: `auth.ts`, `sacola.ts`, `pedidos.ts`, `endere
 
 ## 9. Últimos commits
 
-- **App:** `767a016` — Editar perfil confere a data de nascimento (ano bissexto, sem data futura).
-- **Site:** `1208d0a` — design modificado (antes: `e3492fa`, API recusa data de nascimento futura). Servidor atualizado em 20/10.
+- **App:** `194aed4` — Sacola e Pagamento com a taxa de entrega pela zona do endereço. Publicado em 21/10.
+- **Site:** `02610cb` — zonas de entrega acham o CEP também buscando só pela rua (antes: `dad9b1e`, zonas de entrega no painel/site/API). Servidor atualizado em 21/10.
 
 Para ver tudo: `git log --oneline` em cada projeto.
